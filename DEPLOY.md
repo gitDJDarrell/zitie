@@ -43,7 +43,12 @@ Stack: **Neon** (Postgres) · **Fly.io** (API) · **Vercel** (web) ·
    fly secrets set SESSION_SECRET="<openssl rand -hex 32>"
    fly secrets set WEB_ORIGIN="https://<your-vercel-app>.vercel.app"
    fly secrets set NODE_ENV=production
+   fly secrets set RESEND_API_KEY="<your resend key>"   # password reset emails
    ```
+   Until you verify a domain at resend.com/domains, Resend's test sender
+   (`onboarding@resend.dev`) only delivers to your own Resend account email.
+   Once the domain is verified (Phase 2), also set
+   `fly secrets set EMAIL_FROM="Zitie <noreply@yourdomain.com>"`.
 4. Add a release step so migrations run automatically on every deploy —
    in `fly.toml`:
    ```toml

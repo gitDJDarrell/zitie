@@ -30,6 +30,10 @@ export const api = {
   login: (email: string, password: string) =>
     request<{ id: string; email: string }>("/auth/login", { method: "POST", body: JSON.stringify({ email, password }) }),
   logout: () => request<{ ok: true }>("/auth/logout", { method: "POST" }),
+  forgotPassword: (email: string) =>
+    request<{ ok: true }>("/auth/forgot", { method: "POST", body: JSON.stringify({ email }) }),
+  resetPassword: (token: string, password: string) =>
+    request<{ ok: true }>("/auth/reset", { method: "POST", body: JSON.stringify({ token, password }) }),
   me: () => request<{ id: string; email: string }>("/auth/me"),
 
   getBank: () => request<{ cards: Card[]; seen: SeenMap }>("/cards"),

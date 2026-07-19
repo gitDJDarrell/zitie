@@ -15,6 +15,14 @@ export const sessions = pgTable("sessions", {
   expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
 });
 
+// Single-use password reset tokens; only the SHA-256 of the token is stored,
+// so a database leak doesn't yield working reset links.
+export const passwordResetTokens = pgTable("password_reset_tokens", {
+  tokenHash: text("token_hash").primaryKey(),
+  userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+});
+
 // Mirrors the client card shape: { id, hanzi, pinyin, meaning, pos[], compound,
 // radical?, strokes?, examples[]?, notes?, starred?, added }
 export const cards = pgTable("cards", {
