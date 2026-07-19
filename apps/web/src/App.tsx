@@ -80,8 +80,9 @@ interface Filters {
 }
 
 /* ————————————— study session: read (tap-to-flip) + write (reverse, typed) ————————————— */
-function StudyView({ bank, srs, filters, onSeen, onToggleStar }: {
-  bank: Card[]; srs: SeenMap; filters: Filters; onSeen: (id: string) => void; onToggleStar: (id: string) => void;
+function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onToggleStar }: {
+  bank: Card[]; srs: SeenMap; filters: Filters; setFilters: React.Dispatch<React.SetStateAction<Filters>>;
+  posList: string[]; onSeen: (id: string) => void; onToggleStar: (id: string) => void;
 }) {
   const [queue, setQueue] = useState<string[] | null>(null);
   const [idx, setIdx] = useState(0);
@@ -156,10 +157,38 @@ function StudyView({ bank, srs, filters, onSeen, onToggleStar }: {
   /* ——— session start ——— */
   if (!queue) return (
     <div className="flex flex-col items-center gap-6 pt-10">
+      <div className="flex flex-col items-center gap-3">
+        <div className="flex items-baseline gap-2">
+          <span className="hz text-base" style={{ color: C.dim }}>课</span>
+          <span className="ui text-xs uppercase tracking-widest" style={{ color: C.faint }}>lesson</span>
+        </div>
+        <div className="flex flex-wrap gap-2 justify-center max-w-sm">
+          <Chip active={filters.pos.length === 0}
+            onClick={() => setFilters(f => ({ ...f, pos: [] }))}>
+            all
+          </Chip>
+          {posList.map(p => (
+            <Chip key={p} active={filters.pos.includes(p)}
+              onClick={() => setFilters(f => ({ ...f, pos: f.pos.includes(p) ? f.pos.filter(x => x !== p) : [...f.pos, p] }))}>
+              {p}
+            </Chip>
+          ))}
+        </div>
+        <div className="flex flex-wrap gap-2 justify-center">
+          <Chip active={filters.starred}
+            onClick={() => setFilters(f => ({ ...f, starred: !f.starred }))}>
+            {"★"} starred only
+          </Chip>
+          <Chip active={filters.age === "new"}
+            onClick={() => setFilters(f => ({ ...f, age: f.age === "new" ? "all" : "new" }))}>
+            unseen only
+          </Chip>
+        </div>
+      </div>
       <div className="ui text-sm" style={{ color: C.dim }}>
         <span style={{ color: C.paper }}>{pool.length}</span> cards
         {unseenCount > 0 && <> · <span style={{ color: C.paper }}>{unseenCount}</span> unseen</>}
-        <span style={{ color: C.faint }}> (current filters)</span>
+        <span style={{ color: C.faint }}> (this lesson)</span>
       </div>
       <div className="flex gap-2">
         <Chip active={mode === "read"} onClick={() => setMode("read")}>认 read — flip cards</Chip>
@@ -655,7 +684,7 @@ function Empty({ zh, text }: { zh: string; text: string }) {
 /* ————————————————— app ————————————————— */
 const DEFAULT_POS = ["noun", "verb", "pronoun", "adjective", "adverb", "measure word", "particle"];
 
-export default function App({ onLogout }: { onLogout: () => void }) {
+export default function App({ onLogout, userEmail }: { onLogout: () => void; userEmail: string }) {
   const [bank, setBank] = useState<Card[]>([]);
   const [srs, setSrs] = useState<SeenMap>({});
   const [loaded, setLoaded] = useState(false);
@@ -766,6 +795,11 @@ export default function App({ onLogout }: { onLogout: () => void }) {
             <div className="ui text-xs uppercase tracking-widest mt-1" style={{ color: C.faint }}>character study</div>
           </div>
           <div className="flex flex-col items-end gap-1">
+            {userEmail && (
+              <div className="ui text-xs max-w-[180px] truncate" style={{ color: C.dim }} title={userEmail}>
+                {userEmail}
+              </div>
+            )}
             <div className="flex items-center gap-2">
               <button onClick={toggleTheme} aria-label={theme === "light" ? "Switch to dark theme" : "Switch to light theme"}
                 className="px-2 py-1 rounded border flex items-center gap-1"
@@ -790,7 +824,7 @@ export default function App({ onLogout }: { onLogout: () => void }) {
           <div className="ui text-xs pt-10 text-center" style={{ color: C.faint }}>loading…</div>
         ) : (
           <>
-            {tab === "study" && <StudyView bank={bank} srs={srs} filters={filters} onSeen={onSeen} onToggleStar={onToggleStar} />}
+            {tab === "study" && <StudyView bank={bank} srs={srs} filters={filters} setFilters={setFilters} posList={posList} onSeen={onSeen} onToggleStar={onToggleStar} />}
             {tab === "browse" && <BrowseView bank={bank} srs={srs} filters={filters} setFilters={setFilters} posList={posList} onDelete={onDelete} onDeleteMany={onDeleteMany} onClearAll={onClearAll} onResetSeen={onResetSeen} onToggleStar={onToggleStar} />}
             {tab === "import" && <ImportView bank={bank} onImport={onImport} />}
           </>

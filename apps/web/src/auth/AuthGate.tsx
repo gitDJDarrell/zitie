@@ -12,10 +12,11 @@ export function AuthGate() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [userEmail, setUserEmail] = useState("");
 
   useEffect(() => {
     api.me().then(
-      () => setStatus("authed"),
+      (me) => { setUserEmail(me.email); setStatus("authed"); },
       () => setStatus("guest"),
     );
   }, []);
@@ -25,8 +26,10 @@ export function AuthGate() {
     setError(null);
     setBusy(true);
     try {
-      if (mode === "signup") await api.signup(email, password);
-      else await api.login(email, password);
+      const user = mode === "signup"
+        ? await api.signup(email, password)
+        : await api.login(email, password);
+      setUserEmail(user.email);
       setStatus("authed");
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Could not reach the server.");
@@ -53,7 +56,7 @@ export function AuthGate() {
   }
 
   if (status === "authed") {
-    return <App onLogout={logout} />;
+    return <App onLogout={logout} userEmail={userEmail} />;
   }
 
   return (
