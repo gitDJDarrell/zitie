@@ -1,5 +1,5 @@
 import bcrypt from "bcryptjs";
-import { and, eq, gt } from "drizzle-orm";
+import { and, eq, gt, lt } from "drizzle-orm";
 import { deleteCookie, getCookie, setCookie } from "hono/cookie";
 import { nanoid } from "nanoid";
 import type { Context, MiddlewareHandler } from "hono";
@@ -74,4 +74,8 @@ export const requireAuth: MiddlewareHandler = async (c, next) => {
 
 export async function destroySession(token: string) {
   await db.delete(sessions).where(eq(sessions.id, token));
+}
+
+export async function purgeExpiredSessions() {
+  await db.delete(sessions).where(lt(sessions.expiresAt, new Date()));
 }

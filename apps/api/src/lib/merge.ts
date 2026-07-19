@@ -74,8 +74,10 @@ export function mergeCard(prev: ExistingCard, norm: NormalizedCard) {
     const have = new Set(prev.examples.map((e) => e.zh));
     merged.examples = [...prev.examples, ...norm.examples.filter((e) => !have.has(e.zh))];
   }
-  if (prev.notes && norm.notes && !prev.notes.includes(norm.notes)) {
-    merged.notes = `${prev.notes} ${norm.notes}`;
+  if (prev.notes && norm.notes) {
+    // Never lose existing note text: append when new, keep as-is when the
+    // incoming note is already contained in it.
+    merged.notes = prev.notes.includes(norm.notes) ? prev.notes : `${prev.notes} ${norm.notes}`;
   }
   return merged;
 }

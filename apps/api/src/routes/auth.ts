@@ -6,8 +6,9 @@ import { db } from "../db/client.js";
 import { users } from "../db/schema.js";
 import {
   clearSessionCookie, createSession, destroySession, hashPassword,
-  requireAuth, setSessionCookie, verifyPassword,
+  purgeExpiredSessions, requireAuth, setSessionCookie, verifyPassword,
 } from "../lib/auth.js";
+import { rateLimit } from "../lib/rateLimit.js";
 
 export const auth = new Hono();
 
@@ -15,6 +16,15 @@ const credentials = z.object({
   email: z.string().trim().toLowerCase().email(),
   password: z.string().min(8, "Password must be at least 8 characters."),
 });
+
+// Body-derived email key means rotating IPs doesn't help against one account.
+const emailKey = (_c: unknown, body: unknown) => {
+  const email = (body as { email?: unknown } | null)?.email;
+  return typeof email === "string" ? `email:${email.trim().toLowerCase()}` : null;
+};
+
+auth.use("/signup", rateLimit({ windowMs: 60 * 60 * 1000, max: 10 }));
+auth.use("/login", rateLimit({ windowMs: 15 * 60 * 1000, max: 10, keyExtra: emailKey }));
 
 auth.post("/signup", async (c) => {
   const parsed = credentials.safeParse(await c.req.json().catch(() => null));
@@ -51,6 +61,9 @@ auth.post("/login", async (c) => {
 
   const session = await createSession(user.id);
   setSessionCookie(c, session.id, session.expiresAt);
+  // Opportunistic cleanup — logins are frequent enough to keep the table tidy
+  // without a scheduler, and a failure here must not break the login.
+  purgeExpiredSessions().catch(() => {});
   return c.json({ id: user.id, email: user.email });
 });
 
