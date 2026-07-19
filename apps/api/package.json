@@ -15,6 +15,7 @@
     "db:seed": "tsx scripts/seed.ts"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.112.3",
     "@hono/node-server": "^1.13.7",
     "bcryptjs": "^2.4.3",
     "dotenv": "^16.4.5",

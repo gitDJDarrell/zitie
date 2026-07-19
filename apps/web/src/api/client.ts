@@ -51,4 +51,7 @@ export const api = {
   setTheme: (theme: Theme) => request<{ theme: Theme }>("/settings", { method: "PATCH", body: JSON.stringify({ theme }) }),
 
   exportBank: () => request<Record<string, unknown>[]>("/export"),
+
+  aiExtract: (payload: { text?: string; image?: { mediaType: string; data: string } }) =>
+    request<{ cards: unknown[] }>("/ai/extract", { method: "POST", body: JSON.stringify(payload) }),
 };
