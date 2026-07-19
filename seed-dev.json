@@ -1,0 +1,2702 @@
+[
+  {
+    "hanzi": "水",
+    "pinyin": "shuǐ",
+    "meaning": "water",
+    "pos": [
+      "noun"
+    ],
+    "compound": false,
+    "radical": "水",
+    "strokes": 4,
+    "examples": [
+      {
+        "zh": "热水",
+        "py": "rè shuǐ",
+        "en": "hot water"
+      },
+      {
+        "zh": "我要水。",
+        "py": "wǒ yào shuǐ",
+        "en": "I want water."
+      }
+    ],
+    "notes": "Pictograph of a flowing stream. Appears as 氵 on the left side of characters."
+  },
+  {
+    "hanzi": "咖",
+    "pinyin": "kā",
+    "meaning": "used in 咖啡 (coffee)",
+    "pos": [
+      "bound form"
+    ],
+    "compound": false,
+    "radical": "口",
+    "strokes": 8,
+    "examples": [
+      {
+        "zh": "咖啡",
+        "py": "kāfēi",
+        "en": "coffee"
+      }
+    ],
+    "notes": "Mouth radical 口 + phonetic 加 jiā. Loanword syllable — also read gā in 咖喱 (curry)."
+  },
+  {
+    "hanzi": "啡",
+    "pinyin": "fēi",
+    "meaning": "used in 咖啡 (coffee)",
+    "pos": [
+      "bound form"
+    ],
+    "compound": false,
+    "radical": "口",
+    "strokes": 11,
+    "examples": [
+      {
+        "zh": "咖啡",
+        "py": "kāfēi",
+        "en": "coffee"
+      }
+    ],
+    "notes": "Mouth radical 口 + phonetic 非 fēi. Exists almost solely for the loanword 咖啡."
+  },
+  {
+    "hanzi": "茶",
+    "pinyin": "chá",
+    "meaning": "tea",
+    "pos": [
+      "noun"
+    ],
+    "compound": false,
+    "radical": "艹",
+    "strokes": 9,
+    "examples": [
+      {
+        "zh": "喝茶",
+        "py": "hē chá",
+        "en": "to drink tea"
+      },
+      {
+        "zh": "热茶",
+        "py": "rè chá",
+        "en": "hot tea"
+      }
+    ],
+    "notes": "Grass radical 艹 on top marks it as a plant. Source of the English word 'chai'."
+  },
+  {
+    "hanzi": "米",
+    "pinyin": "mǐ",
+    "meaning": "rice (uncooked grain); meter",
+    "pos": [
+      "noun"
+    ],
+    "compound": false,
+    "radical": "米",
+    "strokes": 6,
+    "examples": [
+      {
+        "zh": "米饭",
+        "py": "mǐfàn",
+        "en": "cooked rice"
+      },
+      {
+        "zh": "一百米",
+        "py": "yìbǎi mǐ",
+        "en": "one hundred meters"
+      }
+    ],
+    "notes": "Pictograph of grains scattered on a stalk. Doubles as the metric 'meter' by sound-loan."
+  },
+  {
+    "hanzi": "饭",
+    "pinyin": "fàn",
+    "meaning": "cooked rice; meal",
+    "pos": [
+      "noun"
+    ],
+    "compound": false,
+    "radical": "饣",
+    "strokes": 7,
+    "examples": [
+      {
+        "zh": "吃饭",
+        "py": "chī fàn",
+        "en": "to eat (a meal)"
+      },
+      {
+        "zh": "米饭",
+        "py": "mǐfàn",
+        "en": "cooked rice"
+      }
+    ],
+    "notes": "Food radical 饣 + phonetic 反 fǎn. Contrast with 米: raw grain vs. cooked rice/meal."
+  },
+  {
+    "hanzi": "汤",
+    "pinyin": "tāng",
+    "meaning": "soup; broth",
+    "pos": [
+      "noun"
+    ],
+    "compound": false,
+    "radical": "氵",
+    "strokes": 6,
+    "examples": [
+      {
+        "zh": "喝汤",
+        "py": "hē tāng",
+        "en": "to drink soup"
+      },
+      {
+        "zh": "热汤",
+        "py": "rè tāng",
+        "en": "hot soup"
+      }
+    ],
+    "notes": "Water radical 氵 — originally meant 'hot water.' Simplified from 湯. Note: soup is 'drunk' (喝), not eaten."
+  },
+  {
+    "hanzi": "热",
+    "pinyin": "rè",
+    "meaning": "hot",
+    "pos": [
+      "adjective"
+    ],
+    "compound": false,
+    "radical": "灬",
+    "strokes": 10,
+    "examples": [
+      {
+        "zh": "很热",
+        "py": "hěn rè",
+        "en": "very hot"
+      },
+      {
+        "zh": "热水",
+        "py": "rè shuǐ",
+        "en": "hot water"
+      }
+    ],
+    "notes": "The four dots 灬 at the bottom are the fire radical (火). Covers both temperature and weather."
+  },
+  {
+    "hanzi": "这",
+    "pinyin": "zhè",
+    "meaning": "this",
+    "pos": [
+      "pronoun"
+    ],
+    "compound": false,
+    "radical": "辶",
+    "strokes": 7,
+    "examples": [
+      {
+        "zh": "这是茶。",
+        "py": "zhè shì chá",
+        "en": "This is tea."
+      },
+      {
+        "zh": "这个",
+        "py": "zhège",
+        "en": "this one"
+      }
+    ],
+    "notes": "Walk radical 辶 + 文. Pairs with 那 nà (that). Colloquially often pronounced zhèi before a measure word."
+  },
+  {
+    "hanzi": "是",
+    "pinyin": "shì",
+    "meaning": "to be; is",
+    "pos": [
+      "verb"
+    ],
+    "compound": false,
+    "radical": "日",
+    "strokes": 9,
+    "examples": [
+      {
+        "zh": "这是水。",
+        "py": "zhè shì shuǐ",
+        "en": "This is water."
+      },
+      {
+        "zh": "是的",
+        "py": "shì de",
+        "en": "yes; that's right"
+      }
+    ],
+    "notes": "The copula: links nouns to nouns (A 是 B). Not used before adjectives — 很热, never 是热."
+  },
+  {
+    "hanzi": "粥",
+    "pinyin": "zhōu",
+    "meaning": "congee; rice porridge",
+    "pos": [
+      "noun"
+    ],
+    "compound": false,
+    "radical": "米",
+    "strokes": 12,
+    "examples": [
+      {
+        "zh": "喝粥",
+        "py": "hē zhōu",
+        "en": "to eat congee"
+      },
+      {
+        "zh": "米粥",
+        "py": "mǐzhōu",
+        "en": "rice porridge"
+      }
+    ],
+    "notes": "Rice 米 flanked by two bows 弓 — traditionally read as steam curling around cooking rice. Like soup, it takes 喝."
+  },
+  {
+    "hanzi": "豆",
+    "pinyin": "dòu",
+    "meaning": "bean",
+    "pos": [
+      "noun"
+    ],
+    "compound": false,
+    "radical": "豆",
+    "strokes": 7,
+    "examples": [
+      {
+        "zh": "豆腐",
+        "py": "dòufu",
+        "en": "tofu"
+      },
+      {
+        "zh": "红豆",
+        "py": "hóngdòu",
+        "en": "red bean"
+      }
+    ],
+    "notes": "Originally a pictograph of a stemmed ritual food vessel; later borrowed for 'bean.'"
+  },
+  {
+    "hanzi": "腐",
+    "pinyin": "fǔ",
+    "meaning": "rotten; fermented — used in 豆腐 (tofu)",
+    "pos": [
+      "adjective",
+      "bound form"
+    ],
+    "compound": false,
+    "radical": "肉",
+    "strokes": 14,
+    "examples": [
+      {
+        "zh": "豆腐",
+        "py": "dòufu",
+        "en": "tofu"
+      },
+      {
+        "zh": "腐烂",
+        "py": "fǔlàn",
+        "en": "to rot; decayed"
+      }
+    ],
+    "notes": "Meat radical 肉 beneath phonetic 府 fǔ. In 豆腐 it means 'fermented/curdled,' not spoiled."
+  },
+  {
+    "hanzi": "运",
+    "pinyin": "yùn",
+    "meaning": "to transport; motion; luck",
+    "pos": [
+      "verb",
+      "bound form"
+    ],
+    "compound": false,
+    "radical": "辶",
+    "strokes": 7,
+    "examples": [
+      {
+        "zh": "运动",
+        "py": "yùndòng",
+        "en": "sports; exercise"
+      }
+    ],
+    "notes": "Walk radical 辶. Simplified from 運."
+  },
+  {
+    "hanzi": "动",
+    "pinyin": "dòng",
+    "meaning": "to move",
+    "pos": [
+      "verb"
+    ],
+    "compound": false,
+    "radical": "力",
+    "strokes": 6,
+    "examples": [
+      {
+        "zh": "运动",
+        "py": "yùndòng",
+        "en": "sports; exercise"
+      },
+      {
+        "zh": "动物",
+        "py": "dòngwù",
+        "en": "animal"
+      }
+    ],
+    "notes": "Strength radical 力 on the right."
+  },
+  {
+    "hanzi": "篮",
+    "pinyin": "lán",
+    "meaning": "basket",
+    "pos": [
+      "noun",
+      "bound form"
+    ],
+    "compound": false,
+    "radical": "⺮",
+    "strokes": 16,
+    "examples": [
+      {
+        "zh": "篮球",
+        "py": "lánqiú",
+        "en": "basketball"
+      },
+      {
+        "zh": "打篮球",
+        "py": "dǎ lánqiú",
+        "en": "to play basketball"
+      }
+    ],
+    "notes": "Bamboo radical ⺮ on top — baskets were woven bamboo."
+  },
+  {
+    "hanzi": "球",
+    "pinyin": "qiú",
+    "meaning": "ball",
+    "pos": [
+      "noun"
+    ],
+    "compound": false,
+    "radical": "王",
+    "strokes": 11,
+    "examples": [
+      {
+        "zh": "篮球",
+        "py": "lánqiú",
+        "en": "basketball"
+      },
+      {
+        "zh": "网球",
+        "py": "wǎngqiú",
+        "en": "tennis"
+      }
+    ],
+    "notes": "Jade radical 王 + phonetic 求 qiú."
+  },
+  {
+    "hanzi": "打",
+    "pinyin": "dǎ",
+    "meaning": "to hit; to play (a sport); to make (a call)",
+    "pos": [
+      "verb"
+    ],
+    "compound": false,
+    "radical": "扌",
+    "strokes": 5,
+    "examples": [
+      {
+        "zh": "打球",
+        "py": "dǎ qiú",
+        "en": "to play ball"
+      },
+      {
+        "zh": "打电话",
+        "py": "dǎ diànhuà",
+        "en": "to make a phone call"
+      }
+    ],
+    "notes": "Hand radical 扌. Extremely versatile verb — ball sports take 打, not 玩."
+  },
+  {
+    "hanzi": "跑",
+    "pinyin": "pǎo",
+    "meaning": "to run",
+    "pos": [
+      "verb"
+    ],
+    "compound": false,
+    "radical": "⻊",
+    "strokes": 12,
+    "examples": [
+      {
+        "zh": "跑步",
+        "py": "pǎobù",
+        "en": "to run; jogging"
+      }
+    ],
+    "notes": "Foot radical ⻊ + phonetic 包 bāo."
+  },
+  {
+    "hanzi": "非",
+    "pinyin": "fēi",
+    "meaning": "not; non-",
+    "pos": [
+      "adverb",
+      "bound form"
+    ],
+    "compound": false,
+    "radical": "非",
+    "strokes": 8,
+    "examples": [
+      {
+        "zh": "非常",
+        "py": "fēicháng",
+        "en": "extremely; very"
+      }
+    ],
+    "notes": "Pictograph of two wings facing opposite ways — hence negation. 非常 literally 'not ordinary.'"
+  },
+  {
+    "hanzi": "游",
+    "pinyin": "yóu",
+    "meaning": "to swim; to tour",
+    "pos": [
+      "verb"
+    ],
+    "compound": false,
+    "radical": "氵",
+    "strokes": 12,
+    "examples": [
+      {
+        "zh": "游泳",
+        "py": "yóuyǒng",
+        "en": "to swim"
+      }
+    ],
+    "notes": "Water radical 氵."
+  },
+  {
+    "hanzi": "泳",
+    "pinyin": "yǒng",
+    "meaning": "swim (bound form)",
+    "pos": [
+      "bound form"
+    ],
+    "compound": false,
+    "radical": "氵",
+    "strokes": 8,
+    "examples": [
+      {
+        "zh": "游泳",
+        "py": "yóuyǒng",
+        "en": "to swim"
+      }
+    ],
+    "notes": "Water radical 氵 + phonetic 永 yǒng. Pairs with 游."
+  },
+  {
+    "hanzi": "网",
+    "pinyin": "wǎng",
+    "meaning": "net; the internet",
+    "pos": [
+      "noun"
+    ],
+    "compound": false,
+    "radical": "网",
+    "strokes": 6,
+    "examples": [
+      {
+        "zh": "网球",
+        "py": "wǎngqiú",
+        "en": "tennis"
+      },
+      {
+        "zh": "上网",
+        "py": "shàngwǎng",
+        "en": "to go online"
+      }
+    ],
+    "notes": "Pictograph of a net's mesh. Doubles as 'internet.'"
+  },
+  {
+    "hanzi": "还",
+    "pinyin": "hái",
+    "meaning": "still; also; (huán) to return",
+    "pos": [
+      "adverb",
+      "verb"
+    ],
+    "compound": false,
+    "radical": "辶",
+    "strokes": 7,
+    "examples": [
+      {
+        "zh": "还有",
+        "py": "háiyǒu",
+        "en": "also; in addition"
+      },
+      {
+        "zh": "还是",
+        "py": "háishi",
+        "en": "or; still"
+      }
+    ],
+    "notes": "Two readings: hái (still/also) and huán (to return something)."
+  },
+  {
+    "hanzi": "比",
+    "pinyin": "bǐ",
+    "meaning": "to compare; than",
+    "pos": [
+      "verb",
+      "preposition"
+    ],
+    "compound": false,
+    "radical": "比",
+    "strokes": 4,
+    "examples": [
+      {
+        "zh": "比赛",
+        "py": "bǐsài",
+        "en": "match; competition"
+      },
+      {
+        "zh": "A比B大",
+        "py": "A bǐ B dà",
+        "en": "A is bigger than B"
+      }
+    ],
+    "notes": "Two people side by side — comparison. Core comparative structure."
+  },
+  {
+    "hanzi": "园",
+    "pinyin": "yuán",
+    "meaning": "garden; park",
+    "pos": [
+      "noun"
+    ],
+    "compound": false,
+    "radical": "囗",
+    "strokes": 7,
+    "examples": [
+      {
+        "zh": "公园",
+        "py": "gōngyuán",
+        "en": "park"
+      },
+      {
+        "zh": "花园",
+        "py": "huāyuán",
+        "en": "garden"
+      }
+    ],
+    "notes": "Enclosure radical 囗 + phonetic 元 yuán. Simplified from 園."
+  },
+  {
+    "hanzi": "健",
+    "pinyin": "jiàn",
+    "meaning": "healthy; strong",
+    "pos": [
+      "adjective",
+      "bound form"
+    ],
+    "compound": false,
+    "radical": "亻",
+    "strokes": 10,
+    "examples": [
+      {
+        "zh": "健身",
+        "py": "jiànshēn",
+        "en": "to work out"
+      },
+      {
+        "zh": "健康",
+        "py": "jiànkāng",
+        "en": "health; healthy"
+      }
+    ],
+    "notes": "Person radical 亻."
+  },
+  {
+    "hanzi": "身",
+    "pinyin": "shēn",
+    "meaning": "body",
+    "pos": [
+      "noun"
+    ],
+    "compound": false,
+    "radical": "身",
+    "strokes": 7,
+    "examples": [
+      {
+        "zh": "健身房",
+        "py": "jiànshēnfáng",
+        "en": "gym"
+      },
+      {
+        "zh": "身体",
+        "py": "shēntǐ",
+        "en": "body; health"
+      }
+    ],
+    "notes": "Pictograph of a person in profile with a torso emphasized."
+  },
+  {
+    "hanzi": "房",
+    "pinyin": "fáng",
+    "meaning": "house; room",
+    "pos": [
+      "noun"
+    ],
+    "compound": false,
+    "radical": "户",
+    "strokes": 8,
+    "examples": [
+      {
+        "zh": "健身房",
+        "py": "jiànshēnfáng",
+        "en": "gym"
+      },
+      {
+        "zh": "房间",
+        "py": "fángjiān",
+        "en": "room"
+      }
+    ],
+    "notes": "Door radical 户 + phonetic 方 fāng."
+  },
+  {
+    "hanzi": "常",
+    "pinyin": "cháng",
+    "meaning": "often; ordinary",
+    "pos": [
+      "adverb",
+      "adjective"
+    ],
+    "compound": false,
+    "radical": "巾",
+    "strokes": 11,
+    "examples": [
+      {
+        "zh": "非常",
+        "py": "fēicháng",
+        "en": "extremely"
+      },
+      {
+        "zh": "常常",
+        "py": "chángcháng",
+        "en": "often"
+      }
+    ],
+    "notes": "Reduplicates as 常常 for 'often.'"
+  },
+  {
+    "hanzi": "你",
+    "pinyin": "nǐ",
+    "meaning": "you",
+    "pos": [
+      "pronoun"
+    ],
+    "compound": false,
+    "radical": "亻",
+    "strokes": 7,
+    "examples": [
+      {
+        "zh": "你好",
+        "py": "nǐ hǎo",
+        "en": "hello"
+      },
+      {
+        "zh": "你们",
+        "py": "nǐmen",
+        "en": "you (plural)"
+      }
+    ],
+    "notes": "Person radical 亻. Polite form is 您 nín."
+  },
+  {
+    "hanzi": "们",
+    "pinyin": "men",
+    "meaning": "plural suffix for pronouns/people",
+    "pos": [
+      "suffix"
+    ],
+    "compound": false,
+    "radical": "亻",
+    "strokes": 5,
+    "examples": [
+      {
+        "zh": "我们",
+        "py": "wǒmen",
+        "en": "we; us"
+      },
+      {
+        "zh": "你们",
+        "py": "nǐmen",
+        "en": "you (plural)"
+      }
+    ],
+    "notes": "Neutral tone. Only pluralizes people, never objects."
+  },
+  {
+    "hanzi": "公",
+    "pinyin": "gōng",
+    "meaning": "public; male; grandfather (bound)",
+    "pos": [
+      "adjective",
+      "bound form"
+    ],
+    "compound": false,
+    "radical": "八",
+    "strokes": 4,
+    "examples": [
+      {
+        "zh": "公园",
+        "py": "gōngyuán",
+        "en": "park"
+      },
+      {
+        "zh": "公公",
+        "py": "gōnggong",
+        "en": "husband's father"
+      }
+    ],
+    "notes": "Multiple lives: public (公园), male animals, and in-law kinship terms."
+  },
+  {
+    "hanzi": "同",
+    "pinyin": "tóng",
+    "meaning": "same; together",
+    "pos": [
+      "adjective",
+      "bound form"
+    ],
+    "compound": false,
+    "radical": "口",
+    "strokes": 6,
+    "examples": [
+      {
+        "zh": "同学",
+        "py": "tóngxué",
+        "en": "classmate"
+      }
+    ],
+    "notes": "'Same' — 同学 literally 'same-study.'"
+  },
+  {
+    "hanzi": "新",
+    "pinyin": "xīn",
+    "meaning": "new",
+    "pos": [
+      "adjective"
+    ],
+    "compound": false,
+    "radical": "斤",
+    "strokes": 13,
+    "examples": [
+      {
+        "zh": "新年",
+        "py": "xīnnián",
+        "en": "New Year"
+      },
+      {
+        "zh": "新手机",
+        "py": "xīn shǒujī",
+        "en": "new phone"
+      }
+    ],
+    "notes": "Axe radical 斤 — freshly cut wood."
+  },
+  {
+    "hanzi": "有",
+    "pinyin": "yǒu",
+    "meaning": "to have; there is/are",
+    "pos": [
+      "verb"
+    ],
+    "compound": false,
+    "radical": "月",
+    "strokes": 6,
+    "examples": [
+      {
+        "zh": "我有",
+        "py": "wǒ yǒu",
+        "en": "I have"
+      },
+      {
+        "zh": "有没有",
+        "py": "yǒu méiyǒu",
+        "en": "have or not? (question)"
+      }
+    ],
+    "notes": "Negated with 没, never 不: 没有 méiyǒu."
+  },
+  {
+    "hanzi": "天",
+    "pinyin": "tiān",
+    "meaning": "day; sky; heaven",
+    "pos": [
+      "noun"
+    ],
+    "compound": false,
+    "radical": "大",
+    "strokes": 4,
+    "examples": [
+      {
+        "zh": "今天",
+        "py": "jīntiān",
+        "en": "today"
+      },
+      {
+        "zh": "天气",
+        "py": "tiānqì",
+        "en": "weather"
+      }
+    ],
+    "notes": "A person 大 with a line above — the sky overhead."
+  },
+  {
+    "hanzi": "好",
+    "pinyin": "hǎo",
+    "meaning": "good; well",
+    "pos": [
+      "adjective"
+    ],
+    "compound": false,
+    "radical": "女",
+    "strokes": 6,
+    "examples": [
+      {
+        "zh": "你好",
+        "py": "nǐ hǎo",
+        "en": "hello"
+      },
+      {
+        "zh": "很好",
+        "py": "hěn hǎo",
+        "en": "very good"
+      }
+    ],
+    "notes": "Woman 女 + child 子 = good. Also hào 'to like' in some compounds."
+  },
+  {
+    "hanzi": "四",
+    "pinyin": "sì",
+    "meaning": "four",
+    "pos": [
+      "numeral"
+    ],
+    "compound": false,
+    "radical": "囗",
+    "strokes": 5,
+    "examples": [
+      {
+        "zh": "四个",
+        "py": "sì ge",
+        "en": "four (of something)"
+      }
+    ],
+    "notes": "Mind the tone: sì (4) vs sǐ (die) — the source of the number's unlucky reputation."
+  },
+  {
+    "hanzi": "今",
+    "pinyin": "jīn",
+    "meaning": "now; the present",
+    "pos": [
+      "bound form"
+    ],
+    "compound": false,
+    "radical": "人",
+    "strokes": 4,
+    "examples": [
+      {
+        "zh": "今天",
+        "py": "jīntiān",
+        "en": "today"
+      },
+      {
+        "zh": "今年",
+        "py": "jīnnián",
+        "en": "this year"
+      }
+    ],
+    "notes": "Always bound: 今天, 今年, 今晚."
+  },
+  {
+    "hanzi": "历",
+    "pinyin": "lì",
+    "meaning": "to pass through; calendar (bound)",
+    "pos": [
+      "bound form"
+    ],
+    "compound": false,
+    "radical": "厂",
+    "strokes": 4,
+    "examples": [
+      {
+        "zh": "历史",
+        "py": "lìshǐ",
+        "en": "history"
+      }
+    ],
+    "notes": "Simplified from both 歷 (experience) and 曆 (calendar)."
+  },
+  {
+    "hanzi": "史",
+    "pinyin": "shǐ",
+    "meaning": "history; annals",
+    "pos": [
+      "noun",
+      "bound form"
+    ],
+    "compound": false,
+    "radical": "口",
+    "strokes": 5,
+    "examples": [
+      {
+        "zh": "历史",
+        "py": "lìshǐ",
+        "en": "history"
+      }
+    ],
+    "notes": "Pictograph of a hand holding a record tablet — the scribe."
+  },
+  {
+    "hanzi": "真",
+    "pinyin": "zhēn",
+    "meaning": "real; really; truly",
+    "pos": [
+      "adverb",
+      "adjective"
+    ],
+    "compound": false,
+    "radical": "十",
+    "strokes": 10,
+    "examples": [
+      {
+        "zh": "真的",
+        "py": "zhēnde",
+        "en": "really; truth"
+      },
+      {
+        "zh": "真好",
+        "py": "zhēn hǎo",
+        "en": "really good"
+      }
+    ],
+    "notes": "Common intensifier before adjectives: 真好, 真热."
+  },
+  {
+    "hanzi": "的",
+    "pinyin": "de",
+    "meaning": "possessive/descriptive particle",
+    "pos": [
+      "particle"
+    ],
+    "compound": false,
+    "radical": "白",
+    "strokes": 8,
+    "examples": [
+      {
+        "zh": "我的",
+        "py": "wǒ de",
+        "en": "my; mine"
+      },
+      {
+        "zh": "真的",
+        "py": "zhēnde",
+        "en": "really"
+      }
+    ],
+    "notes": "The most frequent character in Chinese. Neutral tone. Links possessor→possessed and description→noun."
+  },
+  {
+    "hanzi": "吗",
+    "pinyin": "ma",
+    "meaning": "yes/no question particle",
+    "pos": [
+      "particle"
+    ],
+    "compound": false,
+    "radical": "口",
+    "strokes": 6,
+    "examples": [
+      {
+        "zh": "好吗？",
+        "py": "hǎo ma?",
+        "en": "OK?"
+      },
+      {
+        "zh": "你是学生吗？",
+        "py": "nǐ shì xuésheng ma?",
+        "en": "Are you a student?"
+      }
+    ],
+    "notes": "Mouth radical 口 + phonetic 马 mǎ. Turns any statement into a yes/no question. Neutral tone."
+  },
+  {
+    "hanzi": "学",
+    "pinyin": "xué",
+    "meaning": "to study; learning",
+    "pos": [
+      "verb",
+      "bound form"
+    ],
+    "compound": false,
+    "radical": "子",
+    "strokes": 8,
+    "examples": [
+      {
+        "zh": "学生",
+        "py": "xuésheng",
+        "en": "student"
+      },
+      {
+        "zh": "学习",
+        "py": "xuéxí",
+        "en": "to study"
+      }
+    ],
+    "notes": "Child 子 beneath — a child under instruction. Simplified from 學."
+  },
+  {
+    "hanzi": "我",
+    "pinyin": "wǒ",
+    "meaning": "I; me",
+    "pos": [
+      "pronoun"
+    ],
+    "compound": false,
+    "radical": "戈",
+    "strokes": 7,
+    "examples": [
+      {
+        "zh": "我们",
+        "py": "wǒmen",
+        "en": "we"
+      },
+      {
+        "zh": "我是",
+        "py": "wǒ shì",
+        "en": "I am"
+      }
+    ],
+    "notes": "Contains the halberd radical 戈 — originally a weapon name, borrowed for 'I.'"
+  },
+  {
+    "hanzi": "手",
+    "pinyin": "shǒu",
+    "meaning": "hand",
+    "pos": [
+      "noun"
+    ],
+    "compound": false,
+    "radical": "手",
+    "strokes": 4,
+    "examples": [
+      {
+        "zh": "手机",
+        "py": "shǒujī",
+        "en": "mobile phone"
+      },
+      {
+        "zh": "洗手",
+        "py": "xǐ shǒu",
+        "en": "to wash hands"
+      }
+    ],
+    "notes": "Pictograph of a hand with fingers. Appears as 扌 on character left sides."
+  },
+  {
+    "hanzi": "机",
+    "pinyin": "jī",
+    "meaning": "machine; device (bound)",
+    "pos": [
+      "bound form"
+    ],
+    "compound": false,
+    "radical": "木",
+    "strokes": 6,
+    "examples": [
+      {
+        "zh": "手机",
+        "py": "shǒujī",
+        "en": "mobile phone"
+      },
+      {
+        "zh": "飞机",
+        "py": "fēijī",
+        "en": "airplane"
+      }
+    ],
+    "notes": "Wood radical 木 — early machines were wooden. Simplified from 機."
+  },
+  {
+    "hanzi": "钱",
+    "pinyin": "qián",
+    "meaning": "money",
+    "pos": [
+      "noun"
+    ],
+    "compound": false,
+    "radical": "钅",
+    "strokes": 10,
+    "examples": [
+      {
+        "zh": "钱包",
+        "py": "qiánbāo",
+        "en": "wallet"
+      },
+      {
+        "zh": "多少钱？",
+        "py": "duōshao qián?",
+        "en": "How much?"
+      }
+    ],
+    "notes": "Metal radical 钅 — coins were metal."
+  },
+  {
+    "hanzi": "包",
+    "pinyin": "bāo",
+    "meaning": "bag; to wrap",
+    "pos": [
+      "noun",
+      "verb"
+    ],
+    "compound": false,
+    "radical": "勹",
+    "strokes": 5,
+    "examples": [
+      {
+        "zh": "钱包",
+        "py": "qiánbāo",
+        "en": "wallet"
+      },
+      {
+        "zh": "包子",
+        "py": "bāozi",
+        "en": "steamed bun"
+      }
+    ],
+    "notes": "Pictograph of wrapping around something. Noun and verb both."
+  },
+  {
+    "hanzi": "洗",
+    "pinyin": "xǐ",
+    "meaning": "to wash",
+    "pos": [
+      "verb"
+    ],
+    "compound": false,
+    "radical": "氵",
+    "strokes": 9,
+    "examples": [
+      {
+        "zh": "洗手间",
+        "py": "xǐshǒujiān",
+        "en": "restroom"
+      },
+      {
+        "zh": "洗手",
+        "py": "xǐ shǒu",
+        "en": "to wash hands"
+      }
+    ],
+    "notes": "Water radical 氵. 洗手间 'hand-washing room' is the polite word for restroom."
+  },
+  {
+    "hanzi": "间",
+    "pinyin": "jiān",
+    "meaning": "room; between; measure word for rooms",
+    "pos": [
+      "noun",
+      "measure word"
+    ],
+    "compound": false,
+    "radical": "门",
+    "strokes": 7,
+    "examples": [
+      {
+        "zh": "房间",
+        "py": "fángjiān",
+        "en": "room"
+      },
+      {
+        "zh": "洗手间",
+        "py": "xǐshǒujiān",
+        "en": "restroom"
+      }
+    ],
+    "notes": "A door 门 with sunlight 日 through it — the space between."
+  },
+  {
+    "hanzi": "哪",
+    "pinyin": "nǎ",
+    "meaning": "which; where",
+    "pos": [
+      "pronoun"
+    ],
+    "compound": false,
+    "radical": "口",
+    "strokes": 9,
+    "examples": [
+      {
+        "zh": "哪儿",
+        "py": "nǎr",
+        "en": "where"
+      },
+      {
+        "zh": "哪个",
+        "py": "nǎge",
+        "en": "which one"
+      }
+    ],
+    "notes": "Question word — 哪儿/哪里 where, 哪个 which. Compare 那 nà (that)."
+  },
+  {
+    "hanzi": "火",
+    "pinyin": "huǒ",
+    "meaning": "fire",
+    "pos": [
+      "noun"
+    ],
+    "compound": false,
+    "radical": "火",
+    "strokes": 4,
+    "examples": [
+      {
+        "zh": "火车",
+        "py": "huǒchē",
+        "en": "train"
+      }
+    ],
+    "notes": "Pictograph of flames. Appears as 灬 at character bottoms (as in 热)."
+  },
+  {
+    "hanzi": "车",
+    "pinyin": "chē",
+    "meaning": "vehicle; car",
+    "pos": [
+      "noun"
+    ],
+    "compound": false,
+    "radical": "车",
+    "strokes": 4,
+    "examples": [
+      {
+        "zh": "火车站",
+        "py": "huǒchēzhàn",
+        "en": "train station"
+      },
+      {
+        "zh": "汽车",
+        "py": "qìchē",
+        "en": "car"
+      }
+    ],
+    "notes": "Pictograph of a cart viewed from above. Simplified from 車."
+  },
+  {
+    "hanzi": "站",
+    "pinyin": "zhàn",
+    "meaning": "station; to stand",
+    "pos": [
+      "noun",
+      "verb"
+    ],
+    "compound": false,
+    "radical": "立",
+    "strokes": 10,
+    "examples": [
+      {
+        "zh": "火车站",
+        "py": "huǒchēzhàn",
+        "en": "train station"
+      },
+      {
+        "zh": "站台",
+        "py": "zhàntái",
+        "en": "platform"
+      }
+    ],
+    "notes": "Stand radical 立 — a place where vehicles stand."
+  },
+  {
+    "hanzi": "呀",
+    "pinyin": "ya",
+    "meaning": "exclamatory particle",
+    "pos": [
+      "particle"
+    ],
+    "compound": false,
+    "radical": "口",
+    "strokes": 7,
+    "examples": [
+      {
+        "zh": "好呀！",
+        "py": "hǎo ya!",
+        "en": "Sure! Great!"
+      }
+    ],
+    "notes": "Softened form of 啊 a after vowel sounds. Neutral tone."
+  },
+  {
+    "hanzi": "行",
+    "pinyin": "xíng",
+    "meaning": "OK; to go; capable; (háng) row, profession",
+    "pos": [
+      "verb",
+      "adjective"
+    ],
+    "compound": false,
+    "radical": "行",
+    "strokes": 6,
+    "examples": [
+      {
+        "zh": "行李",
+        "py": "xíngli",
+        "en": "luggage"
+      },
+      {
+        "zh": "行！",
+        "py": "xíng!",
+        "en": "OK! That works!"
+      }
+    ],
+    "notes": "Two readings: xíng (go/OK) and háng (row/trade, as in 银行 bank)."
+  },
+  {
+    "hanzi": "李",
+    "pinyin": "lǐ",
+    "meaning": "plum; the surname Li",
+    "pos": [
+      "noun"
+    ],
+    "compound": false,
+    "radical": "木",
+    "strokes": 7,
+    "examples": [
+      {
+        "zh": "行李",
+        "py": "xíngli",
+        "en": "luggage"
+      }
+    ],
+    "notes": "Tree 木 over child 子. One of the most common surnames on earth."
+  },
+  {
+    "hanzi": "票",
+    "pinyin": "piào",
+    "meaning": "ticket",
+    "pos": [
+      "noun"
+    ],
+    "compound": false,
+    "radical": "示",
+    "strokes": 11,
+    "examples": [
+      {
+        "zh": "车票",
+        "py": "chēpiào",
+        "en": "train/bus ticket"
+      },
+      {
+        "zh": "门票",
+        "py": "ménpiào",
+        "en": "admission ticket"
+      }
+    ],
+    "notes": ""
+  },
+  {
+    "hanzi": "台",
+    "pinyin": "tái",
+    "meaning": "platform; measure word for machines",
+    "pos": [
+      "noun",
+      "measure word"
+    ],
+    "compound": false,
+    "radical": "口",
+    "strokes": 5,
+    "examples": [
+      {
+        "zh": "站台",
+        "py": "zhàntái",
+        "en": "platform"
+      },
+      {
+        "zh": "一台手机",
+        "py": "yì tái shǒujī",
+        "en": "one phone"
+      }
+    ],
+    "notes": "Also the measure word for machines and devices."
+  },
+  {
+    "hanzi": "谢",
+    "pinyin": "xiè",
+    "meaning": "to thank",
+    "pos": [
+      "verb"
+    ],
+    "compound": false,
+    "radical": "讠",
+    "strokes": 12,
+    "examples": [
+      {
+        "zh": "谢谢",
+        "py": "xièxie",
+        "en": "thank you"
+      }
+    ],
+    "notes": "Speech radical 讠. Always doubled in everyday thanks: 谢谢."
+  },
+  {
+    "hanzi": "杯",
+    "pinyin": "bēi",
+    "meaning": "cup; measure word for cups of",
+    "pos": [
+      "measure word",
+      "noun"
+    ],
+    "compound": false,
+    "radical": "木",
+    "strokes": 8,
+    "examples": [
+      {
+        "zh": "一杯茶",
+        "py": "yì bēi chá",
+        "en": "a cup of tea"
+      },
+      {
+        "zh": "杯子",
+        "py": "bēizi",
+        "en": "cup"
+      }
+    ],
+    "notes": "Wood radical 木 + 不 as phonetic — early cups were wooden."
+  },
+  {
+    "hanzi": "要",
+    "pinyin": "yào",
+    "meaning": "to want; to need; will",
+    "pos": [
+      "verb"
+    ],
+    "compound": false,
+    "radical": "覀",
+    "strokes": 9,
+    "examples": [
+      {
+        "zh": "我要水",
+        "py": "wǒ yào shuǐ",
+        "en": "I want water"
+      },
+      {
+        "zh": "要不要？",
+        "py": "yào bu yào?",
+        "en": "Do you want it?"
+      }
+    ],
+    "notes": "Core ordering verb. Also marks near-future: 要下雨了 it's about to rain."
+  },
+  {
+    "hanzi": "奶",
+    "pinyin": "nǎi",
+    "meaning": "milk; grandma (bound)",
+    "pos": [
+      "noun",
+      "bound form"
+    ],
+    "compound": false,
+    "radical": "女",
+    "strokes": 5,
+    "examples": [
+      {
+        "zh": "牛奶",
+        "py": "niúnǎi",
+        "en": "milk"
+      },
+      {
+        "zh": "奶茶",
+        "py": "nǎichá",
+        "en": "milk tea"
+      }
+    ],
+    "notes": "Woman radical 女. 奶奶 nǎinai = paternal grandmother."
+  },
+  {
+    "hanzi": "两",
+    "pinyin": "liǎng",
+    "meaning": "two (before measure words)",
+    "pos": [
+      "numeral"
+    ],
+    "compound": false,
+    "radical": "一",
+    "strokes": 7,
+    "examples": [
+      {
+        "zh": "两杯",
+        "py": "liǎng bēi",
+        "en": "two cups"
+      },
+      {
+        "zh": "两个人",
+        "py": "liǎng ge rén",
+        "en": "two people"
+      }
+    ],
+    "notes": "Use 两 before measure words, 二 èr for counting/numbers: 两杯 but 十二."
+  },
+  {
+    "hanzi": "牛",
+    "pinyin": "niú",
+    "meaning": "cow; ox",
+    "pos": [
+      "noun"
+    ],
+    "compound": false,
+    "radical": "牛",
+    "strokes": 4,
+    "examples": [
+      {
+        "zh": "牛奶",
+        "py": "niúnǎi",
+        "en": "milk"
+      },
+      {
+        "zh": "牛肉",
+        "py": "niúròu",
+        "en": "beef"
+      }
+    ],
+    "notes": "Pictograph of a horned ox head. Slang: 牛 = awesome."
+  },
+  {
+    "hanzi": "冰",
+    "pinyin": "bīng",
+    "meaning": "ice; iced",
+    "pos": [
+      "noun",
+      "adjective"
+    ],
+    "compound": false,
+    "radical": "冫",
+    "strokes": 6,
+    "examples": [
+      {
+        "zh": "冰水",
+        "py": "bīngshuǐ",
+        "en": "ice water"
+      },
+      {
+        "zh": "冰咖啡",
+        "py": "bīng kāfēi",
+        "en": "iced coffee"
+      }
+    ],
+    "notes": "Ice radical 冫 (two strokes) + 水 — literally frozen water."
+  },
+  {
+    "hanzi": "绿",
+    "pinyin": "lǜ",
+    "meaning": "green",
+    "pos": [
+      "adjective"
+    ],
+    "compound": false,
+    "radical": "纟",
+    "strokes": 11,
+    "examples": [
+      {
+        "zh": "绿茶",
+        "py": "lǜchá",
+        "en": "green tea"
+      }
+    ],
+    "notes": "Silk radical 纟 — colors were dye words. Note the ü: lǜ, typed lv4."
+  },
+  {
+    "hanzi": "客",
+    "pinyin": "kè",
+    "meaning": "guest; customer (bound)",
+    "pos": [
+      "noun",
+      "bound form"
+    ],
+    "compound": false,
+    "radical": "宀",
+    "strokes": 9,
+    "examples": [
+      {
+        "zh": "客气",
+        "py": "kèqi",
+        "en": "polite"
+      },
+      {
+        "zh": "客人",
+        "py": "kèrén",
+        "en": "guest"
+      }
+    ],
+    "notes": "Roof radical 宀 — someone under your roof."
+  },
+  {
+    "hanzi": "气",
+    "pinyin": "qì",
+    "meaning": "air; gas; vital energy",
+    "pos": [
+      "noun"
+    ],
+    "compound": false,
+    "radical": "气",
+    "strokes": 4,
+    "examples": [
+      {
+        "zh": "不客气",
+        "py": "bú kèqi",
+        "en": "you're welcome"
+      },
+      {
+        "zh": "天气",
+        "py": "tiānqì",
+        "en": "weather"
+      }
+    ],
+    "notes": "Pictograph of rising vapor. The qi of qigong. Simplified from 氣."
+  },
+  {
+    "hanzi": "不",
+    "pinyin": "bù",
+    "meaning": "not; no",
+    "pos": [
+      "adverb"
+    ],
+    "compound": false,
+    "radical": "一",
+    "strokes": 4,
+    "examples": [
+      {
+        "zh": "不是",
+        "py": "bú shì",
+        "en": "is not"
+      },
+      {
+        "zh": "不客气",
+        "py": "bú kèqi",
+        "en": "you're welcome"
+      }
+    ],
+    "notes": "Tone sandhi: bù becomes bú before a 4th tone — 不是 bú shì. Negates most verbs; 有 takes 没 instead."
+  },
+  {
+    "hanzi": "去",
+    "pinyin": "qù",
+    "meaning": "to go (to)",
+    "pos": [
+      "verb"
+    ],
+    "compound": false,
+    "radical": "厶",
+    "strokes": 5,
+    "examples": [
+      {
+        "zh": "去超市",
+        "py": "qù chāoshì",
+        "en": "to go to the supermarket"
+      },
+      {
+        "zh": "去哪儿？",
+        "py": "qù nǎr?",
+        "en": "Where are you going?"
+      }
+    ],
+    "notes": "Takes the destination directly: 去 + place, no preposition needed."
+  },
+  {
+    "hanzi": "书",
+    "pinyin": "shū",
+    "meaning": "book",
+    "pos": [
+      "noun"
+    ],
+    "compound": false,
+    "radical": "乙",
+    "strokes": 4,
+    "examples": [
+      {
+        "zh": "书店",
+        "py": "shūdiàn",
+        "en": "bookstore"
+      },
+      {
+        "zh": "一本书",
+        "py": "yì běn shū",
+        "en": "a book"
+      }
+    ],
+    "notes": "Simplified from 書 — originally a hand holding a brush."
+  },
+  {
+    "hanzi": "店",
+    "pinyin": "diàn",
+    "meaning": "shop; store",
+    "pos": [
+      "noun"
+    ],
+    "compound": false,
+    "radical": "广",
+    "strokes": 8,
+    "examples": [
+      {
+        "zh": "书店",
+        "py": "shūdiàn",
+        "en": "bookstore"
+      },
+      {
+        "zh": "商店",
+        "py": "shāngdiàn",
+        "en": "shop"
+      }
+    ],
+    "notes": "Shelter radical 广 + phonetic 占 — commerce under a roof."
+  },
+  {
+    "hanzi": "超",
+    "pinyin": "chāo",
+    "meaning": "to exceed; super-",
+    "pos": [
+      "bound form",
+      "verb"
+    ],
+    "compound": false,
+    "radical": "走",
+    "strokes": 12,
+    "examples": [
+      {
+        "zh": "超市",
+        "py": "chāoshì",
+        "en": "supermarket"
+      }
+    ],
+    "notes": "Run radical 走 — to overtake. 超 also prefixes slang for 'super.'"
+  },
+  {
+    "hanzi": "市",
+    "pinyin": "shì",
+    "meaning": "market; city",
+    "pos": [
+      "noun",
+      "bound form"
+    ],
+    "compound": false,
+    "radical": "巾",
+    "strokes": 5,
+    "examples": [
+      {
+        "zh": "超市",
+        "py": "chāoshì",
+        "en": "supermarket"
+      },
+      {
+        "zh": "城市",
+        "py": "chéngshì",
+        "en": "city"
+      }
+    ],
+    "notes": "超市 is short for 超级市场 'super market' — a direct calque."
+  },
+  {
+    "hanzi": "馆",
+    "pinyin": "guǎn",
+    "meaning": "hall; establishment (bound)",
+    "pos": [
+      "bound form"
+    ],
+    "compound": false,
+    "radical": "饣",
+    "strokes": 11,
+    "examples": [
+      {
+        "zh": "饭馆",
+        "py": "fànguǎn",
+        "en": "restaurant"
+      },
+      {
+        "zh": "图书馆",
+        "py": "túshūguǎn",
+        "en": "library"
+      }
+    ],
+    "notes": "Food radical 饣 — originally a lodging that fed guests."
+  },
+  {
+    "hanzi": "菜",
+    "pinyin": "cài",
+    "meaning": "dish (of food); vegetable",
+    "pos": [
+      "noun"
+    ],
+    "compound": false,
+    "radical": "艹",
+    "strokes": 11,
+    "examples": [
+      {
+        "zh": "中国菜",
+        "py": "Zhōngguó cài",
+        "en": "Chinese food"
+      },
+      {
+        "zh": "买菜",
+        "py": "mǎi cài",
+        "en": "to buy groceries"
+      }
+    ],
+    "notes": "Grass radical 艹. Means both 'vegetable' and 'dish/cuisine.'"
+  },
+  {
+    "hanzi": "吃",
+    "pinyin": "chī",
+    "meaning": "to eat",
+    "pos": [
+      "verb"
+    ],
+    "compound": false,
+    "radical": "口",
+    "strokes": 6,
+    "examples": [
+      {
+        "zh": "吃饭",
+        "py": "chī fàn",
+        "en": "to eat (a meal)"
+      },
+      {
+        "zh": "好吃",
+        "py": "hǎochī",
+        "en": "delicious"
+      }
+    ],
+    "notes": "Mouth radical 口. Solids are 吃, liquids (soup, congee) are 喝."
+  },
+  {
+    "hanzi": "买",
+    "pinyin": "mǎi",
+    "meaning": "to buy",
+    "pos": [
+      "verb"
+    ],
+    "compound": false,
+    "radical": "乛",
+    "strokes": 6,
+    "examples": [
+      {
+        "zh": "买菜",
+        "py": "mǎi cài",
+        "en": "to buy groceries"
+      },
+      {
+        "zh": "买票",
+        "py": "mǎi piào",
+        "en": "to buy tickets"
+      }
+    ],
+    "notes": "Mirror-twin trap: 买 mǎi buy vs 卖 mài sell — one stroke and one tone apart."
+  },
+  {
+    "hanzi": "零",
+    "pinyin": "líng",
+    "meaning": "zero; fragmentary",
+    "pos": [
+      "numeral",
+      "bound form"
+    ],
+    "compound": false,
+    "radical": "雨",
+    "strokes": 13,
+    "examples": [
+      {
+        "zh": "零食",
+        "py": "língshí",
+        "en": "snacks"
+      }
+    ],
+    "notes": "Rain radical 雨 — originally scattered raindrops, hence 'scattered/odd bits,' hence snacks."
+  },
+  {
+    "hanzi": "食",
+    "pinyin": "shí",
+    "meaning": "food; to eat (literary)",
+    "pos": [
+      "noun",
+      "bound form"
+    ],
+    "compound": false,
+    "radical": "食",
+    "strokes": 9,
+    "examples": [
+      {
+        "zh": "零食",
+        "py": "língshí",
+        "en": "snacks"
+      },
+      {
+        "zh": "食物",
+        "py": "shíwù",
+        "en": "food"
+      }
+    ],
+    "notes": "Appears as 饣 on the left of characters like 饭 and 馆."
+  },
+  {
+    "hanzi": "韩",
+    "pinyin": "hán",
+    "meaning": "Korea (bound); the surname Han",
+    "pos": [
+      "bound form"
+    ],
+    "compound": false,
+    "radical": "韦",
+    "strokes": 12,
+    "examples": [
+      {
+        "zh": "韩国",
+        "py": "Hánguó",
+        "en": "South Korea"
+      },
+      {
+        "zh": "韩国菜",
+        "py": "Hánguó cài",
+        "en": "Korean food"
+      }
+    ],
+    "notes": "Capitalized sense: 韩国 South Korea, 韩语 Korean language."
+  },
+  {
+    "hanzi": "文",
+    "pinyin": "wén",
+    "meaning": "writing; language; culture",
+    "pos": [
+      "noun",
+      "bound form"
+    ],
+    "compound": false,
+    "radical": "文",
+    "strokes": 4,
+    "examples": [
+      {
+        "zh": "中文",
+        "py": "Zhōngwén",
+        "en": "Chinese (language)"
+      },
+      {
+        "zh": "英文",
+        "py": "Yīngwén",
+        "en": "English (language)"
+      }
+    ],
+    "notes": "Pictograph of a tattooed figure — marks, hence writing. Language names: country + 文."
+  },
+  {
+    "hanzi": "爸",
+    "pinyin": "bà",
+    "meaning": "dad",
+    "pos": [
+      "noun"
+    ],
+    "compound": false,
+    "radical": "父",
+    "strokes": 8,
+    "examples": [
+      {
+        "zh": "爸爸",
+        "py": "bàba",
+        "en": "dad"
+      }
+    ],
+    "notes": "Father radical 父 + phonetic 巴 bā. Doubled in speech: 爸爸."
+  },
+  {
+    "hanzi": "儿",
+    "pinyin": "ér",
+    "meaning": "child; son; -r sound suffix",
+    "pos": [
+      "noun",
+      "suffix"
+    ],
+    "compound": false,
+    "radical": "儿",
+    "strokes": 2,
+    "examples": [
+      {
+        "zh": "儿子",
+        "py": "érzi",
+        "en": "son"
+      },
+      {
+        "zh": "哪儿",
+        "py": "nǎr",
+        "en": "where"
+      }
+    ],
+    "notes": "Two strokes. Also the northern -r ending: 哪儿, 一点儿. Simplified from 兒."
+  },
+  {
+    "hanzi": "子",
+    "pinyin": "zǐ",
+    "meaning": "child; noun suffix",
+    "pos": [
+      "noun",
+      "suffix"
+    ],
+    "compound": false,
+    "radical": "子",
+    "strokes": 3,
+    "examples": [
+      {
+        "zh": "儿子",
+        "py": "érzi",
+        "en": "son"
+      },
+      {
+        "zh": "杯子",
+        "py": "bēizi",
+        "en": "cup"
+      }
+    ],
+    "notes": "Pictograph of a swaddled infant. As a suffix it's neutral tone: 杯子, 包子."
+  },
+  {
+    "hanzi": "妈",
+    "pinyin": "mā",
+    "meaning": "mom",
+    "pos": [
+      "noun"
+    ],
+    "compound": false,
+    "radical": "女",
+    "strokes": 6,
+    "examples": [
+      {
+        "zh": "妈妈",
+        "py": "māma",
+        "en": "mom"
+      }
+    ],
+    "notes": "Woman radical 女 + phonetic 马 mǎ. Doubled in speech: 妈妈."
+  },
+  {
+    "hanzi": "婆",
+    "pinyin": "pó",
+    "meaning": "old woman; mother-in-law (bound)",
+    "pos": [
+      "noun",
+      "bound form"
+    ],
+    "compound": false,
+    "radical": "女",
+    "strokes": 11,
+    "examples": [
+      {
+        "zh": "婆婆",
+        "py": "pópo",
+        "en": "husband's mother"
+      },
+      {
+        "zh": "公公婆婆",
+        "py": "gōnggong pópo",
+        "en": "husband's parents"
+      }
+    ],
+    "notes": "Kinship precision: 婆婆 is specifically the husband's mother."
+  },
+  {
+    "hanzi": "也",
+    "pinyin": "yě",
+    "meaning": "also; too",
+    "pos": [
+      "adverb"
+    ],
+    "compound": false,
+    "radical": "乙",
+    "strokes": 3,
+    "examples": [
+      {
+        "zh": "我也是",
+        "py": "wǒ yě shì",
+        "en": "me too"
+      },
+      {
+        "zh": "她也去",
+        "py": "tā yě qù",
+        "en": "she's going too"
+      }
+    ],
+    "notes": "Always before the verb, never sentence-final like English 'too.'"
+  },
+  {
+    "hanzi": "女",
+    "pinyin": "nǚ",
+    "meaning": "female; woman",
+    "pos": [
+      "noun",
+      "adjective"
+    ],
+    "compound": false,
+    "radical": "女",
+    "strokes": 3,
+    "examples": [
+      {
+        "zh": "女儿",
+        "py": "nǚ'ér",
+        "en": "daughter"
+      },
+      {
+        "zh": "女生",
+        "py": "nǚshēng",
+        "en": "girl; female student"
+      }
+    ],
+    "notes": "Pictograph of a kneeling figure. Note the ü: nǚ, typed nv3. The apostrophe in 女儿 nǚ'ér separates syllables."
+  },
+  {
+    "hanzi": "英",
+    "pinyin": "yīng",
+    "meaning": "hero; England (bound)",
+    "pos": [
+      "bound form"
+    ],
+    "compound": false,
+    "radical": "艹",
+    "strokes": 8,
+    "examples": [
+      {
+        "zh": "英文",
+        "py": "Yīngwén",
+        "en": "English (language)"
+      },
+      {
+        "zh": "英国",
+        "py": "Yīngguó",
+        "en": "the UK"
+      }
+    ],
+    "notes": "Grass radical 艹 — originally 'flower/finest,' borrowed phonetically for England."
+  },
+  {
+    "hanzi": "老",
+    "pinyin": "lǎo",
+    "meaning": "old; venerable; prefix",
+    "pos": [
+      "adjective",
+      "prefix"
+    ],
+    "compound": false,
+    "radical": "老",
+    "strokes": 6,
+    "examples": [
+      {
+        "zh": "老师",
+        "py": "lǎoshī",
+        "en": "teacher"
+      },
+      {
+        "zh": "老朋友",
+        "py": "lǎo péngyou",
+        "en": "old friend"
+      }
+    ],
+    "notes": "Respect prefix, not an insult: 老师 teacher, 老王 'ol' Wang.'"
+  },
+  {
+    "hanzi": "中",
+    "pinyin": "zhōng",
+    "meaning": "middle; China (bound)",
+    "pos": [
+      "noun",
+      "bound form"
+    ],
+    "compound": false,
+    "radical": "丨",
+    "strokes": 4,
+    "examples": [
+      {
+        "zh": "中国",
+        "py": "Zhōngguó",
+        "en": "China"
+      },
+      {
+        "zh": "中文",
+        "py": "Zhōngwén",
+        "en": "Chinese (language)"
+      }
+    ],
+    "notes": "A line through a box's center. 中国 = 'the Middle Kingdom.'"
+  },
+  {
+    "hanzi": "生",
+    "pinyin": "shēng",
+    "meaning": "to be born; raw; student (bound)",
+    "pos": [
+      "verb",
+      "bound form"
+    ],
+    "compound": false,
+    "radical": "生",
+    "strokes": 5,
+    "examples": [
+      {
+        "zh": "学生",
+        "py": "xuésheng",
+        "en": "student"
+      },
+      {
+        "zh": "医生",
+        "py": "yīshēng",
+        "en": "doctor"
+      },
+      {
+        "zh": "生日",
+        "py": "shēngrì",
+        "en": "birthday"
+      }
+    ],
+    "notes": "Pictograph of a sprout emerging from soil."
+  },
+  {
+    "hanzi": "喜",
+    "pinyin": "xǐ",
+    "meaning": "joy; to like (bound)",
+    "pos": [
+      "bound form"
+    ],
+    "compound": false,
+    "radical": "口",
+    "strokes": 12,
+    "examples": [
+      {
+        "zh": "喜欢",
+        "py": "xǐhuan",
+        "en": "to like"
+      }
+    ],
+    "notes": "The doubled form 囍 'double happiness' decorates weddings."
+  },
+  {
+    "hanzi": "欢",
+    "pinyin": "huān",
+    "meaning": "joyous (bound)",
+    "pos": [
+      "bound form"
+    ],
+    "compound": false,
+    "radical": "欠",
+    "strokes": 6,
+    "examples": [
+      {
+        "zh": "喜欢",
+        "py": "xǐhuan",
+        "en": "to like"
+      }
+    ],
+    "notes": "Pairs with 喜. Simplified from 歡."
+  },
+  {
+    "hanzi": "课",
+    "pinyin": "kè",
+    "meaning": "class; lesson",
+    "pos": [
+      "noun"
+    ],
+    "compound": false,
+    "radical": "讠",
+    "strokes": 10,
+    "examples": [
+      {
+        "zh": "数学课",
+        "py": "shùxué kè",
+        "en": "math class"
+      },
+      {
+        "zh": "上课",
+        "py": "shàngkè",
+        "en": "to attend class"
+      }
+    ],
+    "notes": "Speech radical 讠 — instruction is spoken."
+  },
+  {
+    "hanzi": "大",
+    "pinyin": "dà",
+    "meaning": "big; large",
+    "pos": [
+      "adjective"
+    ],
+    "compound": false,
+    "radical": "大",
+    "strokes": 3,
+    "examples": [
+      {
+        "zh": "大学",
+        "py": "dàxué",
+        "en": "university"
+      },
+      {
+        "zh": "很大",
+        "py": "hěn dà",
+        "en": "very big"
+      }
+    ],
+    "notes": "Pictograph of a person with arms spread wide. 大学 = 'great learning' = university."
+  },
+  {
+    "hanzi": "数",
+    "pinyin": "shù",
+    "meaning": "number; (shǔ) to count",
+    "pos": [
+      "noun",
+      "verb"
+    ],
+    "compound": false,
+    "radical": "攵",
+    "strokes": 13,
+    "examples": [
+      {
+        "zh": "数学",
+        "py": "shùxué",
+        "en": "mathematics"
+      }
+    ],
+    "notes": "Two readings: shù (number) and shǔ (to count)."
+  },
+  {
+    "hanzi": "他",
+    "pinyin": "tā",
+    "meaning": "he; him",
+    "pos": [
+      "pronoun"
+    ],
+    "compound": false,
+    "radical": "亻",
+    "strokes": 5,
+    "examples": [
+      {
+        "zh": "他们",
+        "py": "tāmen",
+        "en": "they (male/mixed)"
+      },
+      {
+        "zh": "他是",
+        "py": "tā shì",
+        "en": "he is"
+      }
+    ],
+    "notes": "Person radical 亻. Sounds identical to 她 and 它 — spoken Mandarin doesn't distinguish gender."
+  },
+  {
+    "hanzi": "音",
+    "pinyin": "yīn",
+    "meaning": "sound; tone",
+    "pos": [
+      "noun",
+      "bound form"
+    ],
+    "compound": false,
+    "radical": "音",
+    "strokes": 9,
+    "examples": [
+      {
+        "zh": "音乐",
+        "py": "yīnyuè",
+        "en": "music"
+      }
+    ],
+    "notes": "拼音 pīnyīn is literally 'spelled sound.'"
+  },
+  {
+    "hanzi": "乐",
+    "pinyin": "yuè",
+    "meaning": "music; (lè) happy",
+    "pos": [
+      "noun",
+      "adjective"
+    ],
+    "compound": false,
+    "radical": "丿",
+    "strokes": 5,
+    "examples": [
+      {
+        "zh": "音乐",
+        "py": "yīnyuè",
+        "en": "music"
+      },
+      {
+        "zh": "快乐",
+        "py": "kuàilè",
+        "en": "happy"
+      }
+    ],
+    "notes": "Two readings that both matter: yuè in 音乐 music, lè in 快乐 happy. Simplified from 樂."
+  },
+  {
+    "hanzi": "她",
+    "pinyin": "tā",
+    "meaning": "she; her",
+    "pos": [
+      "pronoun"
+    ],
+    "compound": false,
+    "radical": "女",
+    "strokes": 6,
+    "examples": [
+      {
+        "zh": "她们",
+        "py": "tāmen",
+        "en": "they (female)"
+      }
+    ],
+    "notes": "Woman radical 女. A 20th-century invention modeled on English 'she' — identical in sound to 他."
+  },
+  {
+    "hanzi": "医",
+    "pinyin": "yī",
+    "meaning": "medicine; to heal (bound)",
+    "pos": [
+      "bound form"
+    ],
+    "compound": false,
+    "radical": "匚",
+    "strokes": 7,
+    "examples": [
+      {
+        "zh": "医生",
+        "py": "yīshēng",
+        "en": "doctor"
+      },
+      {
+        "zh": "医院",
+        "py": "yīyuàn",
+        "en": "hospital"
+      }
+    ],
+    "notes": "Simplified from 醫 — the box 匚 held an arrow, from battlefield medicine."
+  },
+  {
+    "hanzi": "师",
+    "pinyin": "shī",
+    "meaning": "teacher; master (bound)",
+    "pos": [
+      "bound form"
+    ],
+    "compound": false,
+    "radical": "巾",
+    "strokes": 6,
+    "examples": [
+      {
+        "zh": "老师",
+        "py": "lǎoshī",
+        "en": "teacher"
+      },
+      {
+        "zh": "律师",
+        "py": "lǜshī",
+        "en": "lawyer"
+      }
+    ],
+    "notes": "Profession suffix: 老师, 律师, 厨师 chef."
+  },
+  {
+    "hanzi": "对",
+    "pinyin": "duì",
+    "meaning": "correct; right; toward",
+    "pos": [
+      "adjective",
+      "preposition"
+    ],
+    "compound": false,
+    "radical": "寸",
+    "strokes": 5,
+    "examples": [
+      {
+        "zh": "对！",
+        "py": "duì!",
+        "en": "Right! Correct!"
+      },
+      {
+        "zh": "不对",
+        "py": "bú duì",
+        "en": "wrong"
+      }
+    ],
+    "notes": "The everyday 'yes, that's right.' Also a preposition: 对我说 say to me."
+  },
+  {
+    "hanzi": "律",
+    "pinyin": "lǜ",
+    "meaning": "law; rule (bound)",
+    "pos": [
+      "bound form"
+    ],
+    "compound": false,
+    "radical": "彳",
+    "strokes": 9,
+    "examples": [
+      {
+        "zh": "律师",
+        "py": "lǜshī",
+        "en": "lawyer"
+      }
+    ],
+    "notes": "Step radical 彳. Note the ü: lǜ, typed lv4 — same syllable as 绿 green, different character."
+  },
+  {
+    "hanzi": "说",
+    "pinyin": "shuō",
+    "meaning": "to speak; to say",
+    "pos": [
+      "verb"
+    ],
+    "compound": false,
+    "radical": "讠",
+    "strokes": 9,
+    "examples": [
+      {
+        "zh": "说中文",
+        "py": "shuō Zhōngwén",
+        "en": "to speak Chinese"
+      },
+      {
+        "zh": "说话",
+        "py": "shuōhuà",
+        "en": "to talk"
+      }
+    ],
+    "notes": "Speech radical 讠. Languages take 说: 你说英文吗？"
+  },
+  {
+    "hanzi": "美",
+    "pinyin": "měi",
+    "meaning": "beautiful; America (bound)",
+    "pos": [
+      "adjective",
+      "bound form"
+    ],
+    "compound": false,
+    "radical": "羊",
+    "strokes": 9,
+    "examples": [
+      {
+        "zh": "美国",
+        "py": "Měiguó",
+        "en": "the USA"
+      },
+      {
+        "zh": "美丽",
+        "py": "měilì",
+        "en": "beautiful"
+      }
+    ],
+    "notes": "Sheep 羊 over big 大 — a large sheep was beauty/bounty. 美国 = 'beautiful country,' a phonetic borrowing."
+  },
+  {
+    "hanzi": "国",
+    "pinyin": "guó",
+    "meaning": "country; nation",
+    "pos": [
+      "noun"
+    ],
+    "compound": false,
+    "radical": "囗",
+    "strokes": 8,
+    "examples": [
+      {
+        "zh": "中国",
+        "py": "Zhōngguó",
+        "en": "China"
+      },
+      {
+        "zh": "美国",
+        "py": "Měiguó",
+        "en": "the USA"
+      }
+    ],
+    "notes": "Jade 玉 inside a border 囗 — the treasure within walls. Simplified from 國."
+  },
+  {
+    "hanzi": "日",
+    "pinyin": "rì",
+    "meaning": "sun; day; Japan (bound)",
+    "pos": [
+      "noun",
+      "bound form"
+    ],
+    "compound": false,
+    "radical": "日",
+    "strokes": 4,
+    "examples": [
+      {
+        "zh": "日本",
+        "py": "Rìběn",
+        "en": "Japan"
+      },
+      {
+        "zh": "生日",
+        "py": "shēngrì",
+        "en": "birthday"
+      }
+    ],
+    "notes": "Pictograph of the sun. 日本 = 'origin of the sun' — the source of 'Land of the Rising Sun.'"
+  },
+  {
+    "hanzi": "本",
+    "pinyin": "běn",
+    "meaning": "root; origin; measure word for books",
+    "pos": [
+      "noun",
+      "measure word"
+    ],
+    "compound": false,
+    "radical": "木",
+    "strokes": 5,
+    "examples": [
+      {
+        "zh": "日本",
+        "py": "Rìběn",
+        "en": "Japan"
+      },
+      {
+        "zh": "一本书",
+        "py": "yì běn shū",
+        "en": "a book"
+      }
+    ],
+    "notes": "A tree 木 with a stroke marking its root. Measure word for bound volumes."
+  },
+  {
+    "hanzi": "呢",
+    "pinyin": "ne",
+    "meaning": "follow-up question particle",
+    "pos": [
+      "particle"
+    ],
+    "compound": false,
+    "radical": "口",
+    "strokes": 8,
+    "examples": [
+      {
+        "zh": "你呢？",
+        "py": "nǐ ne?",
+        "en": "And you?"
+      },
+      {
+        "zh": "我的书呢？",
+        "py": "wǒ de shū ne?",
+        "en": "Where's my book?"
+      }
+    ],
+    "notes": "Neutral tone. Bounces a question back (你呢?) or asks where something is."
+  }
+]
