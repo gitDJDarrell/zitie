@@ -1,16 +1,24 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Chip, Empty, StarBtn } from "../components/atoms";
+import { Chip, Empty, StarBtn, StarToggle, Switch } from "../components/atoms";
 import { applyFilters, type Filters } from "../lib/filters";
+import { POS_HANZI } from "../lib/posLabels";
 import { C } from "../theme";
 import type { Card, SeenMap } from "../types";
 
 interface StackSession { ids: string[]; nonce: number }
 
+const AGE_OPTIONS: { value: Filters["age"]; label: string }[] = [
+  { value: "all", label: "all" },
+  { value: "new", label: "unseen" },
+  { value: "old", label: "seen" },
+];
+
 /* ————————————— study session: read (tap-to-flip) + write (reverse, typed) ————————————— */
-export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onToggleStar, stackSession, onExitStackSession }: {
+export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onToggleStar, stackSession, onExitStackSession, stack, onStudyStack }: {
   bank: Card[]; srs: SeenMap; filters: Filters; setFilters: React.Dispatch<React.SetStateAction<Filters>>;
   posList: string[]; onSeen: (id: string) => void; onToggleStar: (id: string) => void;
   stackSession?: StackSession | null; onExitStackSession?: () => void;
+  stack: string[]; onStudyStack: () => void;
 }) {
   const [queue, setQueue] = useState<string[] | null>(null);
   const [idx, setIdx] = useState(0);
@@ -49,17 +57,18 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onT
     setInput(""); setVerdict(null); setScore({ ok: 0, no: 0 });
   }
 
-  // Jump straight into the stack whenever Browse requests a new stack session
-  // (nonce changes on every click) — one auto-start per request, not on every
-  // re-render, so quitting back to the picker doesn't instantly restart it.
-  const lastAutoStart = useRef<number | null>(null);
+  // Land on the (stack-aware) picker whenever a new stack session is requested
+  // — never auto-begin, so the read/write toggle still applies: the user
+  // picks a mode same as any lesson, then presses In order/Shuffle. Also
+  // interrupts any session already in progress so the picker is reachable.
+  const lastStackRequest = useRef<number | null>(null);
   useEffect(() => {
-    if (stackSession && stackSession.nonce !== lastAutoStart.current && pool.length) {
-      lastAutoStart.current = stackSession.nonce;
-      begin(false);
+    if (stackSession && stackSession.nonce !== lastStackRequest.current) {
+      lastStackRequest.current = stackSession.nonce;
+      quit();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stackSession?.nonce, pool]);
+  }, [stackSession?.nonce]);
 
   function restart() { begin(wasShuffled); } // same order mode, fresh deck & tally
 
@@ -123,6 +132,11 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onT
             <span className="hz text-base" style={{ color: C.dim }}>课</span>
             <span className="ui text-xs uppercase tracking-widest" style={{ color: C.faint }}>lesson</span>
           </div>
+          <button onClick={onStudyStack} disabled={!stack.length}
+            className="ui px-3 py-1 text-xs uppercase tracking-widest border rounded-full"
+            style={{ borderColor: C.line, color: stack.length ? C.dim : C.faint, opacity: stack.length ? 1 : 0.5 }}>
+            {"▤"} study stack{stack.length ? ` (${stack.length})` : ""}
+          </button>
           <div className="flex flex-wrap gap-2 justify-center max-w-sm">
             <Chip active={filters.pos.length === 0}
               onClick={() => setFilters(f => ({ ...f, pos: [] }))}>
@@ -131,19 +145,15 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onT
             {posList.map(p => (
               <Chip key={p} active={filters.pos.includes(p)}
                 onClick={() => setFilters(f => ({ ...f, pos: f.pos.includes(p) ? f.pos.filter(x => x !== p) : [...f.pos, p] }))}>
-                {p}
+                {POS_HANZI[p] && <span className="hz">{POS_HANZI[p]} </span>}{p}
               </Chip>
             ))}
           </div>
-          <div className="flex flex-wrap gap-2 justify-center">
-            <Chip active={filters.starred}
-              onClick={() => setFilters(f => ({ ...f, starred: !f.starred }))}>
-              {"★"} starred only
-            </Chip>
-            <Chip active={filters.age === "new"}
-              onClick={() => setFilters(f => ({ ...f, age: f.age === "new" ? "all" : "new" }))}>
-              unseen only
-            </Chip>
+          <div className="flex flex-wrap gap-3 justify-center items-center">
+            <StarToggle active={filters.starred} label={filters.starred ? "Showing starred only — tap to show all" : "Show starred only"}
+              onClick={() => setFilters(f => ({ ...f, starred: !f.starred }))} />
+            <Switch value={filters.age} options={AGE_OPTIONS}
+              onChange={age => setFilters(f => ({ ...f, age }))} />
           </div>
         </div>
       )}

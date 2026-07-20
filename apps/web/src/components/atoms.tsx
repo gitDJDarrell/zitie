@@ -25,6 +25,44 @@ export function StarBtn({ starred, onClick }: { starred: boolean; onClick: () =>
   );
 }
 
+// Icon-only star toggle for filter rows — same glyph as StarBtn, but sized
+// and bordered like a Chip so it sits naturally in a row of them.
+export function StarToggle({ active, onClick, label }: { active: boolean; onClick: () => void; label: string }) {
+  return (
+    <button onClick={onClick} aria-label={label} aria-pressed={active}
+      className="w-8 h-8 flex items-center justify-center text-base rounded-full border"
+      style={{
+        borderColor: active ? C.paper : C.line,
+        color: active ? C.ink : C.faint,
+        background: active ? C.paper : "transparent",
+      }}>
+      {active ? "★" : "☆"}
+    </button>
+  );
+}
+
+// Segmented toggle switch — a single pill with N labeled positions and a
+// sliding active segment, for small closed-set choices (seen/unseen/all).
+export function Switch<T extends string>({ value, options, onChange }: {
+  value: T; options: { value: T; label: string }[]; onChange: (v: T) => void;
+}) {
+  return (
+    <div className="inline-flex rounded-full border p-0.5" style={{ borderColor: C.line }} role="radiogroup">
+      {options.map(opt => (
+        <button key={opt.value} onClick={() => onChange(opt.value)}
+          role="radio" aria-checked={value === opt.value}
+          className="ui px-3 py-1 text-xs tracking-wide rounded-full"
+          style={{
+            background: value === opt.value ? C.paper : "transparent",
+            color: value === opt.value ? C.ink : C.dim,
+          }}>
+          {opt.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 export function SectionLabel({ zh, en }: { zh: string; en: string }) {
   return (
     <div className="flex items-baseline gap-2 mb-3">
