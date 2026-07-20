@@ -11,17 +11,27 @@ settingsRoute.use("*", requireAuth);
 settingsRoute.get("/", async (c) => {
   const userId = c.get("userId");
   const [row] = await db.select().from(settings).where(eq(settings.userId, userId));
-  return c.json({ theme: row?.theme ?? "light" });
+  return c.json({ theme: row?.theme ?? "light", stack: row?.stack ?? [] });
 });
 
-const patchSchema = z.object({ theme: z.enum(["light", "dark"]) });
+// Partial update: either field may be sent alone (e.g. the theme toggle never
+// touches the stack, and stack edits never touch the theme).
+const patchSchema = z.object({
+  theme: z.enum(["light", "dark"]).optional(),
+  stack: z.array(z.string()).max(500, "A stack can hold at most 500 cards.").optional(),
+}).refine((b) => b.theme !== undefined || b.stack !== undefined, { message: "Nothing to update." });
 
 settingsRoute.patch("/", async (c) => {
   const userId = c.get("userId");
   const parsed = patchSchema.safeParse(await c.req.json().catch(() => null));
-  if (!parsed.success) return c.json({ error: "theme must be 'light' or 'dark'." }, 400);
+  if (!parsed.success) return c.json({ error: parsed.error.issues[0]?.message ?? "Invalid input." }, 400);
 
-  await db.insert(settings).values({ userId, theme: parsed.data.theme })
-    .onConflictDoUpdate({ target: settings.userId, set: { theme: parsed.data.theme } });
-  return c.json({ theme: parsed.data.theme });
+  const [existing] = await db.select().from(settings).where(eq(settings.userId, userId));
+  const next = {
+    theme: parsed.data.theme ?? existing?.theme ?? "light",
+    stack: parsed.data.stack ?? existing?.stack ?? [],
+  };
+  await db.insert(settings).values({ userId, ...next })
+    .onConflictDoUpdate({ target: settings.userId, set: next });
+  return c.json(next);
 });

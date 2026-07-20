@@ -15,6 +15,13 @@
       "when": 1784473576612,
       "tag": "0001_silly_doctor_octopus",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1784557040465,
+      "tag": "0002_shiny_earthquake",
+      "breakpoints": true
     }
   ]
 }

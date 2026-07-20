@@ -6,6 +6,7 @@ export interface CachedBank {
   bank: Card[];
   srs: SeenMap;
   theme: Theme;
+  stack: string[];
 }
 
 export function readCache(): CachedBank | null {

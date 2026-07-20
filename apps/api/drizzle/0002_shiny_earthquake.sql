@@ -1,0 +1,1 @@
+ALTER TABLE "settings" ADD COLUMN "stack" jsonb DEFAULT '[]'::jsonb NOT NULL;

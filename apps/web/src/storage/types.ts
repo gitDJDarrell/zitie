@@ -1,7 +1,7 @@
 import type { Card, SeenMap, SeenRecord, Theme } from "../types";
 
 export interface StorageBackend {
-  load(): Promise<{ bank: Card[]; srs: SeenMap; theme: Theme }>;
+  load(): Promise<{ bank: Card[]; srs: SeenMap; theme: Theme; stack: string[] }>;
   importCards(items: unknown[]): Promise<{ cards: Card[]; added: number; updated: number }>;
   patchCard(id: string, patch: Partial<Card>): Promise<Card | null>;
   deleteCards(ids: string[]): Promise<void>;
@@ -9,7 +9,8 @@ export interface StorageBackend {
   markSeen(id: string): Promise<SeenRecord | null>;
   resetSeen(ids: string[] | null): Promise<void>;
   setTheme(theme: Theme): Promise<void>;
-  cacheSnapshot(bank: Card[], srs: SeenMap, theme: Theme): void;
+  setStack(ids: string[]): Promise<void>;
+  cacheSnapshot(bank: Card[], srs: SeenMap, theme: Theme, stack: string[]): void;
 }
 
 export type SyncState = "syncing" | "synced" | "offline";

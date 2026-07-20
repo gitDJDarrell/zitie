@@ -1,13 +1,16 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Chip, Empty, StarBtn } from "../components/atoms";
 import { applyFilters, type Filters } from "../lib/filters";
 import { C } from "../theme";
 import type { Card, SeenMap } from "../types";
 
+interface StackSession { ids: string[]; nonce: number }
+
 /* ————————————— study session: read (tap-to-flip) + write (reverse, typed) ————————————— */
-export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onToggleStar }: {
+export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onToggleStar, stackSession, onExitStackSession }: {
   bank: Card[]; srs: SeenMap; filters: Filters; setFilters: React.Dispatch<React.SetStateAction<Filters>>;
   posList: string[]; onSeen: (id: string) => void; onToggleStar: (id: string) => void;
+  stackSession?: StackSession | null; onExitStackSession?: () => void;
 }) {
   const [queue, setQueue] = useState<string[] | null>(null);
   const [idx, setIdx] = useState(0);
@@ -20,7 +23,15 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onT
   const touchRef = useRef<{ x: number; y: number } | null>(null);
   const swipedRef = useRef(false);
 
-  const pool = useMemo(() => applyFilters(bank, srs, filters), [bank, srs, filters]);
+  // A stack session bypasses the lesson-filter pool entirely and studies
+  // exactly the preselected cards, in the order they were stacked.
+  const pool = useMemo(() => {
+    if (stackSession) {
+      const byId = new Map(bank.map(c => [c.id, c]));
+      return stackSession.ids.map(id => byId.get(id)).filter((c): c is Card => !!c);
+    }
+    return applyFilters(bank, srs, filters);
+  }, [bank, srs, filters, stackSession]);
   const card = queue && queue[idx] ? bank.find(c => c.id === queue[idx]) : null;
   const unseenCount = pool.filter(c => !srs[c.id]).length;
 
@@ -37,6 +48,18 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onT
     setQueue(null); setIdx(0); setFlipped(false);
     setInput(""); setVerdict(null); setScore({ ok: 0, no: 0 });
   }
+
+  // Jump straight into the stack whenever Browse requests a new stack session
+  // (nonce changes on every click) — one auto-start per request, not on every
+  // re-render, so quitting back to the picker doesn't instantly restart it.
+  const lastAutoStart = useRef<number | null>(null);
+  useEffect(() => {
+    if (stackSession && stackSession.nonce !== lastAutoStart.current && pool.length) {
+      lastAutoStart.current = stackSession.nonce;
+      begin(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stackSession?.nonce, pool]);
 
   function restart() { begin(wasShuffled); } // same order mode, fresh deck & tally
 
@@ -82,38 +105,52 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onT
   /* ——— session start ——— */
   if (!queue) return (
     <div className="flex flex-col items-center gap-6 pt-10">
-      <div className="flex flex-col items-center gap-3">
-        <div className="flex items-baseline gap-2">
-          <span className="hz text-base" style={{ color: C.dim }}>课</span>
-          <span className="ui text-xs uppercase tracking-widest" style={{ color: C.faint }}>lesson</span>
+      {stackSession ? (
+        <div className="flex flex-col items-center gap-2">
+          <div className="flex items-baseline gap-2">
+            <span className="hz text-base" style={{ color: C.dim }}>{"▤"}</span>
+            <span className="ui text-xs uppercase tracking-widest" style={{ color: C.faint }}>your stack</span>
+          </div>
+          {onExitStackSession && (
+            <button onClick={onExitStackSession} className="ui text-xs" style={{ color: C.faint }}>
+              {"✕"} exit stack mode — back to lessons
+            </button>
+          )}
         </div>
-        <div className="flex flex-wrap gap-2 justify-center max-w-sm">
-          <Chip active={filters.pos.length === 0}
-            onClick={() => setFilters(f => ({ ...f, pos: [] }))}>
-            all
-          </Chip>
-          {posList.map(p => (
-            <Chip key={p} active={filters.pos.includes(p)}
-              onClick={() => setFilters(f => ({ ...f, pos: f.pos.includes(p) ? f.pos.filter(x => x !== p) : [...f.pos, p] }))}>
-              {p}
+      ) : (
+        <div className="flex flex-col items-center gap-3">
+          <div className="flex items-baseline gap-2">
+            <span className="hz text-base" style={{ color: C.dim }}>课</span>
+            <span className="ui text-xs uppercase tracking-widest" style={{ color: C.faint }}>lesson</span>
+          </div>
+          <div className="flex flex-wrap gap-2 justify-center max-w-sm">
+            <Chip active={filters.pos.length === 0}
+              onClick={() => setFilters(f => ({ ...f, pos: [] }))}>
+              all
             </Chip>
-          ))}
+            {posList.map(p => (
+              <Chip key={p} active={filters.pos.includes(p)}
+                onClick={() => setFilters(f => ({ ...f, pos: f.pos.includes(p) ? f.pos.filter(x => x !== p) : [...f.pos, p] }))}>
+                {p}
+              </Chip>
+            ))}
+          </div>
+          <div className="flex flex-wrap gap-2 justify-center">
+            <Chip active={filters.starred}
+              onClick={() => setFilters(f => ({ ...f, starred: !f.starred }))}>
+              {"★"} starred only
+            </Chip>
+            <Chip active={filters.age === "new"}
+              onClick={() => setFilters(f => ({ ...f, age: f.age === "new" ? "all" : "new" }))}>
+              unseen only
+            </Chip>
+          </div>
         </div>
-        <div className="flex flex-wrap gap-2 justify-center">
-          <Chip active={filters.starred}
-            onClick={() => setFilters(f => ({ ...f, starred: !f.starred }))}>
-            {"★"} starred only
-          </Chip>
-          <Chip active={filters.age === "new"}
-            onClick={() => setFilters(f => ({ ...f, age: f.age === "new" ? "all" : "new" }))}>
-            unseen only
-          </Chip>
-        </div>
-      </div>
+      )}
       <div className="ui text-sm" style={{ color: C.dim }}>
         <span style={{ color: C.paper }}>{pool.length}</span> cards
         {unseenCount > 0 && <> · <span style={{ color: C.paper }}>{unseenCount}</span> unseen</>}
-        <span style={{ color: C.faint }}> (this lesson)</span>
+        <span style={{ color: C.faint }}> ({stackSession ? "in stack" : "this lesson"})</span>
       </div>
       <div className="flex gap-2">
         <Chip active={mode === "read"} onClick={() => setMode("read")}>认 read — flip cards</Chip>
@@ -137,7 +174,9 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onT
         </p>
       )}
       {!pool.length && (
-        <p className="ui text-xs" style={{ color: C.faint }}>Nothing matches the current filters.</p>
+        <p className="ui text-xs" style={{ color: C.faint }}>
+          {stackSession ? "Your stack is empty." : "Nothing matches the current filters."}
+        </p>
       )}
     </div>
   );

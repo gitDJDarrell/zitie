@@ -54,4 +54,7 @@ export const seenState = pgTable("seen_state", {
 export const settings = pgTable("settings", {
   userId: uuid("user_id").primaryKey().references(() => users.id, { onDelete: "cascade" }),
   theme: text("theme").notNull().default("light"),
+  // User-curated study stack: an ordered list of card ids preselected for a
+  // future session, independent of the star flag (see BrowseView "stack" view).
+  stack: jsonb("stack").$type<string[]>().notNull().default([]),
 });

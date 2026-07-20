@@ -19,6 +19,10 @@ export default function App({ onLogout, userEmail }: { onLogout: () => void; use
   const [filters, setFilters] = useState<Filters>({ q: "", pos: [], includeCompound: false, age: "all", starred: false });
   const [syncState, setSyncState] = useState<SyncState>("syncing");
   const [theme, setTheme] = useState<Theme>("light");
+  const [stack, setStack] = useState<string[]>([]);
+  // A "study this stack" request from Browse. nonce changes on every request so
+  // StudyView can auto-begin exactly once per click, even if the ids are unchanged.
+  const [stackSession, setStackSession] = useState<{ ids: string[]; nonce: number } | null>(null);
 
   const storageRef = useRef<ApiStorage | null>(null);
   if (!storageRef.current) storageRef.current = new ApiStorage(setSyncState);
@@ -27,9 +31,9 @@ export default function App({ onLogout, userEmail }: { onLogout: () => void; use
   useEffect(() => {
     (async () => {
       try {
-        const { bank: b, srs: s, theme: t } = await storage.load();
+        const { bank: b, srs: s, theme: t, stack: st } = await storage.load();
         applyTheme(t); setTheme(t);
-        setBank(b); setSrs(s); setLoaded(true);
+        setBank(b); setSrs(s); setStack(st); setLoaded(true);
       } catch (err) {
         if (err instanceof ApiError) onLogout(); // session expired server-side
       }
@@ -39,8 +43,8 @@ export default function App({ onLogout, userEmail }: { onLogout: () => void; use
 
   // Keep the offline cache warm on every change, regardless of which action caused it.
   useEffect(() => {
-    if (loaded) storage.cacheSnapshot(bank, srs, theme);
-  }, [bank, srs, theme, loaded, storage]);
+    if (loaded) storage.cacheSnapshot(bank, srs, theme, stack);
+  }, [bank, srs, theme, stack, loaded, storage]);
 
   function toggleTheme() {
     const t: Theme = theme === "light" ? "dark" : "light";
@@ -72,6 +76,7 @@ export default function App({ onLogout, userEmail }: { onLogout: () => void; use
   const onDelete = (id: string) => {
     setBank(b => b.filter(c => c.id !== id));
     setSrs(s => { const { [id]: _drop, ...rest } = s; return rest; });
+    setStack(st => st.includes(id) ? st.filter(x => x !== id) : st);
     storage.deleteCards([id]).catch(() => {});
   };
 
@@ -79,12 +84,51 @@ export default function App({ onLogout, userEmail }: { onLogout: () => void; use
     const drop = new Set(ids);
     setBank(b => b.filter(c => !drop.has(c.id)));
     setSrs(s => Object.fromEntries(Object.entries(s).filter(([k]) => !drop.has(k))));
+    setStack(st => st.filter(id => !drop.has(id)));
     storage.deleteCards(ids).catch(() => {});
   };
 
   const onClearAll = () => {
-    setBank([]); setSrs({});
+    setBank([]); setSrs({}); setStack([]);
     storage.clearAll().catch(() => {});
+  };
+
+  // Stack: a user-curated, order-preserving preselection for a future study
+  // session. Independent of starring (see BrowseView) — a card can be starred
+  // ("tricky, keep reviewing forever") without being in the stack ("study
+  // these specific N next"), and vice versa.
+  const onAddToStack = (ids: string[]) => {
+    setStack(st => {
+      const have = new Set(st);
+      const additions = ids.filter(id => !have.has(id));
+      if (!additions.length) return st;
+      const next = [...st, ...additions];
+      storage.setStack(next).catch(() => {});
+      return next;
+    });
+  };
+
+  const onRemoveFromStack = (ids: string[]) => {
+    const drop = new Set(ids);
+    setStack(st => {
+      const next = st.filter(id => !drop.has(id));
+      if (next.length === st.length) return st;
+      storage.setStack(next).catch(() => {});
+      return next;
+    });
+  };
+
+  const onClearStack = () => {
+    setStack([]);
+    storage.setStack([]).catch(() => {});
+  };
+
+  const onStudyStack = () => {
+    const existing = new Set(bank.map(c => c.id));
+    const ids = stack.filter(id => existing.has(id));
+    if (!ids.length) return;
+    setStackSession({ ids, nonce: Date.now() });
+    setTab("study");
   };
 
   const onToggleStar = (id: string) => {
@@ -152,9 +196,9 @@ export default function App({ onLogout, userEmail }: { onLogout: () => void; use
           <div className="ui text-xs pt-10 text-center" style={{ color: C.faint }}>loading…</div>
         ) : (
           <>
-            {tab === "study" && <StudyView bank={bank} srs={srs} filters={filters} setFilters={setFilters} posList={posList} onSeen={onSeen} onToggleStar={onToggleStar} />}
+            {tab === "study" && <StudyView bank={bank} srs={srs} filters={filters} setFilters={setFilters} posList={posList} onSeen={onSeen} onToggleStar={onToggleStar} stackSession={stackSession} onExitStackSession={() => setStackSession(null)} />}
             {tab === "gallery" && <GalleryView bank={bank} srs={srs} onToggleStar={onToggleStar} />}
-            {tab === "browse" && <BrowseView bank={bank} srs={srs} filters={filters} setFilters={setFilters} posList={posList} onDelete={onDelete} onDeleteMany={onDeleteMany} onClearAll={onClearAll} onResetSeen={onResetSeen} onToggleStar={onToggleStar} />}
+            {tab === "browse" && <BrowseView bank={bank} srs={srs} filters={filters} setFilters={setFilters} posList={posList} onDelete={onDelete} onDeleteMany={onDeleteMany} onClearAll={onClearAll} onResetSeen={onResetSeen} onToggleStar={onToggleStar} stack={stack} onAddToStack={onAddToStack} onRemoveFromStack={onRemoveFromStack} onClearStack={onClearStack} onStudyStack={onStudyStack} />}
             {tab === "import" && <ImportView bank={bank} onImport={onImport} />}
           </>
         )}

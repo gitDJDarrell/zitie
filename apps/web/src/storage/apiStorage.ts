@@ -11,15 +11,15 @@ export class ApiStorage implements StorageBackend {
   async load() {
     this.notify("syncing");
     try {
-      const [{ cards, seen }, { theme }] = await Promise.all([api.getBank(), api.getSettings()]);
-      writeCache({ bank: cards, srs: seen, theme });
+      const [{ cards, seen }, { theme, stack }] = await Promise.all([api.getBank(), api.getSettings()]);
+      writeCache({ bank: cards, srs: seen, theme, stack });
       this.notify("synced");
-      return { bank: cards, srs: seen, theme };
+      return { bank: cards, srs: seen, theme, stack };
     } catch (err) {
       if (err instanceof ApiError) throw err; // 401 etc — let the auth gate handle it
       this.notify("offline");
       const cached = readCache();
-      return cached ?? { bank: [], srs: {} as SeenMap, theme: "light" as Theme };
+      return cached ?? { bank: [], srs: {} as SeenMap, theme: "light" as Theme, stack: [] as string[] };
     }
   }
 
@@ -80,7 +80,13 @@ export class ApiStorage implements StorageBackend {
     this.notify("synced");
   }
 
-  cacheSnapshot(bank: Card[], srs: SeenMap, theme: Theme) {
-    writeCache({ bank, srs, theme });
+  async setStack(ids: string[]) {
+    this.notify("syncing");
+    await api.setStack(ids);
+    this.notify("synced");
+  }
+
+  cacheSnapshot(bank: Card[], srs: SeenMap, theme: Theme, stack: string[]) {
+    writeCache({ bank, srs, theme, stack });
   }
 }

@@ -47,8 +47,9 @@ export const api = {
   markSeen: (id: string) => request<{ last: number; views: number }>("/seen", { method: "POST", body: JSON.stringify({ id }) }),
   resetSeen: (ids?: string[]) => request<{ ok: true }>("/seen/reset", { method: "POST", body: JSON.stringify({ ids }) }),
 
-  getSettings: () => request<{ theme: Theme }>("/settings"),
-  setTheme: (theme: Theme) => request<{ theme: Theme }>("/settings", { method: "PATCH", body: JSON.stringify({ theme }) }),
+  getSettings: () => request<{ theme: Theme; stack: string[] }>("/settings"),
+  setTheme: (theme: Theme) => request<{ theme: Theme; stack: string[] }>("/settings", { method: "PATCH", body: JSON.stringify({ theme }) }),
+  setStack: (stack: string[]) => request<{ theme: Theme; stack: string[] }>("/settings", { method: "PATCH", body: JSON.stringify({ stack }) }),
 
   exportBank: () => request<Record<string, unknown>[]>("/export"),
 
