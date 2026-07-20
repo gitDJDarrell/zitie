@@ -1,5 +1,5 @@
 import { DAY } from "../lib/filters";
-import { DEX_BANDS, DEX_INDEX } from "../data/dex";
+import { DEX_LEVELS, DEX_INDEX } from "../data/dex";
 import { C } from "../theme";
 import type { Card, SeenMap } from "../types";
 
@@ -10,7 +10,7 @@ export function CardDetail({ card, srs, onClose, onToggleStar }: {
   const rec = srs[card.id];
   const ago = rec ? Math.floor((Date.now() - rec.last) / DAY) : null;
   const slot = DEX_INDEX.get(card.hanzi);
-  const band = slot ? DEX_BANDS.find(b => b.id === slot.bandId) : undefined;
+  const level = slot ? DEX_LEVELS.find(l => l.id === slot.levelId) : undefined;
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center"
@@ -24,7 +24,7 @@ export function CardDetail({ card, srs, onClose, onToggleStar }: {
         <div className="flex items-start justify-between">
           <div className="ui text-xs uppercase tracking-widest" style={{ color: C.faint }}>
             {slot
-              ? <>图鉴 No. {String(slot.n).padStart(4, "0")} · {band?.label}</>
+              ? <>图鉴 No. {String(slot.n).padStart(4, "0")} · {level?.label}</>
               : card.compound ? "compound · beyond the dex" : "beyond the dex"}
           </div>
           <div className="flex items-center gap-1">

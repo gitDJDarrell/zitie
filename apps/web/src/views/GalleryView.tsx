@@ -1,18 +1,21 @@
 import { useMemo, useState } from "react";
 import { Chip } from "../components/atoms";
 import { CardDetail } from "../components/CardDetail";
-import { DEX_BANDS, DEX_INDEX, DEX_TOTAL } from "../data/dex";
+import { DEX_LEVELS, DEX_INDEX, DEX_TOTAL } from "../data/dex";
 import { C } from "../theme";
 import type { Card, SeenMap } from "../types";
 
 /* ————————————————— gallery: the character dex —————————————————
    Every HSK character is a slot. Uncaught characters render as faint tracing
    outlines — like the grey template glyphs in a paper copybook — and turn to
-   full ink once a matching card exists in the bank. */
+   full ink once a matching card exists in the bank. Levels are the official
+   HSK 3.0 character-list levels (7-9 combined the same way the standard
+   itself combines them). Dex numbers are a stable catalog index, not a
+   difficulty or frequency rank — same as a Pokédex number. */
 export function GalleryView({ bank, srs, onToggleStar }: {
   bank: Card[]; srs: SeenMap; onToggleStar: (id: string) => void;
 }) {
-  const [bandId, setBandId] = useState<string>(DEX_BANDS[0].id);
+  const [levelId, setLevelId] = useState<string>(DEX_LEVELS[0].id);
   const [selected, setSelected] = useState<Card | null>(null);
 
   const byHanzi = useMemo(() => new Map(bank.map(c => [c.hanzi, c])), [bank]);
@@ -26,20 +29,20 @@ export function GalleryView({ bank, srs, onToggleStar }: {
     [bank],
   );
 
-  const band = DEX_BANDS.find(b => b.id === bandId);
-  const bandChars = band ? [...band.chars] : [];
-  const bandCaught = bandChars.filter(ch => byHanzi.has(ch)).length;
-  const showing = bandId === "extras" ? null : band;
+  const level = DEX_LEVELS.find(l => l.id === levelId);
+  const levelChars = level ? [...level.chars] : [];
+  const levelCaught = levelChars.filter(ch => byHanzi.has(ch)).length;
+  const showing = levelId === "extras" ? null : level;
 
-  // dex numbers are global across bands — precompute this band's starting offset
-  const bandOffset = useMemo(() => {
+  // dex numbers are global across levels — precompute this level's starting offset
+  const levelOffset = useMemo(() => {
     let n = 0;
-    for (const b of DEX_BANDS) {
-      if (b.id === bandId) break;
-      n += [...b.chars].length;
+    for (const l of DEX_LEVELS) {
+      if (l.id === levelId) break;
+      n += [...l.chars].length;
     }
     return n;
-  }, [bandId]);
+  }, [levelId]);
 
   // keep the currently-open detail in sync with bank updates (e.g. star toggle)
   const selectedLive = selected ? bank.find(c => c.id === selected.id) ?? null : null;
@@ -58,13 +61,13 @@ export function GalleryView({ bank, srs, onToggleStar }: {
       </div>
 
       <div className="flex flex-wrap gap-2">
-        {DEX_BANDS.map(b => (
-          <Chip key={b.id} active={bandId === b.id} onClick={() => setBandId(b.id)}>
-            {b.label}
+        {DEX_LEVELS.map(l => (
+          <Chip key={l.id} active={levelId === l.id} onClick={() => setLevelId(l.id)}>
+            {l.label}
           </Chip>
         ))}
         {extras.length > 0 && (
-          <Chip active={bandId === "extras"} onClick={() => setBandId("extras")}>
+          <Chip active={levelId === "extras"} onClick={() => setLevelId("extras")}>
             beyond ({extras.length})
           </Chip>
         )}
@@ -75,17 +78,17 @@ export function GalleryView({ bank, srs, onToggleStar }: {
           <div className="flex items-center gap-3">
             <div className="flex-1 h-1 rounded-full overflow-hidden" style={{ background: C.ink3 }} aria-hidden="true">
               <div className="h-full rounded-full"
-                style={{ width: `${bandChars.length ? Math.round((bandCaught / bandChars.length) * 100) : 0}%`, background: C.paper, transition: "width 300ms ease" }} />
+                style={{ width: `${levelChars.length ? Math.round((levelCaught / levelChars.length) * 100) : 0}%`, background: C.paper, transition: "width 300ms ease" }} />
             </div>
             <div className="ui text-xs shrink-0" style={{ color: C.faint }}>
-              <span style={{ color: C.paper }}>{bandCaught}</span> / {bandChars.length}
+              <span style={{ color: C.paper }}>{levelCaught}</span> / {levelChars.length}
             </div>
           </div>
 
           <div className="grid gap-1" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(56px, 1fr))" }}>
-            {bandChars.map((ch, i) => {
+            {levelChars.map((ch, i) => {
               const card = byHanzi.get(ch);
-              const n = bandOffset + i + 1;
+              const n = levelOffset + i + 1;
               return card ? (
                 <button key={ch} onClick={() => setSelected(card)}
                   aria-label={`No. ${n} ${ch} — collected, view details`}
@@ -110,7 +113,7 @@ export function GalleryView({ bank, srs, onToggleStar }: {
         </>
       )}
 
-      {bandId === "extras" && (
+      {levelId === "extras" && (
         <>
           <p className="ui text-xs leading-relaxed" style={{ color: C.faint }}>
             Collected entries beyond the HSK character dex — compound words and rarer characters.

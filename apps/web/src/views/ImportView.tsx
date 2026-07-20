@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { api } from "../api/client";
 import { SectionLabel } from "../components/atoms";
-import { DEX_BANDS, DEX_INDEX } from "../data/dex";
+import { DEX_LEVELS, DEX_INDEX } from "../data/dex";
 import { fileToApiImage } from "../lib/image";
 import { C } from "../theme";
 import type { Card } from "../types";
@@ -138,7 +138,7 @@ export function ImportView({ bank, onImport }: {
 
     const { card, isNew } = items[idx];
     const slot = DEX_INDEX.get(card.hanzi);
-    const band = slot ? DEX_BANDS.find(b => b.id === slot.bandId) : undefined;
+    const level = slot ? DEX_LEVELS.find(l => l.id === slot.levelId) : undefined;
 
     return (
       <div className="flex flex-col items-center gap-5 pt-4">
@@ -159,7 +159,7 @@ export function ImportView({ bank, onImport }: {
           )}
           <div className="ui text-xs uppercase tracking-widest" style={{ color: C.faint }}>
             {slot
-              ? <>图鉴 No. {String(slot.n).padStart(4, "0")} · {band?.label}</>
+              ? <>图鉴 No. {String(slot.n).padStart(4, "0")} · {level?.label}</>
               : card.compound ? "compound · beyond the dex" : "beyond the dex"}
           </div>
           <div className="stamp hz font-black" style={{ color: C.paper, fontSize: card.hanzi.length > 2 ? 56 : 88, lineHeight: 1.1 }}>
