@@ -127,27 +127,10 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onT
           )}
         </div>
       ) : (
-        <div className="flex flex-col items-center gap-3">
+        <div className="flex flex-col items-center gap-4 w-full max-w-sm">
           <div className="flex items-baseline gap-2">
             <span className="hz text-base" style={{ color: C.dim }}>课</span>
             <span className="ui text-xs uppercase tracking-widest" style={{ color: C.faint }}>lesson</span>
-          </div>
-          <button onClick={onStudyStack} disabled={!stack.length}
-            className="ui px-3 py-1 text-xs uppercase tracking-widest border rounded-full"
-            style={{ borderColor: C.line, color: stack.length ? C.dim : C.faint, opacity: stack.length ? 1 : 0.5 }}>
-            {"▤"} study stack{stack.length ? ` (${stack.length})` : ""}
-          </button>
-          <div className="flex flex-wrap gap-2 justify-center max-w-sm">
-            <Chip active={filters.pos.length === 0}
-              onClick={() => setFilters(f => ({ ...f, pos: [] }))}>
-              all
-            </Chip>
-            {posList.map(p => (
-              <Chip key={p} active={filters.pos.includes(p)}
-                onClick={() => setFilters(f => ({ ...f, pos: f.pos.includes(p) ? f.pos.filter(x => x !== p) : [...f.pos, p] }))}>
-                {POS_HANZI[p] && <span className="hz">{POS_HANZI[p]} </span>}{p}
-              </Chip>
-            ))}
           </div>
           <div className="flex flex-wrap gap-3 justify-center items-center">
             <StarToggle active={filters.starred} label={filters.starred ? "Showing starred only — tap to show all" : "Show starred only"}
@@ -155,6 +138,25 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onT
             <Switch value={filters.age} options={AGE_OPTIONS}
               onChange={age => setFilters(f => ({ ...f, age }))} />
           </div>
+          <div className="flex flex-wrap gap-2 justify-center">
+            <button onClick={() => setFilters(f => ({ ...f, pos: [] }))} disabled={!filters.pos.length}
+              className="ui px-3 py-1 text-xs tracking-wide rounded-full border"
+              style={{ borderColor: C.line, color: filters.pos.length ? C.dim : C.faint, opacity: filters.pos.length ? 1 : 0.5 }}>
+              Clear
+            </button>
+            {posList.map(p => (
+              <Chip key={p} active={filters.pos.includes(p)}
+                onClick={() => setFilters(f => ({ ...f, pos: f.pos.includes(p) ? f.pos.filter(x => x !== p) : [...f.pos, p] }))}>
+                {POS_HANZI[p] && <span className="hz">{POS_HANZI[p]} </span>}{p}
+              </Chip>
+            ))}
+          </div>
+          <div className="w-full h-px" style={{ background: C.ink3 }} />
+          <button onClick={onStudyStack} disabled={!stack.length}
+            className="ui px-3 py-1 text-xs uppercase tracking-widest border rounded-full"
+            style={{ borderColor: C.line, color: stack.length ? C.dim : C.faint, opacity: stack.length ? 1 : 0.5 }}>
+            {"▤"} study stack{stack.length ? ` (${stack.length})` : ""}
+          </button>
         </div>
       )}
       <div className="ui text-sm" style={{ color: C.dim }}>
