@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Empty } from "../components/atoms";
+import { CardDetail } from "../components/CardDetail";
 import { FilterBar } from "../components/FilterBar";
 import { applyFilters, DAY, type Filters } from "../lib/filters";
 import { C } from "../theme";
@@ -13,6 +14,7 @@ export function BrowseView({ bank, srs, filters, setFilters, posList, onDelete, 
 }) {
   const [selectMode, setSelectMode] = useState(false);
   const [selected, setSelected] = useState<Set<string>>(() => new Set());
+  const [detailId, setDetailId] = useState<string | null>(null);
   const [confirmClear, setConfirmClear] = useState(false);
   const [confirmReset, setConfirmReset] = useState(false);
   const rows = applyFilters(bank, srs, filters);
@@ -107,11 +109,11 @@ export function BrowseView({ bank, srs, filters, setFilters, posList, onDelete, 
           const isSel = selected.has(c.id);
           return (
             <div key={c.id}
-              onClick={selectMode ? () => toggle(c.id) : undefined}
+              onClick={selectMode ? () => toggle(c.id) : () => setDetailId(c.id)}
               className="flex items-center gap-4 py-3"
               style={{
                 borderBottom: `1px solid ${C.ink3}`,
-                cursor: selectMode ? "pointer" : "default",
+                cursor: "pointer",
                 background: isSel ? C.ink2 : "transparent",
               }}>
               {selectMode && (
@@ -130,11 +132,11 @@ export function BrowseView({ bank, srs, filters, setFilters, posList, onDelete, 
               </div>
               {!selectMode && (
                 <div className="flex items-center shrink-0">
-                  <button onClick={() => onToggleStar(c.id)} aria-label={c.starred ? `Unstar ${c.hanzi}` : `Star ${c.hanzi} as tricky`}
+                  <button onClick={e => { e.stopPropagation(); onToggleStar(c.id); }} aria-label={c.starred ? `Unstar ${c.hanzi}` : `Star ${c.hanzi} as tricky`}
                     className="text-base px-2 py-1" style={{ color: c.starred ? C.cinnabar : C.faint }}>
                     {c.starred ? "★" : "☆"}
                   </button>
-                  <button onClick={() => onDelete(c.id)} aria-label={`Delete ${c.hanzi}`}
+                  <button onClick={e => { e.stopPropagation(); onDelete(c.id); }} aria-label={`Delete ${c.hanzi}`}
                     className="ui text-xs px-2 py-1" style={{ color: C.faint }}>✕</button>
                 </div>
               )}
@@ -142,6 +144,13 @@ export function BrowseView({ bank, srs, filters, setFilters, posList, onDelete, 
           );
         })}
       </div>
+
+      {(() => {
+        const detail = detailId ? bank.find(c => c.id === detailId) : null;
+        return detail ? (
+          <CardDetail card={detail} srs={srs} onClose={() => setDetailId(null)} onToggleStar={onToggleStar} />
+        ) : null;
+      })()}
     </div>
   );
 }

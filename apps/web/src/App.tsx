@@ -5,6 +5,7 @@ import { ApiStorage } from "./storage/apiStorage";
 import { applyTheme, C, FONT_CSS } from "./theme";
 import type { Card, SeenMap, SyncState, Theme } from "./types";
 import { BrowseView } from "./views/BrowseView";
+import { GalleryView } from "./views/GalleryView";
 import { ImportView } from "./views/ImportView";
 import { StudyView } from "./views/StudyView";
 
@@ -14,7 +15,7 @@ export default function App({ onLogout, userEmail }: { onLogout: () => void; use
   const [bank, setBank] = useState<Card[]>([]);
   const [srs, setSrs] = useState<SeenMap>({});
   const [loaded, setLoaded] = useState(false);
-  const [tab, setTab] = useState<"study" | "browse" | "import">("study");
+  const [tab, setTab] = useState<"study" | "gallery" | "browse" | "import">("study");
   const [filters, setFilters] = useState<Filters>({ q: "", pos: [], includeCompound: false, age: "all", starred: false });
   const [syncState, setSyncState] = useState<SyncState>("syncing");
   const [theme, setTheme] = useState<Theme>("light");
@@ -104,6 +105,7 @@ export default function App({ onLogout, userEmail }: { onLogout: () => void; use
 
   const TABS = [
     { id: "study" as const, zh: "学", en: "Study" },
+    { id: "gallery" as const, zh: "鉴", en: "Gallery" },
     { id: "browse" as const, zh: "查", en: "Browse" },
     { id: "import" as const, zh: "入", en: "Import" },
   ];
@@ -151,6 +153,7 @@ export default function App({ onLogout, userEmail }: { onLogout: () => void; use
         ) : (
           <>
             {tab === "study" && <StudyView bank={bank} srs={srs} filters={filters} setFilters={setFilters} posList={posList} onSeen={onSeen} onToggleStar={onToggleStar} />}
+            {tab === "gallery" && <GalleryView bank={bank} srs={srs} onToggleStar={onToggleStar} />}
             {tab === "browse" && <BrowseView bank={bank} srs={srs} filters={filters} setFilters={setFilters} posList={posList} onDelete={onDelete} onDeleteMany={onDeleteMany} onClearAll={onClearAll} onResetSeen={onResetSeen} onToggleStar={onToggleStar} />}
             {tab === "import" && <ImportView bank={bank} onImport={onImport} />}
           </>
