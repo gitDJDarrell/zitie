@@ -39,4 +39,15 @@ input:focus, button:focus-visible, textarea:focus-visible { outline: 2px solid c
 
 export function applyTheme(theme: Theme) {
   Object.assign(C, THEMES[theme]);
+  // Keep the browser/OS chrome (status bar, PWA title bar) in sync with the
+  // app's own theme toggle, which is independent of the OS colour scheme.
+  if (typeof document !== "undefined") {
+    let meta = document.querySelector('meta[name="theme-color"]:not([media])') as HTMLMetaElement | null;
+    if (!meta) {
+      meta = document.createElement("meta");
+      meta.name = "theme-color";
+      document.head.appendChild(meta);
+    }
+    meta.content = C.ink;
+  }
 }

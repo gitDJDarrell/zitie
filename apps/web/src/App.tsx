@@ -160,7 +160,14 @@ export default function App({ onLogout, userEmail }: { onLogout: () => void; use
   return (
     <div className="min-h-screen w-full" style={{ background: C.ink, color: C.paper }}>
       <style>{FONT_CSS}</style>
-      <div className="max-w-md mx-auto px-4 pb-24 pt-6">
+      <div className="max-w-md mx-auto" style={{
+        // Clear the notch up top and the fixed nav + home indicator at the
+        // bottom; keep a sensible min side padding in landscape.
+        paddingTop: "calc(1.5rem + env(safe-area-inset-top))",
+        paddingBottom: "calc(6rem + env(safe-area-inset-bottom))",
+        paddingLeft: "max(1rem, env(safe-area-inset-left))",
+        paddingRight: "max(1rem, env(safe-area-inset-right))",
+      }}>
         <header className="flex items-end justify-between mb-6">
           <div>
             <div className="hz text-2xl font-black tracking-wide" style={{ color: C.paper }}>字帖</div>
@@ -204,7 +211,11 @@ export default function App({ onLogout, userEmail }: { onLogout: () => void; use
         )}
       </div>
 
-      <nav className="fixed bottom-0 left-0 right-0" style={{ background: C.ink2, borderTop: `1px solid ${C.line}` }}>
+      <nav className="fixed bottom-0 left-0 right-0" style={{
+        background: C.ink2,
+        borderTop: `1px solid ${C.line}`,
+        paddingBottom: "env(safe-area-inset-bottom)", // sit above the home indicator
+      }}>
         <div className="max-w-md mx-auto flex">
           {TABS.map(t => (
             <button key={t.id} onClick={() => setTab(t.id)}

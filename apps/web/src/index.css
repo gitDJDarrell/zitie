@@ -1,3 +1,28 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ————————————————— mobile / touch behavior ————————————————— */
+html {
+  -webkit-tap-highlight-color: transparent; /* no grey flash on tap */
+  -webkit-text-size-adjust: 100%;           /* don't reflow text on rotate */
+}
+
+body {
+  /* Prevent the whole page from rubber-banding / pull-to-refresh; inner
+     scroll containers still scroll normally. */
+  overscroll-behavior-y: none;
+}
+
+/* Kill the 300ms double-tap-zoom delay on all interactive controls. */
+button, a, [role="radio"], [role="button"], input, textarea, select {
+  touch-action: manipulation;
+}
+
+/* iOS zooms the viewport when focusing an input smaller than 16px. On touch
+   devices, float app inputs up to 16px to suppress that jarring auto-zoom. */
+@media (pointer: coarse) {
+  input, textarea, select {
+    font-size: 16px;
+  }
+}
