@@ -35,6 +35,7 @@ export function ImportView({ bank, onImport }: {
   const [aiBusy, setAiBusy] = useState(false);
   const [aiMsg, setAiMsg] = useState<{ ok: boolean; t: string } | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const cameraInputRef = useRef<HTMLInputElement | null>(null);
 
   // capture reveal sequence: entries are already imported; this walks through
   // them one at a time. idx === items.length renders the summary screen.
@@ -203,9 +204,9 @@ export function ImportView({ bank, onImport }: {
       <div className="flex flex-col gap-3">
         <SectionLabel zh="释" en="generate with ai" />
         <p className="ui text-xs leading-relaxed" style={{ color: C.dim }}>
-          Type or paste vocabulary in any form — a word list, sentences, or a screenshot of a
-          textbook page (paste it right here, or attach a file). Each catch is added to your
-          collection and revealed one by one. Existing entries only ever expand — nothing is lost.
+          Type or paste vocabulary in any form — a word list, sentences, a screenshot pasted
+          right here, or a photo of a textbook page. Each catch is added to your collection and
+          revealed one by one. Existing entries only ever expand — nothing is lost.
         </p>
         <textarea
           value={aiText} onChange={e => setAiText(e.target.value)} onPaste={onAiPaste}
@@ -213,8 +214,18 @@ export function ImportView({ bank, onImport }: {
           className="hz w-full p-3 text-sm rounded border bg-transparent"
           style={{ borderColor: C.line, color: C.paper }}
         />
+        {/* Gallery/file picker (no capture) */}
         <input
           ref={fileInputRef} type="file" accept="image/*" className="hidden"
+          onChange={e => { const f = e.target.files?.[0]; if (f) void attachImage(f); e.target.value = ""; }}
+        />
+        {/* Camera capture: `capture="environment"` opens the rear camera
+            directly on mobile browsers. On desktop the attribute is ignored and
+            it falls back to a file dialog. When Capacitor lands (Track C) the
+            "Take photo" button switches to the native @capacitor/camera plugin;
+            both paths feed the same fileToApiImage pipeline. */}
+        <input
+          ref={cameraInputRef} type="file" accept="image/*" capture="environment" className="hidden"
           onChange={e => { const f = e.target.files?.[0]; if (f) void attachImage(f); e.target.value = ""; }}
         />
         <div className="flex gap-3 items-center flex-wrap">
@@ -222,6 +233,11 @@ export function ImportView({ bank, onImport }: {
             className="ui px-6 py-2 text-xs uppercase tracking-widest border rounded"
             style={{ borderColor: C.paper, color: C.paper, opacity: aiBusy || (!aiText.trim() && !aiImage) ? 0.35 : 1 }}>
             {aiBusy ? "Generating…" : "Generate entries"}
+          </button>
+          <button onClick={() => cameraInputRef.current?.click()} disabled={aiBusy}
+            className="ui px-4 py-2 text-xs uppercase tracking-widest border rounded"
+            style={{ borderColor: C.line, color: C.dim }}>
+            Take photo
           </button>
           <button onClick={() => fileInputRef.current?.click()} disabled={aiBusy}
             className="ui px-4 py-2 text-xs uppercase tracking-widest border rounded"
