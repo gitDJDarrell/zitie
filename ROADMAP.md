@@ -49,11 +49,13 @@ lending the sound), recursively for components worth explaining.
 
 ## Track B — Take photo
 
-- **Web/PWA now:** add `capture="environment"` to the import file input →
-  opens the camera on mobile browsers. Flows through the existing
-  `fileToApiImage` downscale/compress pipeline. ~5 lines.
-- **Native:** `@capacitor/camera` `Camera.getPhoto()` into the same pipeline.
-  Platform-detect: native camera in the app shell, file input on web.
+- **Web/PWA — SHIPPED (commit 538a002):** a "Take photo" button using a file
+  input with `capture="environment"` opens the rear camera on mobile browsers;
+  falls back to a file dialog on desktop. Flows through the existing
+  `fileToApiImage` pipeline. Native swap point marked with a code comment.
+- **Native (with Track C):** `@capacitor/camera` `Camera.getPhoto()` into the
+  same pipeline. Platform-detect: native camera in the app shell, file input on
+  web.
 
 ## Track C — Mobile compatibility + native launch
 
