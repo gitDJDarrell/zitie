@@ -1,0 +1,264 @@
+[
+  {
+    "hanzi": "爱",
+    "structure": "⿱ stacked",
+    "etyType": "ideographic",
+    "components": [
+      { "char": "友", "reading": "yǒu", "gloss": "friend", "role": "meaning", "note": "A friend at the base — the object of the affection." },
+      { "char": "冖", "reading": "mì", "gloss": "cover, roof", "role": "meaning", "note": "A roof: welcoming the friend into one's home." },
+      { "char": "爫", "reading": "zhǎo", "gloss": "hand from above", "role": "meaning", "note": "A reaching hand at the top." }
+    ],
+    "story": "A hand reaching out to bring a friend (友) in under one's roof (冖) — welcoming someone you care for into your home. The classical form also held 心 (heart) in the middle; the simplified form keeps the gesture, not the heart.",
+    "compounds": [
+      { "zh": "爱情", "py": "àiqíng", "en": "romantic love" },
+      { "zh": "喜爱", "py": "xǐ'ài", "en": "to like, be fond of" },
+      { "zh": "可爱", "py": "kě'ài", "en": "cute, lovable" }
+    ]
+  },
+  {
+    "hanzi": "八",
+    "structure": "simple / indivisible",
+    "etyType": "ideographic",
+    "components": [],
+    "story": "Two strokes bending apart — the original sense was \"to divide.\" It was borrowed early on for the number eight, and the dividing sense lives on in 分 (fēn, to split), which contains it.",
+    "compounds": [
+      { "zh": "八月", "py": "bāyuè", "en": "August" },
+      { "zh": "十八", "py": "shíbā", "en": "eighteen" },
+      { "zh": "八点", "py": "bā diǎn", "en": "eight o'clock" }
+    ]
+  },
+  {
+    "hanzi": "爸",
+    "structure": "⿱ stacked",
+    "etyType": "pictophonetic",
+    "components": [
+      { "char": "父", "reading": "fù", "gloss": "father", "role": "semantic", "note": "The meaning half — 父 is the formal word for father." },
+      { "char": "巴", "reading": "bā", "gloss": "(to cling; phonetic)", "role": "phonetic", "note": "Lends the sound bā." }
+    ],
+    "story": "The formal \"father\" 父 on top for meaning, with 巴 (bā) underneath supplying the sound — giving the everyday, affectionate bà.",
+    "compounds": [
+      { "zh": "爸爸", "py": "bàba", "en": "dad, papa" },
+      { "zh": "爸妈", "py": "bà mā", "en": "mom and dad" }
+    ]
+  },
+  {
+    "hanzi": "吧",
+    "structure": "⿰ left–right",
+    "etyType": "pictophonetic",
+    "components": [
+      { "char": "口", "reading": "kǒu", "gloss": "mouth", "role": "semantic", "note": "The mouth radical — this is a spoken particle, so the meaning lives in the mouth." },
+      { "char": "巴", "reading": "bā", "gloss": "(to cling; phonetic)", "role": "phonetic", "note": "Lends the sound ba." }
+    ],
+    "story": "A mouth (口) marking it as speech, plus 巴 for sound. As a sentence-final particle it softens a command or suggestion into \"...okay?\"; as a noun (bā) it transliterates the English \"bar.\"",
+    "compounds": [
+      { "zh": "好吧", "py": "hǎo ba", "en": "okay then, fine" },
+      { "zh": "酒吧", "py": "jiǔbā", "en": "bar (drinks)" },
+      { "zh": "网吧", "py": "wǎngbā", "en": "internet café" }
+    ]
+  },
+  {
+    "hanzi": "白",
+    "structure": "⿻ overlaid",
+    "etyType": "pictographic",
+    "components": [],
+    "story": "A pictograph of a flame or the rising sun casting light — light being the essence of whiteness and brightness. Beyond \"white\" it stretches to \"clear/plain\" (明白 to understand) and \"in vain\" (白 for nothing).",
+    "compounds": [
+      { "zh": "白色", "py": "báisè", "en": "white (color)" },
+      { "zh": "明白", "py": "míngbai", "en": "to understand, be clear" },
+      { "zh": "白天", "py": "báitiān", "en": "daytime" }
+    ]
+  },
+  {
+    "hanzi": "百",
+    "structure": "⿱ stacked",
+    "etyType": "pictophonetic",
+    "components": [
+      { "char": "一", "reading": "yī", "gloss": "one", "role": "semantic", "note": "A single stroke on top — a number sign, hinting this is a counting word." },
+      { "char": "白", "reading": "bái", "gloss": "white", "role": "phonetic", "note": "Lends the sound (bái → bǎi)." }
+    ],
+    "story": "The number-marker 一 (one) sitting over 白 (bái) for sound — a hundred, the round number that caps the basic counting run.",
+    "compounds": [
+      { "zh": "一百", "py": "yìbǎi", "en": "one hundred" },
+      { "zh": "百分之百", "py": "bǎi fēn zhī bǎi", "en": "one hundred percent" },
+      { "zh": "百货", "py": "bǎihuò", "en": "general merchandise" }
+    ]
+  },
+  {
+    "hanzi": "班",
+    "structure": "⿲ left–middle–right",
+    "etyType": "ideographic",
+    "components": [
+      { "char": "玉", "reading": "yù", "gloss": "jade", "role": "meaning", "note": "Two pieces of jade (王 is jade in this position), one on each side." },
+      { "char": "刂", "reading": "dāo", "gloss": "knife", "role": "meaning", "note": "A knife in the middle, dividing the jade." }
+    ],
+    "story": "A knife (刂) splitting a piece of jade (玉) into two halves — from \"to divide\" came the sense of a divided group: a class, team, or work shift.",
+    "compounds": [
+      { "zh": "上班", "py": "shàngbān", "en": "to go to work" },
+      { "zh": "班级", "py": "bānjí", "en": "class (in school)" },
+      { "zh": "下班", "py": "xiàbān", "en": "to get off work" }
+    ]
+  },
+  {
+    "hanzi": "半",
+    "structure": "⿻ overlaid",
+    "etyType": "ideographic",
+    "components": [
+      { "char": "八", "reading": "bā", "gloss": "to divide", "role": "meaning", "note": "The dividing strokes (丷) up top — splitting in two." },
+      { "char": "牛", "reading": "niú", "gloss": "ox", "role": "meaning", "note": "An ox below: an ox was a big thing to divide up evenly." }
+    ],
+    "story": "The splitting mark (八/丷) over an ox (牛) — dividing something large right down the middle. Hence \"half.\"",
+    "compounds": [
+      { "zh": "一半", "py": "yíbàn", "en": "a half" },
+      { "zh": "半天", "py": "bàntiān", "en": "half a day; a long while" },
+      { "zh": "半夜", "py": "bànyè", "en": "midnight, middle of the night" }
+    ]
+  },
+  {
+    "hanzi": "帮",
+    "structure": "⿱ stacked",
+    "etyType": "ideographic",
+    "components": [
+      { "char": "邦", "reading": "bāng", "gloss": "nation, state", "role": "phonetic", "note": "Supplies the sound bāng — and, loosely, the sense of a body of people." },
+      { "char": "巾", "reading": "jīn", "gloss": "cloth", "role": "meaning", "note": "A cloth or banner below." }
+    ],
+    "story": "A nation (邦) over a cloth (巾) — a banner a group rallies under. From standing together came the meaning \"to help.\" 邦 also carries the sound.",
+    "compounds": [
+      { "zh": "帮助", "py": "bāngzhù", "en": "to help; help" },
+      { "zh": "帮忙", "py": "bāngmáng", "en": "to help out, do a favor" },
+      { "zh": "帮手", "py": "bāngshǒu", "en": "helper, helping hand" }
+    ]
+  },
+  {
+    "hanzi": "包",
+    "structure": "⿹ wrap from upper-right",
+    "etyType": "ideographic",
+    "components": [
+      { "char": "勹", "reading": "bāo", "gloss": "to wrap", "role": "meaning", "note": "The wrapping radical — an arm curling around something. Also carries the sound." },
+      { "char": "巳", "reading": "sì", "gloss": "fetus, child", "role": "meaning", "note": "A curled-up baby inside, being wrapped." }
+    ],
+    "story": "An arm (勹) curling around a baby (巳) — to swaddle, to wrap up. From there: a bundle, a bag, and \"to include.\"",
+    "compounds": [
+      { "zh": "面包", "py": "miànbāo", "en": "bread" },
+      { "zh": "书包", "py": "shūbāo", "en": "schoolbag, backpack" },
+      { "zh": "红包", "py": "hóngbāo", "en": "red envelope (money gift)" }
+    ]
+  },
+  {
+    "hanzi": "杯",
+    "structure": "⿰ left–right",
+    "etyType": "pictophonetic",
+    "components": [
+      { "char": "木", "reading": "mù", "gloss": "wood, tree", "role": "semantic", "note": "The wood radical — cups were once carved from wood." },
+      { "char": "不", "reading": "bù", "gloss": "(not; phonetic)", "role": "phonetic", "note": "Lends the sound (bù → bēi)." }
+    ],
+    "story": "The wood radical (木) marks the material of an old cup, with 不 supplying the sound — a cup or glass.",
+    "compounds": [
+      { "zh": "杯子", "py": "bēizi", "en": "cup, glass" },
+      { "zh": "一杯", "py": "yì bēi", "en": "a cup of" },
+      { "zh": "干杯", "py": "gānbēi", "en": "cheers! (bottoms up)" }
+    ]
+  },
+  {
+    "hanzi": "北",
+    "structure": "⿰ left–right (mirrored)",
+    "etyType": "pictographic",
+    "components": [
+      { "char": "匕", "reading": "bǐ", "gloss": "person (seated)", "role": "form", "note": "Two people drawn back-to-back — the left one mirrored." }
+    ],
+    "story": "Two people sitting back-to-back. Houses traditionally faced south, so your back was to the north — and the character was borrowed for \"north.\" The original \"back\" sense was rewritten as 背 (bèi), which still contains it.",
+    "compounds": [
+      { "zh": "北方", "py": "běifāng", "en": "the north" },
+      { "zh": "北京", "py": "Běijīng", "en": "Beijing" },
+      { "zh": "东北", "py": "dōngběi", "en": "the northeast" }
+    ]
+  },
+  {
+    "hanzi": "备",
+    "structure": "⿱ stacked",
+    "etyType": "ideographic",
+    "components": [
+      { "char": "夂", "reading": "zhǐ", "gloss": "to go, come", "role": "meaning", "note": "A foot/going element on top — heading out." },
+      { "char": "田", "reading": "tián", "gloss": "field", "role": "meaning", "note": "A field below — the destination." }
+    ],
+    "story": "Going out (夂) to the field (田) to get ready for the harvest — to prepare, to have on hand.",
+    "compounds": [
+      { "zh": "准备", "py": "zhǔnbèi", "en": "to prepare, get ready" },
+      { "zh": "设备", "py": "shèbèi", "en": "equipment, facilities" },
+      { "zh": "备用", "py": "bèiyòng", "en": "spare, backup" }
+    ]
+  },
+  {
+    "hanzi": "本",
+    "structure": "⿻ overlaid (indicator)",
+    "etyType": "ideographic",
+    "components": [
+      { "char": "木", "reading": "mù", "gloss": "tree", "role": "meaning", "note": "A whole tree." },
+      { "char": "一", "reading": "yī", "gloss": "(marker)", "role": "form", "note": "A stroke across the base, pointing at the roots." }
+    ],
+    "story": "A tree (木) with a mark drawn across its base to point at the roots — the \"root, origin, source.\" By extension: the root/original thing, and the measure word for books (the root text).",
+    "compounds": [
+      { "zh": "本来", "py": "běnlái", "en": "originally, at first" },
+      { "zh": "课本", "py": "kèběn", "en": "textbook" },
+      { "zh": "一本书", "py": "yì běn shū", "en": "one book" }
+    ]
+  },
+  {
+    "hanzi": "比",
+    "structure": "⿰ left–right",
+    "etyType": "ideographic",
+    "components": [
+      { "char": "匕", "reading": "bǐ", "gloss": "person", "role": "meaning", "note": "Two people side by side, facing the same way. Also carries the sound." }
+    ],
+    "story": "Two figures standing right next to each other, facing the same direction — placing two things side by side: to compare.",
+    "compounds": [
+      { "zh": "比较", "py": "bǐjiào", "en": "to compare; relatively" },
+      { "zh": "比如", "py": "bǐrú", "en": "for example" },
+      { "zh": "比赛", "py": "bǐsài", "en": "match, competition" }
+    ]
+  },
+  {
+    "hanzi": "边",
+    "structure": "⿺ wrap from lower-left",
+    "etyType": "pictophonetic",
+    "components": [
+      { "char": "辶", "reading": "chuò", "gloss": "walking, movement", "role": "semantic", "note": "The movement radical — a border is where you walk to the edge of." },
+      { "char": "力", "reading": "lì", "gloss": "(simplified phonetic)", "role": "phonetic", "note": "The simplified form's inner part; the full form 邊 had a more complex phonetic 臱." }
+    ],
+    "story": "The walking radical (辶) framing the character — the edge you reach by going outward: a side, a border, an edge.",
+    "compounds": [
+      { "zh": "旁边", "py": "pángbiān", "en": "beside, next to" },
+      { "zh": "这边", "py": "zhèbiān", "en": "this side, over here" },
+      { "zh": "外边", "py": "wàibian", "en": "outside" }
+    ]
+  },
+  {
+    "hanzi": "别",
+    "structure": "⿰ left–right",
+    "etyType": "ideographic",
+    "components": [
+      { "char": "另", "reading": "lìng", "gloss": "separate, another", "role": "meaning", "note": "\"Another / separate\" on the left." },
+      { "char": "刂", "reading": "dāo", "gloss": "knife", "role": "meaning", "note": "The knife radical — cutting apart." }
+    ],
+    "story": "A knife (刂) cutting things into separate parts (另) — \"to separate, distinguish, part.\" From \"set apart\" come both \"other/another\" and the negative command \"don't\" (別 = don't do that).",
+    "compounds": [
+      { "zh": "别人", "py": "biérén", "en": "other people, someone else" },
+      { "zh": "特别", "py": "tèbié", "en": "especially, special" },
+      { "zh": "告别", "py": "gàobié", "en": "to say goodbye, part from" }
+    ]
+  },
+  {
+    "hanzi": "病",
+    "structure": "⿸ wrap from upper-left",
+    "etyType": "pictophonetic",
+    "components": [
+      { "char": "疒", "reading": "nè", "gloss": "sickness", "role": "semantic", "note": "The sickness radical — a person on a bed. Almost every illness word carries it." },
+      { "char": "丙", "reading": "bǐng", "gloss": "(3rd stem; phonetic)", "role": "phonetic", "note": "Lends the sound (bǐng → bìng)." }
+    ],
+    "story": "The sickness radical (疒), a person laid up on a bed, wrapping 丙 for sound — illness, disease, to fall ill.",
+    "compounds": [
+      { "zh": "生病", "py": "shēngbìng", "en": "to fall ill" },
+      { "zh": "看病", "py": "kànbìng", "en": "to see a doctor" },
+      { "zh": "毛病", "py": "máobìng", "en": "fault, defect, problem" }
+    ]
+  }
+]

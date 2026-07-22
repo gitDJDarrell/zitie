@@ -51,6 +51,24 @@ export const seenState = pgTable("seen_state", {
   views: integer("views").notNull().default(0),
 });
 
+// Deep character breakdowns — shared across ALL users (keyed by hanzi, not
+// user_id): the decomposition of 吃 is identical for everyone, so it's computed
+// once and reused forever. Seeded in-session from grounded data (makemeahanzi /
+// IDS / Unihan); the long tail is filled at runtime by the enrichment worker.
+export const characterInsights = pgTable("character_insights", {
+  hanzi: text("hanzi").primaryKey(),
+  structure: text("structure"),            // human-readable, e.g. "⿰ left–right"
+  etyType: text("ety_type"),               // pictophonetic | ideographic | pictographic | none
+  components: jsonb("components").$type<{
+    char: string; reading?: string; gloss?: string;
+    role: "semantic" | "phonetic" | "meaning" | "form"; note?: string;
+  }[]>().notNull().default([]),
+  story: text("story"),                     // the pedagogical synthesis
+  compounds: jsonb("compounds").$type<{ zh: string; py?: string; en?: string }[]>().notNull().default([]),
+  source: text("source").notNull().default("seed"), // seed:hsk1 | ai:<model>
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
 export const settings = pgTable("settings", {
   userId: uuid("user_id").primaryKey().references(() => users.id, { onDelete: "cascade" }),
   theme: text("theme").notNull().default("light"),

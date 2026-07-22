@@ -6,6 +6,7 @@ import { cors } from "hono/cors";
 import { secureHeaders } from "hono/secure-headers";
 import { aiRoute } from "./routes/ai.js";
 import { auth } from "./routes/auth.js";
+import { insightsRoute } from "./routes/insights.js";
 import { cardsRoute } from "./routes/cards.js";
 import { exportRoute } from "./routes/export.js";
 import { seenRoute } from "./routes/seen.js";
@@ -34,6 +35,7 @@ app.get("/health", (c) => c.json({ ok: true }));
 
 app.route("/auth", auth);
 app.route("/ai", aiRoute);
+app.route("/insights", insightsRoute);
 app.route("/cards", cardsRoute);
 app.route("/seen", seenRoute);
 app.route("/settings", settingsRoute);

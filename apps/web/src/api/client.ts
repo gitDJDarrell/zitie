@@ -55,4 +55,19 @@ export const api = {
 
   aiExtract: (payload: { text?: string; image?: { mediaType: string; data: string } }) =>
     request<{ cards: unknown[] }>("/ai/extract", { method: "POST", body: JSON.stringify(payload) }),
+
+  getInsights: (hanzi: string[]) =>
+    request<{ insights: Record<string, CharacterInsight> }>("/insights", { method: "POST", body: JSON.stringify({ hanzi }) }),
 };
+
+export interface InsightComponent {
+  char: string; reading?: string; gloss?: string;
+  role: "semantic" | "phonetic" | "meaning" | "form"; note?: string;
+}
+export interface CharacterInsight {
+  structure: string | null;
+  etyType: string | null;
+  components: InsightComponent[];
+  story: string | null;
+  compounds: { zh: string; py?: string; en?: string }[];
+}
