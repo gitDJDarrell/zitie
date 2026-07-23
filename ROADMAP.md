@@ -59,13 +59,14 @@ lending the sound), recursively for components worth explaining.
 
 ## Track C — Mobile compatibility + native launch
 
-1. **Mobile UX polish (first — foundational):** safe-area insets
-   (`env(safe-area-inset-*)`), 44px min touch targets, disable double-tap zoom,
-   momentum scroll. CardDetail already bottom-sheets on mobile.
-2. **PWA:** manifest + service worker (installable, offline app shell; builds on
-   the existing localStorage cache).
-3. **Capacitor wrap:** add iOS/Android platforms, `@capacitor/camera`, later
-   `@capacitor/push-notifications`.
+1. **Mobile UX polish — SHIPPED (commit 11bd2c8):** safe-area insets
+   (`env(safe-area-inset-*)`) on content + fixed nav, `touch-action:
+   manipulation` (no double-tap-zoom delay), tap-highlight/overscroll tuning,
+   16px inputs on coarse pointers (no iOS focus-zoom), dynamic theme-color.
+2. **PWA — manifest + icons SHIPPED (11bd2c8);** service worker (offline app
+   shell) still TODO — builds on the existing localStorage cache.
+3. **Capacitor wrap:** add iOS/Android platforms, `@capacitor/camera` (upgrades
+   Track B's Take photo to native), later `@capacitor/push-notifications`.
 4. **Store launch prerequisites (user action):** Apple Developer Program
    ($99/yr), Google Play Console ($25 once), privacy policy, screenshots,
    review.
