@@ -65,11 +65,15 @@ lending the sound), recursively for components worth explaining.
    16px inputs on coarse pointers (no iOS focus-zoom), dynamic theme-color.
 2. **PWA — manifest + icons SHIPPED (11bd2c8);** service worker (offline app
    shell) still TODO — builds on the existing localStorage cache.
-3. **Capacitor wrap:** add iOS/Android platforms, `@capacitor/camera` (upgrades
-   Track B's Take photo to native), later `@capacitor/push-notifications`.
+3. **Capacitor wrap — SHIPPED (commit c36b128):** Capacitor 8, Android + iOS
+   platforms scaffolded, `@capacitor/camera` wired behind platform detection
+   (native camera in the app shell, web input in a browser), on-brand native
+   icons/splash. `appId: com.zitie.app` (placeholder — finalize before store
+   submission). Remaining: iOS build/run needs macOS + Xcode; Android APK
+   build needs Android Studio / SDK; `@capacitor/push-notifications` later.
 4. **Store launch prerequisites (user action):** Apple Developer Program
    ($99/yr), Google Play Console ($25 once), privacy policy, screenshots,
-   review.
+   review. iOS specifically needs a Mac to archive + upload.
 
 ## Sequencing
 
