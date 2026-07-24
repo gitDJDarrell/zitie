@@ -49,7 +49,6 @@ its remote builders — you do **not** need Docker installed locally.
 3. Set secrets (never commit these):
    ```
    fly secrets set DATABASE_URL="<neon connection string>"
-   fly secrets set SESSION_SECRET="<a long random string — `openssl rand -hex 32`>"
    fly secrets set ANTHROPIC_API_KEY="<your anthropic key>"   # AI card extraction
    fly secrets set RESEND_API_KEY="<your resend key>"         # password reset emails
    fly secrets set WEB_ORIGIN="https://<your-web-app-url>"    # optional now; see note
