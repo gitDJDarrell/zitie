@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Zitie</string>
+    <string name="title_activity_main">Zitie</string>
+    <string name="package_name">com.zitie.app</string>
+    <string name="custom_url_scheme">com.zitie.app</string>
+</resources>

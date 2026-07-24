@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { api } from "../api/client";
 import { SectionLabel } from "../components/atoms";
 import { DEX_LEVELS, DEX_INDEX } from "../data/dex";
+import { captureNativePhoto, isNativePlatform } from "../lib/camera";
 import { fileToApiImage } from "../lib/image";
 import { C } from "../theme";
 import type { Card } from "../types";
@@ -48,6 +49,17 @@ export function ImportView({ bank, onImport }: {
       setAiImage({ ...img, name: file.name || "pasted image" });
     } catch (e: any) {
       setAiMsg({ ok: false, t: e.message || "Could not read that image." });
+    }
+  }
+
+  // Native shell → the @capacitor/camera plugin; web → the <input capture>
+  // fallback (which opens the camera on mobile browsers, a file dialog on desktop).
+  async function takePhoto() {
+    if (isNativePlatform()) {
+      const file = await captureNativePhoto();
+      if (file) void attachImage(file);
+    } else {
+      cameraInputRef.current?.click();
     }
   }
 
@@ -234,7 +246,7 @@ export function ImportView({ bank, onImport }: {
             style={{ borderColor: C.paper, color: C.paper, opacity: aiBusy || (!aiText.trim() && !aiImage) ? 0.35 : 1 }}>
             {aiBusy ? "Generating…" : "Generate entries"}
           </button>
-          <button onClick={() => cameraInputRef.current?.click()} disabled={aiBusy}
+          <button onClick={takePhoto} disabled={aiBusy}
             className="ui px-4 py-2 text-xs uppercase tracking-widest border rounded"
             style={{ borderColor: C.line, color: C.dim }}>
             Take photo
