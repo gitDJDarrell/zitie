@@ -16,21 +16,9 @@ interface GenCard {
 interface RevealItem { card: GenCard; isNew: boolean }
 
 /* ————————————————— import ————————————————— */
-const SCHEMA_EXAMPLE = `[
-  { "hanzi": "水", "pinyin": "shuǐ", "meaning": "water",
-    "pos": ["noun"], "compound": false,
-    "radical": "水", "strokes": 4,
-    "examples": [{ "zh": "热水", "py": "rè shuǐ", "en": "hot water" }],
-    "notes": "Pictograph of a flowing stream." }
-]`;
-
 export function ImportView({ bank, onImport }: {
   bank: Card[]; onImport: (items: unknown[]) => Promise<{ added: number; updated: number }>;
 }) {
-  const [text, setText] = useState("");
-  const [msg, setMsg] = useState<{ ok: boolean; t: string } | null>(null);
-  const [busy, setBusy] = useState(false);
-
   const [aiText, setAiText] = useState("");
   const [aiImage, setAiImage] = useState<{ mediaType: string; data: string; name: string } | null>(null);
   const [aiBusy, setAiBusy] = useState(false);
@@ -41,6 +29,11 @@ export function ImportView({ bank, onImport }: {
   // capture reveal sequence: entries are already imported; this walks through
   // them one at a time. idx === items.length renders the summary screen.
   const [reveal, setReveal] = useState<{ items: RevealItem[]; idx: number } | null>(null);
+
+  // Extracted-but-not-yet-imported entries, awaiting the user's tap-to-include
+  // selection. Nothing touches the bank until confirmImport().
+  const [pending, setPending] = useState<GenCard[] | null>(null);
+  const [selected, setSelected] = useState<Set<number>>(new Set());
 
   async function attachImage(file: File) {
     setAiMsg(null);
@@ -84,13 +77,10 @@ export function ImportView({ bank, onImport }: {
         setAiMsg({ ok: false, t: "No Chinese vocabulary found in that input." });
         return;
       }
-      // Snapshot before import so first-time catches can be marked NEW.
-      const before = new Set(bank.map(c => c.hanzi));
-      await onImport(cards);
-      const items = (cards as GenCard[]).map(card => ({ card, isNew: !before.has(card.hanzi) }));
-      // New catches first — they're the exciting part of a bulk page.
-      items.sort((a, b) => Number(b.isNew) - Number(a.isNew));
-      setReveal({ items, idx: 0 });
+      // Hand off to the selection step — nothing is imported yet.
+      const generated = cards as GenCard[];
+      setPending(generated);
+      setSelected(new Set(generated.map((_, i) => i))); // everything selected by default
       setAiText("");
       setAiImage(null);
     } catch (e: any) {
@@ -100,31 +90,87 @@ export function ImportView({ bank, onImport }: {
     }
   }
 
-  async function run() {
-    let arr: unknown;
+  function toggleSelected(i: number) {
+    setSelected(prev => {
+      const next = new Set(prev);
+      next.has(i) ? next.delete(i) : next.add(i);
+      return next;
+    });
+  }
+
+  async function confirmImport() {
+    if (!pending || !selected.size) return;
+    const chosen = pending.filter((_, i) => selected.has(i));
+    setAiBusy(true);
+    setAiMsg(null);
     try {
-      arr = JSON.parse(text);
-      if (!Array.isArray(arr)) throw new Error("Expected a JSON array.");
+      const before = new Set(bank.map(c => c.hanzi));
+      await onImport(chosen);
+      const items = chosen.map(card => ({ card, isNew: !before.has(card.hanzi) }));
+      // New catches first — they're the exciting part of a bulk page.
+      items.sort((a, b) => Number(b.isNew) - Number(a.isNew));
+      setPending(null);
+      setSelected(new Set());
+      setReveal({ items, idx: 0 });
     } catch (e: any) {
-      setMsg({ ok: false, t: e.message });
-      return;
-    }
-    setBusy(true);
-    try {
-      const { added, updated } = await onImport(arr);
-      setMsg({ ok: true, t: `Imported: ${added} new, ${updated} expanded/updated.` });
-      setText("");
-    } catch (e: any) {
-      setMsg({ ok: false, t: e.message || "Import failed." });
+      setAiMsg({ ok: false, t: e.message || "Import failed." });
     } finally {
-      setBusy(false);
+      setAiBusy(false);
     }
   }
 
-  function exportBank() {
-    const out = JSON.stringify(bank.map(({ id, added, ...rest }) => rest), null, 2);
-    navigator.clipboard && navigator.clipboard.writeText(out);
-    setMsg({ ok: true, t: "Bank copied to clipboard as JSON." });
+  function cancelSelection() {
+    setPending(null);
+    setSelected(new Set());
+  }
+
+  /* ——— selection: tap to include/exclude each extracted word ——— */
+  if (pending) {
+    return (
+      <div className="flex flex-col gap-4">
+        <div className="flex items-center justify-between">
+          <SectionLabel zh="选" en="select entries" />
+          <span className="ui text-xs" style={{ color: C.faint }}>{selected.size} / {pending.length} selected</span>
+        </div>
+        <p className="ui text-xs leading-relaxed" style={{ color: C.dim }}>
+          Tap a word to leave it out. Everything's selected by default — add the rest to your collection when you're ready.
+        </p>
+        <div className="grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(92px, 1fr))" }}>
+          {pending.map((card, i) => {
+            const isSel = selected.has(i);
+            return (
+              <button key={i} onClick={() => toggleSelected(i)}
+                aria-pressed={isSel}
+                aria-label={`${card.hanzi} — ${isSel ? "included, tap to exclude" : "excluded, tap to include"}`}
+                className="flex flex-col items-center gap-0.5 py-3 px-1 rounded"
+                style={{ background: isSel ? C.paper : "transparent", border: `1px solid ${isSel ? C.paper : C.ink3}` }}>
+                <span className="hz text-2xl leading-tight" style={{ color: isSel ? C.ink : C.paper }}>{card.hanzi}</span>
+                <span className="mono" style={{ fontSize: 10, color: isSel ? C.ink : C.dim }}>{card.pinyin}</span>
+                <span className="ui truncate w-full text-center" style={{ fontSize: 9, color: isSel ? C.ink : C.faint }}>{card.meaning}</span>
+              </button>
+            );
+          })}
+        </div>
+        <div className="flex gap-3 items-center flex-wrap">
+          <button onClick={confirmImport} disabled={!selected.size || aiBusy}
+            className="ui px-6 py-2 text-xs uppercase tracking-widest border rounded"
+            style={{ borderColor: C.paper, color: C.paper, opacity: selected.size && !aiBusy ? 1 : 0.35 }}>
+            {aiBusy ? "Adding…" : `Add ${selected.size} to collection`}
+          </button>
+          <button onClick={cancelSelection} disabled={aiBusy}
+            className="ui px-4 py-2 text-xs uppercase tracking-widest border rounded"
+            style={{ borderColor: C.line, color: C.dim }}>
+            Cancel
+          </button>
+          <span className="w-px h-4" style={{ background: C.line }} />
+          <button onClick={() => setSelected(new Set(pending.map((_, i) => i)))}
+            className="ui text-xs" style={{ color: C.faint }}>select all</button>
+          <button onClick={() => setSelected(new Set())}
+            className="ui text-xs" style={{ color: C.faint }}>select none</button>
+        </div>
+        {aiMsg && <div className="ui text-xs" style={{ color: aiMsg.ok ? C.dim : C.cinnabar }}>{aiMsg.t}</div>}
+      </div>
+    );
   }
 
   /* ——— capture reveal sequence ——— */
@@ -217,8 +263,8 @@ export function ImportView({ bank, onImport }: {
         <SectionLabel zh="释" en="generate with ai" />
         <p className="ui text-xs leading-relaxed" style={{ color: C.dim }}>
           Type or paste vocabulary in any form — a word list, sentences, a screenshot pasted
-          right here, or a photo of a textbook page. Each catch is added to your collection and
-          revealed one by one. Existing entries only ever expand — nothing is lost.
+          right here, or a photo of a textbook page. You'll pick which words to keep before
+          anything's added. Existing entries only ever expand — nothing is lost.
         </p>
         <textarea
           value={aiText} onChange={e => setAiText(e.target.value)} onPaste={onAiPaste}
@@ -271,31 +317,6 @@ export function ImportView({ bank, onImport }: {
         )}
         {aiMsg && <div className="ui text-xs" style={{ color: aiMsg.ok ? C.dim : C.cinnabar }}>{aiMsg.t}</div>}
       </div>
-
-      <div className="w-full h-px" style={{ background: C.ink3 }} />
-
-      <SectionLabel zh="入" en="import vocabulary" />
-      <p className="ui text-xs leading-relaxed" style={{ color: C.dim }}>
-        Paste a JSON array. Required per entry: <span className="mono">hanzi</span>, <span className="mono">pinyin</span>, <span className="mono">meaning</span>. Optional: <span className="mono">pos</span>, <span className="mono">compound</span>, <span className="mono">radical</span>, <span className="mono">strokes</span>, <span className="mono">examples</span>, <span className="mono">notes</span>. Re-importing an existing hanzi expands it: new fields fill in, examples and pos merge without duplicates, and omitted fields are kept as-is.
-      </p>
-      <pre className="mono text-xs p-3 rounded overflow-x-auto" style={{ background: C.ink2, color: C.faint, border: `1px solid ${C.line}` }}>{SCHEMA_EXAMPLE}</pre>
-      <textarea
-        value={text} onChange={e => setText(e.target.value)}
-        rows={8} placeholder="Paste JSON here"
-        className="mono w-full p-3 text-xs rounded border bg-transparent"
-        style={{ borderColor: C.line, color: C.paper }}
-      />
-      <div className="flex gap-3">
-        <button onClick={run} disabled={!text.trim() || busy}
-          className="ui px-6 py-2 text-xs uppercase tracking-widest border rounded"
-          style={{ borderColor: C.paper, color: C.paper, opacity: text.trim() && !busy ? 1 : 0.35 }}>
-          {busy ? "Importing…" : "Import"}
-        </button>
-        <button onClick={exportBank} disabled={!bank.length}
-          className="ui px-6 py-2 text-xs uppercase tracking-widest border rounded"
-          style={{ borderColor: C.line, color: C.dim, opacity: bank.length ? 1 : 0.35 }}>Copy bank</button>
-      </div>
-      {msg && <div className="ui text-xs" style={{ color: msg.ok ? C.dim : C.cinnabar }}>{msg.t}</div>}
     </div>
   );
 }
