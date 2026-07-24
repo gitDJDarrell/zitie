@@ -9,10 +9,13 @@ const ROLE_LABEL: Record<InsightComponent["role"], string> = {
   semantic: "meaning", phonetic: "sound", meaning: "meaning", form: "form",
 };
 
-// Full-entry view, opened from a gallery slot or a browse row.
-export function CardDetail({ card, srs, onClose, onToggleStar, inStack, onToggleStack }: {
+// Full-entry view, opened from a gallery slot or a browse row. onPrev/onNext
+// are only wired up by the gallery dex grid, so it can page through the
+// catalog like an index without closing and reopening the modal.
+export function CardDetail({ card, srs, onClose, onToggleStar, inStack, onToggleStack, onPrev, onNext }: {
   card: Card; srs: SeenMap; onClose: () => void; onToggleStar: (id: string) => void;
   inStack: boolean; onToggleStack: () => void;
+  onPrev?: () => void; onNext?: () => void;
 }) {
   const rec = srs[card.id];
   const ago = rec ? Math.floor((Date.now() - rec.last) / DAY) : null;
@@ -152,6 +155,21 @@ export function CardDetail({ card, srs, onClose, onToggleStar, inStack, onToggle
             : "not studied yet"}
           {" · "}collected {card.added}
         </div>
+
+        {(onPrev || onNext) && (
+          <div className="flex justify-between items-center pt-1">
+            <button onClick={onPrev} disabled={!onPrev} aria-label="Previous character"
+              className="ui px-4 py-2 text-xs uppercase tracking-widest border rounded"
+              style={{ borderColor: C.line, color: onPrev ? C.dim : C.faint, opacity: onPrev ? 1 : 0.35 }}>
+              {"←"} prev
+            </button>
+            <button onClick={onNext} disabled={!onNext} aria-label="Next character"
+              className="ui px-4 py-2 text-xs uppercase tracking-widest border rounded"
+              style={{ borderColor: C.line, color: onNext ? C.dim : C.faint, opacity: onNext ? 1 : 0.35 }}>
+              next {"→"}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -36,17 +36,22 @@ export interface DexSlot {
   levelId: string;
 }
 
-// hanzi -> slot, built once at module load
-export const DEX_INDEX: Map<string, DexSlot> = (() => {
+// hanzi -> slot, and the reverse catalog-index -> hanzi lookup, built once
+// together so DEX_ORDER[slot.n - 1] === hanzi always holds, dupes included.
+const { index: DEX_INDEX_BUILT, order: DEX_ORDER_BUILT } = (() => {
   const m = new Map<string, DexSlot>();
+  const order: string[] = [];
   let n = 0;
   for (const level of DEX_LEVELS) {
     for (const ch of level.chars) {
       n += 1;
-      if (!m.has(ch)) m.set(ch, { n, levelId: level.id });
+      if (!m.has(ch)) { m.set(ch, { n, levelId: level.id }); order.push(ch); }
     }
   }
-  return m;
+  return { index: m, order };
 })();
 
+export const DEX_INDEX: Map<string, DexSlot> = DEX_INDEX_BUILT;
+// catalog-index (0-based) -> hanzi, for "prev/next through the dex" navigation
+export const DEX_ORDER: string[] = DEX_ORDER_BUILT;
 export const DEX_TOTAL = DEX_INDEX.size;

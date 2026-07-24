@@ -1,9 +1,16 @@
 import { useMemo, useState } from "react";
 import { Chip } from "../components/atoms";
 import { CardDetail } from "../components/CardDetail";
-import { DEX_LEVELS, DEX_INDEX, DEX_TOTAL } from "../data/dex";
+import { MysteryCardDetail } from "../components/MysteryCardDetail";
+import { DEX_LEVELS, DEX_INDEX, DEX_ORDER, DEX_TOTAL } from "../data/dex";
 import { C } from "../theme";
 import type { Card, SeenMap } from "../types";
+
+// What's currently open in the detail modal: a position in the global dex
+// order (collected or not — mystery slots are viewable too), or a position
+// in the "beyond the dex" extras list. Either way it's an index, not a Card,
+// so prev/next can page seamlessly through uncollected slots as well.
+type Cursor = { kind: "dex"; index: number } | { kind: "extra"; index: number };
 
 /* ————————————————— gallery: the character dex —————————————————
    Every HSK character is a slot. Uncaught characters render as faint tracing
@@ -17,7 +24,7 @@ export function GalleryView({ bank, srs, onToggleStar, stack, onAddToStack, onRe
   stack: string[]; onAddToStack: (ids: string[]) => void; onRemoveFromStack: (ids: string[]) => void;
 }) {
   const [levelId, setLevelId] = useState<string>(DEX_LEVELS[0].id);
-  const [selected, setSelected] = useState<Card | null>(null);
+  const [cursor, setCursor] = useState<Cursor | null>(null);
   const stackSet = useMemo(() => new Set(stack), [stack]);
 
   const byHanzi = useMemo(() => new Map(bank.map(c => [c.hanzi, c])), [bank]);
@@ -46,8 +53,6 @@ export function GalleryView({ bank, srs, onToggleStar, stack, onAddToStack, onRe
     return n;
   }, [levelId]);
 
-  // keep the currently-open detail in sync with bank updates (e.g. star toggle)
-  const selectedLive = selected ? bank.find(c => c.id === selected.id) ?? null : null;
 
   return (
     <div className="flex flex-col gap-4">
@@ -91,8 +96,9 @@ export function GalleryView({ bank, srs, onToggleStar, stack, onAddToStack, onRe
             {levelChars.map((ch, i) => {
               const card = byHanzi.get(ch);
               const n = levelOffset + i + 1;
+              const dexIndex = n - 1; // DEX_ORDER is 0-based; slot.n is 1-based
               return card ? (
-                <button key={ch} onClick={() => setSelected(card)}
+                <button key={ch} onClick={() => setCursor({ kind: "dex", index: dexIndex })}
                   aria-label={`No. ${n} ${ch} — collected, view details`}
                   className="flex flex-col items-center py-2 rounded"
                   style={{ background: C.ink2, border: `1px solid ${C.ink3}` }}>
@@ -102,13 +108,14 @@ export function GalleryView({ bank, srs, onToggleStar, stack, onAddToStack, onRe
                   </span>
                 </button>
               ) : (
-                <div key={ch} title={`No. ${n} — not yet collected`}
+                <button key={ch} onClick={() => setCursor({ kind: "dex", index: dexIndex })}
+                  aria-label={`No. ${n} — not yet collected, tap to view`}
                   className="flex flex-col items-center py-2 rounded"
                   style={{ border: `1px dashed ${C.ink3}` }}>
                   <span className="hz text-2xl leading-tight" aria-hidden="true"
                     style={{ color: "transparent", WebkitTextStroke: `1px ${C.line}` }}>{ch}</span>
                   <span className="ui" style={{ color: C.faint, fontSize: 9 }}>{String(n).padStart(4, "0")}</span>
-                </div>
+                </button>
               );
             })}
           </div>
@@ -121,8 +128,8 @@ export function GalleryView({ bank, srs, onToggleStar, stack, onAddToStack, onRe
             Collected entries beyond the HSK character dex — compound words and rarer characters.
           </p>
           <div className="grid gap-1" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(72px, 1fr))" }}>
-            {extras.map(card => (
-              <button key={card.id} onClick={() => setSelected(card)}
+            {extras.map((card, i) => (
+              <button key={card.id} onClick={() => setCursor({ kind: "extra", index: i })}
                 aria-label={`${card.hanzi} — view details`}
                 className="flex flex-col items-center py-2 px-1 rounded"
                 style={{ background: C.ink2, border: `1px solid ${C.ink3}` }}>
@@ -134,11 +141,39 @@ export function GalleryView({ bank, srs, onToggleStar, stack, onAddToStack, onRe
         </>
       )}
 
-      {selectedLive && (
-        <CardDetail card={selectedLive} srs={srs} onClose={() => setSelected(null)} onToggleStar={onToggleStar}
-          inStack={stackSet.has(selectedLive.id)}
-          onToggleStack={() => stackSet.has(selectedLive.id) ? onRemoveFromStack([selectedLive.id]) : onAddToStack([selectedLive.id])} />
-      )}
+      {cursor?.kind === "extra" && (() => {
+        const card = extras[cursor.index];
+        if (!card) return null;
+        return (
+          <CardDetail card={card} srs={srs} onClose={() => setCursor(null)} onToggleStar={onToggleStar}
+            inStack={stackSet.has(card.id)}
+            onToggleStack={() => stackSet.has(card.id) ? onRemoveFromStack([card.id]) : onAddToStack([card.id])}
+            onPrev={cursor.index > 0 ? () => setCursor({ kind: "extra", index: cursor.index - 1 }) : undefined}
+            onNext={cursor.index < extras.length - 1 ? () => setCursor({ kind: "extra", index: cursor.index + 1 }) : undefined} />
+        );
+      })()}
+
+      {cursor?.kind === "dex" && (() => {
+        const hanzi = DEX_ORDER[cursor.index];
+        if (!hanzi) return null;
+        const card = byHanzi.get(hanzi);
+        const goPrev = cursor.index > 0 ? () => setCursor({ kind: "dex", index: cursor.index - 1 }) : undefined;
+        const goNext = cursor.index < DEX_ORDER.length - 1 ? () => setCursor({ kind: "dex", index: cursor.index + 1 }) : undefined;
+        if (card) {
+          return (
+            <CardDetail card={card} srs={srs} onClose={() => setCursor(null)} onToggleStar={onToggleStar}
+              inStack={stackSet.has(card.id)}
+              onToggleStack={() => stackSet.has(card.id) ? onRemoveFromStack([card.id]) : onAddToStack([card.id])}
+              onPrev={goPrev} onNext={goNext} />
+          );
+        }
+        const slot = DEX_INDEX.get(hanzi);
+        const levelLabel = DEX_LEVELS.find(l => l.id === slot?.levelId)?.label ?? "";
+        return (
+          <MysteryCardDetail hanzi={hanzi} dexNumber={cursor.index + 1} levelLabel={levelLabel}
+            onClose={() => setCursor(null)} onPrev={goPrev} onNext={goNext} />
+        );
+      })()}
     </div>
   );
 }
