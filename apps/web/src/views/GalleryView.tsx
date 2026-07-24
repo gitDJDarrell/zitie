@@ -12,11 +12,13 @@ import type { Card, SeenMap } from "../types";
    HSK 3.0 character-list levels (7-9 combined the same way the standard
    itself combines them). Dex numbers are a stable catalog index, not a
    difficulty or frequency rank — same as a Pokédex number. */
-export function GalleryView({ bank, srs, onToggleStar }: {
+export function GalleryView({ bank, srs, onToggleStar, stack, onAddToStack, onRemoveFromStack }: {
   bank: Card[]; srs: SeenMap; onToggleStar: (id: string) => void;
+  stack: string[]; onAddToStack: (ids: string[]) => void; onRemoveFromStack: (ids: string[]) => void;
 }) {
   const [levelId, setLevelId] = useState<string>(DEX_LEVELS[0].id);
   const [selected, setSelected] = useState<Card | null>(null);
+  const stackSet = useMemo(() => new Set(stack), [stack]);
 
   const byHanzi = useMemo(() => new Map(bank.map(c => [c.hanzi, c])), [bank]);
   const caughtTotal = useMemo(
@@ -133,7 +135,9 @@ export function GalleryView({ bank, srs, onToggleStar }: {
       )}
 
       {selectedLive && (
-        <CardDetail card={selectedLive} srs={srs} onClose={() => setSelected(null)} onToggleStar={onToggleStar} />
+        <CardDetail card={selectedLive} srs={srs} onClose={() => setSelected(null)} onToggleStar={onToggleStar}
+          inStack={stackSet.has(selectedLive.id)}
+          onToggleStack={() => stackSet.has(selectedLive.id) ? onRemoveFromStack([selectedLive.id]) : onAddToStack([selectedLive.id])} />
       )}
     </div>
   );

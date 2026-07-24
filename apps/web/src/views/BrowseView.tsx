@@ -240,7 +240,9 @@ export function BrowseView({
       {(() => {
         const detail = detailId ? bank.find(c => c.id === detailId) : null;
         return detail ? (
-          <CardDetail card={detail} srs={srs} onClose={() => setDetailId(null)} onToggleStar={onToggleStar} />
+          <CardDetail card={detail} srs={srs} onClose={() => setDetailId(null)} onToggleStar={onToggleStar}
+            inStack={stackSet.has(detail.id)}
+            onToggleStack={() => stackSet.has(detail.id) ? onRemoveFromStack([detail.id]) : onAddToStack([detail.id])} />
         ) : null;
       })()}
     </div>

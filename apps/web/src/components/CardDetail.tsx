@@ -10,8 +10,9 @@ const ROLE_LABEL: Record<InsightComponent["role"], string> = {
 };
 
 // Full-entry view, opened from a gallery slot or a browse row.
-export function CardDetail({ card, srs, onClose, onToggleStar }: {
+export function CardDetail({ card, srs, onClose, onToggleStar, inStack, onToggleStack }: {
   card: Card; srs: SeenMap; onClose: () => void; onToggleStar: (id: string) => void;
+  inStack: boolean; onToggleStack: () => void;
 }) {
   const rec = srs[card.id];
   const ago = rec ? Math.floor((Date.now() - rec.last) / DAY) : null;
@@ -49,6 +50,12 @@ export function CardDetail({ card, srs, onClose, onToggleStar }: {
               : card.compound ? "compound · beyond the dex" : "beyond the dex"}
           </div>
           <div className="flex items-center gap-1">
+            <button onClick={onToggleStack}
+              aria-label={inStack ? `Remove ${card.hanzi} from stack` : `Add ${card.hanzi} to stack`}
+              className="px-2 py-1 text-xl leading-none"
+              style={{ color: inStack ? C.paper : C.faint }}>
+              {inStack ? "▤" : "▢"}
+            </button>
             <button onClick={() => onToggleStar(card.id)}
               aria-label={card.starred ? "Unstar" : "Mark as tricky"}
               className="px-2 py-1 text-xl leading-none"
