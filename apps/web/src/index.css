@@ -26,3 +26,60 @@ button, a, [role="radio"], [role="button"], input, textarea, select {
     font-size: 16px;
   }
 }
+
+/* ————————————————— dex: shiny/chrome finish —————————————————
+   A foil-card treatment for fully-completed dex entries (radical, strokes,
+   examples, and notes all filled in). Deliberately theme-independent —
+   real foil looks the same whether the page around it is light or dark.
+   Static mirror-polish gradient at rest; the gloss only sweeps on
+   hover/focus, like tilting a foil card to catch the light. */
+@keyframes dex-shiny-sweep {
+  0% { background-position: -160% -160%; }
+  100% { background-position: 160% 160%; }
+}
+.dex-shiny {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #747982 0%, #9aa0a8 18%, #eef1f4 38%, #ffffff 50%, #eef1f4 62%, #9aa0a8 82%, #747982 100%);
+  border-color: #d7dbdf !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.8), inset 0 -1px 3px rgba(0,0,0,0.25);
+}
+/* scattered glitter flecks — static, no per-fleck animation */
+.dex-shiny::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle, #fff 0 1px, transparent 1.5px),
+    radial-gradient(circle, #fff 0 1px, transparent 1.5px),
+    radial-gradient(circle, #fff 0 1px, transparent 1.5px),
+    radial-gradient(circle, #fff 0 1px, transparent 1.5px),
+    radial-gradient(circle, #fff 0 1px, transparent 1.5px),
+    radial-gradient(circle, #fff 0 1px, transparent 1.5px),
+    radial-gradient(circle, #fff 0 1px, transparent 1.5px),
+    radial-gradient(circle, #fff 0 1px, transparent 1.5px),
+    radial-gradient(circle, #fff 0 0.75px, transparent 1.2px),
+    radial-gradient(circle, #fff 0 0.75px, transparent 1.2px),
+    radial-gradient(circle, #fff 0 0.75px, transparent 1.2px),
+    radial-gradient(circle, #fff 0 0.75px, transparent 1.2px),
+    radial-gradient(circle, #fff 0 0.75px, transparent 1.2px),
+    radial-gradient(circle, #fff 0 0.75px, transparent 1.2px);
+  background-repeat: no-repeat;
+  background-position:
+    12% 20%, 28% 65%, 42% 15%, 58% 78%, 71% 30%, 85% 60%, 18% 85%, 92% 22%,
+    35% 42%, 65% 8%, 8% 50%, 78% 45%, 50% 90%, 95% 78%;
+  opacity: 0.9;
+}
+.dex-shiny::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(115deg, transparent 40%, rgba(255,255,255,0.85) 49%, rgba(255,255,255,0.85) 51%, transparent 60%);
+  background-size: 240% 240%;
+  background-position: 0% 0%;
+}
+.dex-shiny:hover::after, .dex-shiny:focus-visible::after {
+  animation: dex-shiny-sweep 1s ease-in-out 1;
+}

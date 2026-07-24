@@ -12,6 +12,14 @@ import type { Card, SeenMap } from "../types";
 // so prev/next can page seamlessly through uncollected slots as well.
 type Cursor = { kind: "dex"; index: number } | { kind: "extra"; index: number };
 
+// A card is "fully completed" — and gets the shiny/chrome dex tile — once
+// its entry is filled in beyond the AI-extracted basics: radical, strokes,
+// at least one example, and notes.
+function isFullyComplete(card: Card): boolean {
+  return !!card.radical && card.strokes != null
+    && !!card.examples?.length && !!card.notes?.trim();
+}
+
 /* ————————————————— gallery: the character dex —————————————————
    Every HSK character is a slot. Uncaught characters render as faint tracing
    outlines — like the grey template glyphs in a paper copybook — and turn to
@@ -97,13 +105,14 @@ export function GalleryView({ bank, srs, onToggleStar, stack, onAddToStack, onRe
               const card = byHanzi.get(ch);
               const n = levelOffset + i + 1;
               const dexIndex = n - 1; // DEX_ORDER is 0-based; slot.n is 1-based
+              const shiny = card ? isFullyComplete(card) : false;
               return card ? (
                 <button key={ch} onClick={() => setCursor({ kind: "dex", index: dexIndex })}
-                  aria-label={`No. ${n} ${ch} — collected, view details`}
-                  className="flex flex-col items-center py-2 rounded"
-                  style={{ background: C.ink2, border: `1px solid ${C.ink3}` }}>
-                  <span className="hz text-2xl leading-tight" style={{ color: C.paper }}>{ch}</span>
-                  <span className="ui" style={{ color: C.faint, fontSize: 9 }}>
+                  aria-label={`No. ${n} ${ch} — collected${shiny ? ", fully completed" : ""}, view details`}
+                  className={`flex flex-col items-center py-2 rounded${shiny ? " dex-shiny" : ""}`}
+                  style={shiny ? undefined : { background: C.ink2, border: `1px solid ${C.ink3}` }}>
+                  <span className="hz text-2xl leading-tight" style={{ color: shiny ? "#1a1a1a" : C.paper }}>{ch}</span>
+                  <span className="ui" style={{ color: shiny ? "#3a3a3a" : C.faint, fontSize: 9 }}>
                     {String(n).padStart(4, "0")}{card.starred ? " ★" : ""}
                   </span>
                 </button>
@@ -128,15 +137,18 @@ export function GalleryView({ bank, srs, onToggleStar, stack, onAddToStack, onRe
             Collected entries beyond the HSK character dex — compound words and rarer characters.
           </p>
           <div className="grid gap-1" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(72px, 1fr))" }}>
-            {extras.map((card, i) => (
-              <button key={card.id} onClick={() => setCursor({ kind: "extra", index: i })}
-                aria-label={`${card.hanzi} — view details`}
-                className="flex flex-col items-center py-2 px-1 rounded"
-                style={{ background: C.ink2, border: `1px solid ${C.ink3}` }}>
-                <span className="hz text-xl leading-tight" style={{ color: C.paper }}>{card.hanzi}</span>
-                <span className="ui truncate w-full text-center" style={{ color: C.faint, fontSize: 9 }}>{card.pinyin}</span>
-              </button>
-            ))}
+            {extras.map((card, i) => {
+              const shiny = isFullyComplete(card);
+              return (
+                <button key={card.id} onClick={() => setCursor({ kind: "extra", index: i })}
+                  aria-label={`${card.hanzi} — view details${shiny ? " (fully completed)" : ""}`}
+                  className={`flex flex-col items-center py-2 px-1 rounded${shiny ? " dex-shiny" : ""}`}
+                  style={shiny ? undefined : { background: C.ink2, border: `1px solid ${C.ink3}` }}>
+                  <span className="hz text-xl leading-tight" style={{ color: shiny ? "#1a1a1a" : C.paper }}>{card.hanzi}</span>
+                  <span className="ui truncate w-full text-center" style={{ color: shiny ? "#3a3a3a" : C.faint, fontSize: 9 }}>{card.pinyin}</span>
+                </button>
+              );
+            })}
           </div>
         </>
       )}
