@@ -1,0 +1,10 @@
+.git
+**/node_modules
+**/dist
+apps/web/android
+apps/web/ios
+apps/web/assets
+apps/api/.pgdata
+**/.env
+**/.env.local
+*.log

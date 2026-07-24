@@ -1,0 +1,40 @@
+# Fly.io config for the Zitie API. Deploy from the repo ROOT (this file and the
+# Dockerfile live here so the monorepo build context is correct):
+#   fly launch --no-deploy   # first time — pick a unique app name & region
+#   fly deploy
+#
+# `app` is set by `fly launch`; if "zitie-api" is taken it will pick/prompt for
+# another and rewrite this line.
+app = "zitie-api"
+primary_region = "iad"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[deploy]
+  # Runs in a one-off VM before traffic shifts: apply migrations, then upsert
+  # the shared character-insight reference data. Idempotent — safe every deploy.
+  release_command = "npm run db:deploy"
+
+[env]
+  NODE_ENV = "production"
+  PORT = "8787"
+
+[http_service]
+  internal_port = 8787
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+
+  [[http_service.checks]]
+    interval = "15s"
+    timeout = "2s"
+    grace_period = "10s"
+    method = "GET"
+    path = "/health"
+
+[[vm]]
+  memory = "512mb"
+  cpu_kind = "shared"
+  cpus = 1

@@ -32,38 +32,52 @@ Stack: **Neon** (Postgres) · **Fly.io** (API) · **Vercel** (web) ·
 
 ## 2. API — Fly.io
 
-1. Install `flyctl`, `fly auth login`.
-2. From `apps/api`:
+The `Dockerfile`, `fly.toml`, and `.dockerignore` are committed at the **repo
+root** (the monorepo build context needs the root lockfile), so you run all
+`fly` commands **from the repo root**, not `apps/api`. Fly builds the image on
+its remote builders — you do **not** need Docker installed locally.
+
+1. Install `flyctl` (`iwr https://fly.io/install.ps1 -useb | iex` on Windows
+   PowerShell), then `fly auth signup` (or `fly auth login`).
+2. From the **repo root**:
    ```
-   fly launch --no-deploy   # creates fly.toml, pick a unique app name e.g. zitie-api
+   fly launch --no-deploy
    ```
+   It detects the existing `fly.toml` + `Dockerfile` and adopts them; just
+   confirm/pick a unique app name (if `zitie-api` is taken it'll offer another
+   and rewrite the `app =` line) and a region.
 3. Set secrets (never commit these):
    ```
    fly secrets set DATABASE_URL="<neon connection string>"
-   fly secrets set SESSION_SECRET="<openssl rand -hex 32>"
-   fly secrets set WEB_ORIGIN="https://<your-vercel-app>.vercel.app"
-   fly secrets set NODE_ENV=production
-   fly secrets set RESEND_API_KEY="<your resend key>"   # password reset emails
+   fly secrets set SESSION_SECRET="<a long random string — `openssl rand -hex 32`>"
+   fly secrets set ANTHROPIC_API_KEY="<your anthropic key>"   # AI card extraction
+   fly secrets set RESEND_API_KEY="<your resend key>"         # password reset emails
+   fly secrets set WEB_ORIGIN="https://<your-web-app-url>"    # optional now; see note
    ```
-   Until you verify a domain at resend.com/domains, Resend's test sender
-   (`onboarding@resend.dev`) only delivers to your own Resend account email.
-   Once the domain is verified (Phase 2), also set
-   `fly secrets set EMAIL_FROM="Zitie <noreply@yourdomain.com>"`.
-4. Add a release step so migrations run automatically on every deploy —
-   in `fly.toml`:
-   ```toml
-   [deploy]
-     release_command = "npm run db:migrate"
+   `NODE_ENV=production` and `PORT` are already set in `fly.toml` `[env]` — the
+   production cookie mode (`SameSite=None; Secure`) keys off `NODE_ENV`.
+   `WEB_ORIGIN` only matters for a **browser** web app (Vercel, §3); the
+   **mobile** app's WebView origins (`http://localhost`, `capacitor://localhost`)
+   are already allow-listed in CORS, so the app works without it. Resend note:
+   until you verify a domain, its test sender only delivers to your own Resend
+   account email (set `EMAIL_FROM` once a domain is verified in Phase 2).
+4. Deploy from the repo root:
    ```
-   (runs via `tsx`, which is a regular `dependency` — not `devDependency` —
-   of `apps/api` for exactly this reason, so it's present in the production
-   install.)
-5. Deploy: `fly deploy`. You'll get `https://zitie-api.fly.dev`.
-6. Sanity check: `curl https://zitie-api.fly.dev/health` → `{"ok":true}`.
+   fly deploy
+   ```
+   The `release_command` in `fly.toml` (`npm run db:deploy`) runs **before**
+   traffic shifts: it applies migrations and upserts the shared character-insight
+   reference data — so you don't need to migrate manually. You'll get
+   `https://zitie-api.fly.dev` (or your chosen name).
+5. Sanity check: `curl https://zitie-api.fly.dev/health` → `{"ok":true}`.
+
+Then tell me the URL and I'll rebuild the mobile app + `cap sync` pointing at it,
+so login works on the emulator/phone (HTTPS enables the secure cross-site
+session cookie).
 
 Railway is an equally good alternative if you'd rather have a dashboard:
-new project → deploy from the `apps/api` folder → same env vars → Railway
-auto-detects the Node app and gives you a `*.up.railway.app` URL.
+new project → point it at this repo → it uses the root `Dockerfile` → same env
+vars → gives you a `*.up.railway.app` URL.
 
 ## 3. Web — Vercel
 

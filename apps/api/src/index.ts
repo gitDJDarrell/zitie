@@ -15,8 +15,17 @@ import { settingsRoute } from "./routes/settings.js";
 const app = new Hono();
 
 app.use("*", secureHeaders());
+// Allowed browser/WebView origins. Includes the deployed web origin plus the
+// Capacitor native shells — Android serves the app from http(s)://localhost,
+// iOS from capacitor://localhost — so the mobile app's API calls pass CORS.
+const allowedOrigins = [
+  process.env.WEB_ORIGIN ?? "http://localhost:5173",
+  "http://localhost",
+  "https://localhost",
+  "capacitor://localhost",
+];
 app.use("*", cors({
-  origin: process.env.WEB_ORIGIN ?? "http://localhost:5173",
+  origin: (origin) => (!origin || allowedOrigins.includes(origin) ? (origin ?? allowedOrigins[0]) : undefined),
   credentials: true,
 }));
 // Bulk card imports are the largest legitimate payload; 2 MB is ~10x the
@@ -42,6 +51,8 @@ app.route("/settings", settingsRoute);
 app.route("/export", exportRoute);
 
 const port = Number(process.env.PORT) || 8787;
-serve({ fetch: app.fetch, port }, (info) => {
-  console.log(`zitie api listening on http://localhost:${info.port}`);
+// Bind all interfaces so the container's proxy (Fly) and the Android emulator
+// (10.0.2.2 → host) can reach it, not just loopback.
+serve({ fetch: app.fetch, port, hostname: "0.0.0.0" }, (info) => {
+  console.log(`zitie api listening on 0.0.0.0:${info.port}`);
 });
