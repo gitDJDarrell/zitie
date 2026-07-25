@@ -22,8 +22,15 @@ cardsRoute.get("/", async (c) => {
     db.select().from(seenState).where(eq(seenState.userId, userId)),
   ]);
 
-  const seen: Record<string, { last: number; views: number }> = {};
-  for (const r of seenRows) seen[r.cardId] = { last: r.last.getTime(), views: r.views };
+  const seen: Record<string, unknown> = {};
+  for (const r of seenRows) {
+    seen[r.cardId] = {
+      last: r.last.getTime(), views: r.views,
+      ease: r.ease, intervalDays: r.intervalDays,
+      due: r.due ? r.due.getTime() : null,
+      reps: r.reps, lapses: r.lapses,
+    };
+  }
 
   return c.json({ cards: rows, seen });
 });

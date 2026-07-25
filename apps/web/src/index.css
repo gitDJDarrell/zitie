@@ -27,6 +27,89 @@ button, a, [role="radio"], [role="button"], input, textarea, select {
   }
 }
 
+/* ————————————————— typography scale —————————————————
+   The app leaned on 9-11px uppercase text with wide tracking almost
+   everywhere, which read as "instrument panel" rather than "study app" and
+   punished small screens. These classes set the floor at 11px and reserve
+   uppercase+wide tracking for genuinely short labels (1-2 words); anything
+   longer gets sentence case at a readable size. */
+
+/* Section/eyebrow labels: short, uppercase, tracked. Never for sentences. */
+.t-label {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  line-height: 1.4;
+}
+/* Secondary metadata — sentence case, comfortably readable. */
+.t-meta {
+  font-size: 13px;
+  letter-spacing: 0.01em;
+  line-height: 1.5;
+}
+/* Explanatory prose: help text, empty states, hints. */
+.t-body {
+  font-size: 14px;
+  line-height: 1.6;
+}
+/* The smallest thing we ever render — dex slot numbers. A floor, not a default. */
+.t-micro {
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  line-height: 1.3;
+}
+/* Button text — short by definition, so tracking is fine, but not 9px. */
+.t-btn {
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  line-height: 1.4;
+}
+
+/* Disclosure widgets: hide the default triangle so our own caret is the
+   only affordance, and keep the summary row from showing a text cursor. */
+.zt-details > summary { list-style: none; }
+.zt-details > summary::-webkit-details-marker { display: none; }
+.zt-details[open] > summary > span:last-child { transform: rotate(180deg); }
+
+/* ————————————————— slider ————————————————— */
+.zt-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  height: 28px;
+  cursor: pointer;
+}
+.zt-slider::-webkit-slider-runnable-track {
+  height: 2px;
+  background: currentColor;
+  opacity: 0.25;
+  border-radius: 2px;
+}
+.zt-slider::-moz-range-track {
+  height: 2px;
+  background: currentColor;
+  opacity: 0.25;
+  border-radius: 2px;
+}
+.zt-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  margin-top: -8px;
+  border-radius: 50%;
+  background: currentColor;
+  border: 2px solid currentColor;
+}
+.zt-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  background: currentColor;
+}
+
 /* ————————————————— dex: shiny/chrome finish —————————————————
    A foil-card treatment for fully-completed dex entries (radical, strokes,
    examples, and notes all filled in). Deliberately theme-independent —

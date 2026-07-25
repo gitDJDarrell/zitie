@@ -67,7 +67,7 @@ export function GalleryView({ bank, srs, onToggleStar, stack, onAddToStack, onRe
       <div className="flex items-baseline justify-between">
         <div className="flex items-baseline gap-2">
           <span className="hz text-base" style={{ color: C.dim }}>图鉴</span>
-          <span className="ui text-xs uppercase tracking-widest" style={{ color: C.faint }}>character dex</span>
+          <span className="ui t-label" style={{ color: C.faint }}>character dex</span>
         </div>
         <div className="ui text-xs" style={{ color: C.dim }}>
           <span style={{ color: C.paper }}>{caughtTotal}</span>
@@ -112,7 +112,7 @@ export function GalleryView({ bank, srs, onToggleStar, stack, onAddToStack, onRe
                   className={`flex flex-col items-center py-2 rounded${shiny ? " dex-shiny" : ""}`}
                   style={shiny ? undefined : { background: C.ink2, border: `1px solid ${C.ink3}` }}>
                   <span className="hz text-2xl leading-tight" style={{ color: shiny ? "#1a1a1a" : C.paper }}>{ch}</span>
-                  <span className="ui" style={{ color: shiny ? "#3a3a3a" : C.faint, fontSize: 9 }}>
+                  <span className="ui t-micro" style={{ color: shiny ? "#3a3a3a" : C.faint }}>
                     {String(n).padStart(4, "0")}{card.starred ? " ★" : ""}
                   </span>
                 </button>
@@ -123,7 +123,7 @@ export function GalleryView({ bank, srs, onToggleStar, stack, onAddToStack, onRe
                   style={{ border: `1px dashed ${C.ink3}` }}>
                   <span className="hz text-2xl leading-tight" aria-hidden="true"
                     style={{ color: "transparent", WebkitTextStroke: `1px ${C.line}` }}>{ch}</span>
-                  <span className="ui" style={{ color: C.faint, fontSize: 9 }}>{String(n).padStart(4, "0")}</span>
+                  <span className="ui t-micro" style={{ color: C.faint }}>{String(n).padStart(4, "0")}</span>
                 </button>
               );
             })}
@@ -133,7 +133,7 @@ export function GalleryView({ bank, srs, onToggleStar, stack, onAddToStack, onRe
 
       {levelId === "extras" && (
         <>
-          <p className="ui text-xs leading-relaxed" style={{ color: C.faint }}>
+          <p className="ui t-body" style={{ color: C.faint }}>
             Collected entries beyond the HSK character dex — compound words and rarer characters.
           </p>
           <div className="grid gap-1" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(72px, 1fr))" }}>
@@ -145,7 +145,7 @@ export function GalleryView({ bank, srs, onToggleStar, stack, onAddToStack, onRe
                   className={`flex flex-col items-center py-2 px-1 rounded${shiny ? " dex-shiny" : ""}`}
                   style={shiny ? undefined : { background: C.ink2, border: `1px solid ${C.ink3}` }}>
                   <span className="hz text-xl leading-tight" style={{ color: shiny ? "#1a1a1a" : C.paper }}>{card.hanzi}</span>
-                  <span className="ui truncate w-full text-center" style={{ color: shiny ? "#3a3a3a" : C.faint, fontSize: 9 }}>{card.pinyin}</span>
+                  <span className="ui t-micro truncate w-full text-center" style={{ color: shiny ? "#3a3a3a" : C.faint }}>{card.pinyin}</span>
                 </button>
               );
             })}

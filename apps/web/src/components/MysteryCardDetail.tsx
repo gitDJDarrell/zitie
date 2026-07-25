@@ -17,7 +17,7 @@ export function MysteryCardDetail({ hanzi, dexNumber, levelLabel, onClose, onPre
         style={{ background: C.ink, border: `1px solid ${C.line}` }}>
 
         <div className="flex items-start justify-between">
-          <div className="ui text-xs uppercase tracking-widest" style={{ color: C.faint }}>
+          <div className="ui t-label" style={{ color: C.faint }}>
             图鉴 No. {String(dexNumber).padStart(4, "0")} · {levelLabel}
           </div>
           <button onClick={onClose} aria-label="Close"
@@ -39,12 +39,12 @@ export function MysteryCardDetail({ hanzi, dexNumber, levelLabel, onClose, onPre
         {(onPrev || onNext) && (
           <div className="flex justify-between items-center pt-3" style={{ borderTop: `1px solid ${C.ink3}` }}>
             <button onClick={onPrev} disabled={!onPrev} aria-label="Previous character"
-              className="ui px-4 py-2 text-xs uppercase tracking-widest border rounded"
+              className="ui px-4 py-2 t-btn border rounded"
               style={{ borderColor: C.line, color: onPrev ? C.dim : C.faint, opacity: onPrev ? 1 : 0.35 }}>
               {"←"} prev
             </button>
             <button onClick={onNext} disabled={!onNext} aria-label="Next character"
-              className="ui px-4 py-2 text-xs uppercase tracking-widest border rounded"
+              className="ui px-4 py-2 t-btn border rounded"
               style={{ borderColor: C.line, color: onNext ? C.dim : C.faint, opacity: onNext ? 1 : 0.35 }}>
               next {"→"}
             </button>

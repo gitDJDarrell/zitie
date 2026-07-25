@@ -98,12 +98,12 @@ export function BrowseView({
 
       {view === "stack" && stack.length > 0 && (
         <div className="flex items-center justify-between gap-2 flex-wrap">
-          <p className="ui text-xs leading-relaxed" style={{ color: C.faint }}>
+          <p className="ui t-body" style={{ color: C.faint }}>
             Preselected for a future session, in this order. Independent of ★ — starring keeps
             flagging tricky cards for review; the stack is a specific lineup you're building.
           </p>
           <button onClick={onStudyStack}
-            className="ui px-4 py-2 text-xs uppercase tracking-widest border rounded shrink-0"
+            className="ui px-4 py-2 t-btn border rounded shrink-0"
             style={{ borderColor: C.paper, color: C.paper }}>
             {"▸"} study this stack
           </button>
@@ -119,24 +119,24 @@ export function BrowseView({
             {!selectMode ? (
               <>
                 <button onClick={() => setSelectMode(true)}
-                  className="ui px-3 py-1 text-xs uppercase tracking-widest border rounded"
+                  className="ui px-3 py-1 t-label border rounded"
                   style={{ borderColor: C.line, color: C.dim }}>Select</button>
                 {view === "all" ? (
                   <>
                     <button onClick={resetSeen} onBlur={() => setConfirmReset(false)} disabled={!seenCount}
-                      className="ui px-3 py-1 text-xs uppercase tracking-widest border rounded"
+                      className="ui px-3 py-1 t-label border rounded"
                       style={{ borderColor: confirmReset ? C.cinnabar : C.line, color: confirmReset ? C.cinnabar : C.dim, opacity: seenCount ? 1 : 0.5 }}>
                       {confirmReset ? "Tap again to reset" : "Reset seen"}
                     </button>
                     <button onClick={clearAll} onBlur={() => setConfirmClear(false)}
-                      className="ui px-3 py-1 text-xs uppercase tracking-widest border rounded"
+                      className="ui px-3 py-1 t-label border rounded"
                       style={{ borderColor: confirmClear ? C.cinnabar : C.line, color: confirmClear ? C.cinnabar : C.dim }}>
                       {confirmClear ? "Tap again to clear all" : "Clear all"}
                     </button>
                   </>
                 ) : (
                   <button onClick={clearStack} onBlur={() => setConfirmClearStack(false)}
-                    className="ui px-3 py-1 text-xs uppercase tracking-widest border rounded"
+                    className="ui px-3 py-1 t-label border rounded"
                     style={{ borderColor: confirmClearStack ? C.cinnabar : C.line, color: confirmClearStack ? C.cinnabar : C.dim }}>
                     {confirmClearStack ? "Tap again to empty stack" : "Empty stack"}
                   </button>
@@ -145,35 +145,35 @@ export function BrowseView({
             ) : (
               <>
                 <button onClick={selectAllFiltered}
-                  className="ui px-3 py-1 text-xs uppercase tracking-widest border rounded"
+                  className="ui px-3 py-1 t-label border rounded"
                   style={{ borderColor: C.line, color: C.dim }}>All shown</button>
                 {view === "all" ? (
                   <>
                     <button onClick={addSelectedToStack} disabled={!selected.size}
-                      className="ui px-3 py-1 text-xs uppercase tracking-widest border rounded"
+                      className="ui px-3 py-1 t-label border rounded"
                       style={{ borderColor: C.line, color: selected.size ? C.dim : C.faint, opacity: selected.size ? 1 : 0.5 }}>
                       {"▤"} Add to stack ({selected.size})
                     </button>
                     <button onClick={resetSelected} disabled={!selected.size}
-                      className="ui px-3 py-1 text-xs uppercase tracking-widest border rounded"
+                      className="ui px-3 py-1 t-label border rounded"
                       style={{ borderColor: C.line, color: selected.size ? C.dim : C.faint, opacity: selected.size ? 1 : 0.5 }}>
                       Reset ({selected.size})
                     </button>
                     <button onClick={deleteSelected} disabled={!selected.size}
-                      className="ui px-3 py-1 text-xs uppercase tracking-widest border rounded"
+                      className="ui px-3 py-1 t-label border rounded"
                       style={{ borderColor: selected.size ? C.cinnabar : C.line, color: selected.size ? C.cinnabar : C.faint, opacity: selected.size ? 1 : 0.5 }}>
                       Delete ({selected.size})
                     </button>
                   </>
                 ) : (
                   <button onClick={removeSelectedFromStack} disabled={!selected.size}
-                    className="ui px-3 py-1 text-xs uppercase tracking-widest border rounded"
+                    className="ui px-3 py-1 t-label border rounded"
                     style={{ borderColor: selected.size ? C.cinnabar : C.line, color: selected.size ? C.cinnabar : C.faint, opacity: selected.size ? 1 : 0.5 }}>
                     Remove from stack ({selected.size})
                   </button>
                 )}
                 <button onClick={exitSelect}
-                  className="ui px-3 py-1 text-xs uppercase tracking-widest border rounded"
+                  className="ui px-3 py-1 t-label border rounded"
                   style={{ borderColor: C.line, color: C.dim }}>Cancel</button>
               </>
             )}

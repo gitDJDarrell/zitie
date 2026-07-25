@@ -7,6 +7,9 @@ export interface CachedBank {
   srs: SeenMap;
   theme: Theme;
   stack: string[];
+  // Absent in caches written before these settings existed — callers default.
+  autoSpeak?: boolean;
+  difficulty?: number;
 }
 
 export function readCache(): CachedBank | null {

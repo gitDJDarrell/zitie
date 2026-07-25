@@ -1,9 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Chip, Empty, StarBtn, StarToggle, Switch } from "../components/atoms";
+import { Chip, Collapsible, Empty, MultiSelect, Slider, SpeakBtn, StarBtn, StarToggle, Switch } from "../components/atoms";
+import { availableLevels, buildSession, DIFFICULTY_STEPS, filterByLevels, sessionSize, stepFor } from "../lib/difficulty";
 import { applyFilters, type Filters } from "../lib/filters";
 import { POS_HANZI } from "../lib/posLabels";
+import { canSpeak, speak } from "../lib/speech";
+import { countDue, formatInterval, previewIntervalDays } from "../lib/srs";
 import { C } from "../theme";
-import type { Card, SeenMap } from "../types";
+import type { Card, Grade, SeenMap } from "../types";
 
 interface StackSession { ids: string[]; nonce: number }
 
@@ -13,12 +16,23 @@ const AGE_OPTIONS: { value: Filters["age"]; label: string }[] = [
   { value: "old", label: "seen" },
 ];
 
+// Order matters: this is the left-to-right button row, hardest recall first.
+const GRADES: { grade: Grade; label: string; zh: string }[] = [
+  { grade: "again", label: "Again", zh: "忘" },
+  { grade: "hard", label: "Hard", zh: "难" },
+  { grade: "good", label: "Good", zh: "好" },
+  { grade: "easy", label: "Easy", zh: "易" },
+];
+
 /* ————————————— study session: read (tap-to-flip) + write (reverse, typed) ————————————— */
-export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onToggleStar, stackSession, onExitStackSession, stack, onStudyStack }: {
+export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onGrade, onToggleStar, stackSession, onExitStackSession, stack, onStudyStack, difficulty, onSetDifficulty, autoSpeak, onToggleAutoSpeak }: {
   bank: Card[]; srs: SeenMap; filters: Filters; setFilters: React.Dispatch<React.SetStateAction<Filters>>;
-  posList: string[]; onSeen: (id: string) => void; onToggleStar: (id: string) => void;
+  posList: string[]; onSeen: (id: string) => void; onGrade: (id: string, grade: Grade) => void;
+  onToggleStar: (id: string) => void;
   stackSession?: StackSession | null; onExitStackSession?: () => void;
   stack: string[]; onStudyStack: () => void;
+  difficulty: number; onSetDifficulty: (d: number) => void;
+  autoSpeak: boolean; onToggleAutoSpeak: () => void;
 }) {
   const [queue, setQueue] = useState<string[] | null>(null);
   const [idx, setIdx] = useState(0);
@@ -28,6 +42,8 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onT
   const [verdict, setVerdict] = useState<null | "ok" | "no">(null);
   const [score, setScore] = useState({ ok: 0, no: 0 });
   const [initialLen, setInitialLen] = useState(0);
+  const [levels, setLevels] = useState<string[]>([]); // empty = every level
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const touchRef = useRef<{ x: number; y: number } | null>(null);
   const swipedRef = useRef(false);
 
@@ -38,15 +54,35 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onT
       const byId = new Map(bank.map(c => [c.id, c]));
       return stackSession.ids.map(id => byId.get(id)).filter((c): c is Card => !!c);
     }
-    return applyFilters(bank, srs, filters);
-  }, [bank, srs, filters, stackSession]);
+    return filterByLevels(applyFilters(bank, srs, filters), levels);
+  }, [bank, srs, filters, levels, stackSession]);
+
+  const levelOptions = useMemo(() => availableLevels(bank), [bank]);
+
+  // What the collapsed filter header advertises, so folding it away never
+  // hides an active constraint.
+  const filterSummary = useMemo(() => {
+    const parts: string[] = [];
+    if (filters.starred) parts.push("★ starred");
+    if (filters.age !== "all") parts.push(filters.age === "new" ? "unseen" : "seen");
+    if (filters.pos.length) parts.push(filters.pos.join(", "));
+    return parts.length ? parts.join(" · ") : "none";
+  }, [filters]);
   const card = queue && queue[idx] ? bank.find(c => c.id === queue[idx]) : null;
   const unseenCount = pool.filter(c => !srs[c.id]).length;
+  const dueCount = useMemo(() => countDue(pool, srs), [pool, srs]);
+
+  // A stack session is an explicit lineup — the difficulty slider doesn't get
+  // to trim it. Everything else is drawn to the current difficulty step.
+  const sessionCards = useMemo(
+    () => stackSession ? pool : buildSession(pool, srs, difficulty),
+    [pool, srs, difficulty, stackSession],
+  );
 
   const [wasShuffled, setWasShuffled] = useState(false);
 
   function begin(shuffle: boolean) {
-    let q = pool.map(c => c.id);
+    let q = sessionCards.map(c => c.id);
     if (shuffle) q = [...q].sort(() => Math.random() - 0.5);
     setQueue(q); setIdx(0); setFlipped(false); setWasShuffled(shuffle);
     setInput(""); setVerdict(null); setScore({ ok: 0, no: 0 }); setInitialLen(q.length);
@@ -74,8 +110,21 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onT
 
   function flip() {
     if (swipedRef.current) { swipedRef.current = false; return; } // suppress the click that follows a swipe
-    if (!flipped && card) onSeen(card.id);
+    if (!flipped && card) {
+      onSeen(card.id);
+      if (autoSpeak) speak(card.hanzi); // the tap itself is the gesture browsers require
+    }
     setFlipped(f => !f);
+  }
+
+  // Rate the card, then advance. "Again" re-queues it at the end of the deck
+  // so it genuinely comes back this session, matching the 10-minute relearn
+  // step the server schedules.
+  function grade(g: Grade) {
+    if (!card) return;
+    onGrade(card.id, g);
+    if (g === "again") setQueue(q => [...(q as string[]), card.id]);
+    next();
   }
 
   function onTouchStart(e: React.TouchEvent) {
@@ -101,7 +150,10 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onT
     setVerdict(ok ? "ok" : "no");
     setScore(s => ok ? { ...s, ok: s.ok + 1 } : { ...s, no: s.no + 1 });
     if (!ok) setQueue(q => [...(q as string[]), card.id]); // shuffle miss to end of deck
-    onSeen(card.id);
+    // Typing the character correctly is a stronger signal than tapping "good"
+    // in read mode, but it maps to the same scheduler grades.
+    onGrade(card.id, ok ? "good" : "again");
+    if (autoSpeak) speak(card.hanzi);
   }
 
   function next() { setIdx(i => i + 1); setFlipped(false); setInput(""); setVerdict(null); }
@@ -111,6 +163,9 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onT
     <Empty zh="库空" text="No characters yet. Open Import and paste your vocabulary to begin." />
   );
 
+  const step = stepFor(difficulty);
+  const plannedCount = stackSession ? pool.length : sessionSize(pool, difficulty);
+
   /* ——— session start ——— */
   if (!queue) return (
     <div className="flex flex-col items-center gap-6 pt-10">
@@ -118,7 +173,7 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onT
         <div className="flex flex-col items-center gap-2">
           <div className="flex items-baseline gap-2">
             <span className="hz text-base" style={{ color: C.dim }}>{"▤"}</span>
-            <span className="ui text-xs uppercase tracking-widest" style={{ color: C.faint }}>your stack</span>
+            <span className="ui t-label" style={{ color: C.faint }}>your stack</span>
           </div>
           {onExitStackSession && (
             <button onClick={onExitStackSession} className="ui text-xs" style={{ color: C.faint }}>
@@ -130,63 +185,103 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onT
         <div className="flex flex-col items-center gap-4 w-full max-w-sm">
           <div className="flex items-baseline gap-2">
             <span className="hz text-base" style={{ color: C.dim }}>课</span>
-            <span className="ui text-xs uppercase tracking-widest" style={{ color: C.faint }}>lesson</span>
+            <span className="ui t-label" style={{ color: C.faint }}>lesson</span>
           </div>
-          <div className="flex flex-wrap gap-3 justify-center items-center">
-            <StarToggle active={filters.starred} label={filters.starred ? "Showing starred only — tap to show all" : "Show starred only"}
-              onClick={() => setFilters(f => ({ ...f, starred: !f.starred }))} />
-            <Switch value={filters.age} options={AGE_OPTIONS}
-              onChange={age => setFilters(f => ({ ...f, age }))} />
+          {/* Which material — an explicit level choice, independent of how
+              hard the session is. Defaults to everything in the bank. */}
+          <MultiSelect label="levels" allLabel="All levels"
+            options={levelOptions} selected={levels} onChange={setLevels} />
+
+          {/* How hard — session length and how much of it is cards you're
+              shaky on versus comfortable revision. */}
+          <div className="w-full flex flex-col gap-1" style={{ color: C.paper }}>
+            <div className="flex items-baseline justify-between gap-2">
+              <span className="ui t-label" style={{ color: C.faint }}>difficulty</span>
+              <span className="ui t-meta text-right" style={{ color: C.dim }}>
+                <span className="hz" style={{ color: C.paper }}>{step.zh}</span>{" "}
+                <span style={{ color: C.paper }}>{step.label}</span>
+                {" — "}{plannedCount} card{plannedCount === 1 ? "" : "s"}
+              </span>
+            </div>
+            <Slider value={difficulty} max={DIFFICULTY_STEPS.length - 1}
+              onChange={onSetDifficulty} label="Session difficulty"
+              ticks={DIFFICULTY_STEPS.map(s => s.zh)} />
           </div>
-          <div className="flex flex-wrap gap-2 justify-center">
-            <button onClick={() => setFilters(f => ({ ...f, pos: [] }))} disabled={!filters.pos.length}
-              className="ui px-3 py-1 text-xs tracking-wide rounded-full border"
-              style={{ borderColor: C.line, color: filters.pos.length ? C.dim : C.faint, opacity: filters.pos.length ? 1 : 0.5 }}>
-              Clear
-            </button>
-            {posList.map(p => (
-              <Chip key={p} active={filters.pos.includes(p)}
-                onClick={() => setFilters(f => ({ ...f, pos: f.pos.includes(p) ? f.pos.filter(x => x !== p) : [...f.pos, p] }))}>
-                {POS_HANZI[p] && <span className="hz">{POS_HANZI[p]} </span>}{p}
-              </Chip>
-            ))}
-          </div>
-          <div className="w-full h-px" style={{ background: C.ink3 }} />
+
+          {/* Everything else stays folded away — the study screen should lead
+              with "start", not with a wall of chips. */}
+          <Collapsible label="filters" open={filtersOpen} onToggle={() => setFiltersOpen(o => !o)}
+            summary={filterSummary}>
+            <div className="w-full flex flex-col items-center gap-3">
+              <div className="flex flex-wrap gap-3 justify-center items-center">
+                <StarToggle active={filters.starred} label={filters.starred ? "Showing starred only — tap to show all" : "Show starred only"}
+                  onClick={() => setFilters(f => ({ ...f, starred: !f.starred }))} />
+                <Switch value={filters.age} options={AGE_OPTIONS}
+                  onChange={age => setFilters(f => ({ ...f, age }))} />
+              </div>
+              <div className="flex flex-wrap gap-2 justify-center">
+                <button onClick={() => setFilters(f => ({ ...f, pos: [] }))} disabled={!filters.pos.length}
+                  className="ui px-3 py-1 text-xs tracking-wide rounded-full border"
+                  style={{ borderColor: C.line, color: filters.pos.length ? C.dim : C.faint, opacity: filters.pos.length ? 1 : 0.5 }}>
+                  Clear
+                </button>
+                {posList.map(p => (
+                  <Chip key={p} active={filters.pos.includes(p)}
+                    onClick={() => setFilters(f => ({ ...f, pos: f.pos.includes(p) ? f.pos.filter(x => x !== p) : [...f.pos, p] }))}>
+                    {POS_HANZI[p] && <span className="hz">{POS_HANZI[p]} </span>}{p}
+                  </Chip>
+                ))}
+              </div>
+            </div>
+          </Collapsible>
+
           <button onClick={onStudyStack} disabled={!stack.length}
-            className="ui px-3 py-1 text-xs uppercase tracking-widest border rounded-full"
+            className="ui t-btn px-3 py-1 border rounded-full"
             style={{ borderColor: C.line, color: stack.length ? C.dim : C.faint, opacity: stack.length ? 1 : 0.5 }}>
             {"▤"} study stack{stack.length ? ` (${stack.length})` : ""}
           </button>
         </div>
       )}
-      <div className="ui text-sm" style={{ color: C.dim }}>
-        <span style={{ color: C.paper }}>{pool.length}</span> cards
-        {unseenCount > 0 && <> · <span style={{ color: C.paper }}>{unseenCount}</span> unseen</>}
-        <span style={{ color: C.faint }}> ({stackSession ? "in stack" : "this lesson"})</span>
+      <div className="ui t-meta text-center" style={{ color: C.dim }}>
+        <div>
+          <span style={{ color: C.paper }}>{plannedCount}</span> in this session
+          <span style={{ color: C.faint }}> · drawn from {pool.length} {stackSession ? "stacked" : "matching"}</span>
+        </div>
+        <div style={{ color: C.faint }}>
+          {dueCount > 0 && <><span style={{ color: C.paper }}>{dueCount}</span> due for review</>}
+          {dueCount > 0 && unseenCount > 0 && " · "}
+          {unseenCount > 0 && <><span style={{ color: C.paper }}>{unseenCount}</span> never studied</>}
+          {dueCount === 0 && unseenCount === 0 && "nothing due — you're ahead"}
+        </div>
       </div>
-      <div className="flex gap-2">
+      <div className="flex gap-2 flex-wrap justify-center items-center">
         <Chip active={mode === "read"} onClick={() => setMode("read")}>认 read — flip cards</Chip>
         <Chip active={mode === "write"} onClick={() => setMode("write")}>写 write — type hanzi</Chip>
+        {canSpeak() && (
+          <Chip active={autoSpeak} onClick={onToggleAutoSpeak}>
+            {autoSpeak ? "🔊" : "🔇"} say it aloud
+          </Chip>
+        )}
       </div>
       <div className="flex gap-3">
-        <button onClick={() => begin(false)} disabled={!pool.length}
-          className="ui px-6 py-3 text-xs tracking-widest uppercase border rounded"
-          style={{ borderColor: C.paper, color: C.paper, opacity: pool.length ? 1 : 0.35 }}>
+        <button onClick={() => begin(false)} disabled={!plannedCount}
+          className="ui t-btn px-6 py-3 border rounded"
+          style={{ borderColor: C.paper, color: C.paper, opacity: plannedCount ? 1 : 0.35 }}>
           In order
         </button>
-        <button onClick={() => begin(true)} disabled={!pool.length}
-          className="ui px-6 py-3 text-xs tracking-widest uppercase border rounded"
-          style={{ borderColor: C.paper, color: C.paper, opacity: pool.length ? 1 : 0.35 }}>
+        <button onClick={() => begin(true)} disabled={!plannedCount}
+          className="ui t-btn px-6 py-3 border rounded"
+          style={{ borderColor: C.paper, color: C.paper, opacity: plannedCount ? 1 : 0.35 }}>
           Shuffle
         </button>
       </div>
       {mode === "write" && (
-        <p className="ui text-xs text-center max-w-xs leading-relaxed" style={{ color: C.faint }}>
+        <p className="ui t-body text-center max-w-xs" style={{ color: C.faint }}>
           Write mode needs a Chinese keyboard (pinyin IME) enabled on your device.
         </p>
       )}
-      {!pool.length && (
-        <p className="ui text-xs" style={{ color: C.faint }}>
+      {!plannedCount && (
+        <p className="ui t-body" style={{ color: C.faint }}>
           {stackSession ? "Your stack is empty." : "Nothing matches the current filters."}
         </p>
       )}
@@ -205,9 +300,9 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onT
             : <>Deck complete — {queue.length} card{queue.length === 1 ? "" : "s"} reviewed.</>}
         </p>
         <div className="flex gap-3">
-          <button onClick={() => begin(true)} className="ui px-6 py-2 text-xs uppercase tracking-widest border rounded"
+          <button onClick={() => begin(true)} className="ui px-6 py-2 t-btn border rounded"
             style={{ borderColor: C.paper, color: C.paper }}>Again (shuffled)</button>
-          <button onClick={() => setQueue(null)} className="ui px-6 py-2 text-xs uppercase tracking-widest border rounded"
+          <button onClick={() => setQueue(null)} className="ui px-6 py-2 t-btn border rounded"
             style={{ borderColor: C.line, color: C.dim }}>Back</button>
         </div>
       </div>
@@ -224,7 +319,7 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onT
 
   const header = (
     <div className="w-full max-w-sm flex flex-col gap-2">
-      <div className="flex justify-between ui text-xs tracking-widest uppercase">
+      <div className="flex justify-between ui t-label">
         <button onClick={quit} className="px-1 py-1" style={{ color: C.faint }}>
           {"✕"} end session
         </button>
@@ -280,7 +375,7 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onT
               style={{ borderColor: C.line, color: C.paper }}
             />
             <button onClick={check} disabled={!input.trim()}
-              className="ui px-8 py-2 text-xs uppercase tracking-widest border rounded"
+              className="ui px-8 py-2 t-btn border rounded"
               style={{ borderColor: C.paper, color: C.paper, opacity: input.trim() ? 1 : 0.35 }}>
               Check
             </button>
@@ -298,10 +393,13 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onT
             )}
             <div className="flex flex-col items-center gap-2">
               <div className="hz font-black" style={{ color: C.paper, fontSize: 64, lineHeight: 1.1 }}>{card.hanzi}</div>
-              <div className="mono text-lg" style={{ color: C.paper }}>{card.pinyin}</div>
+              <div className="flex items-center gap-1">
+                <div className="mono text-lg" style={{ color: C.paper }}>{card.pinyin}</div>
+                <SpeakBtn text={card.hanzi} />
+              </div>
               <div className="ui text-sm text-center" style={{ color: C.dim }}>{card.meaning}</div>
             </div>
-            <button onClick={next} className="ui px-8 py-2 text-xs uppercase tracking-widest border rounded"
+            <button onClick={next} className="ui px-8 py-2 t-btn border rounded"
               style={{ borderColor: C.paper, color: C.paper }}>Next →</button>
           </>
         )}
@@ -331,9 +429,12 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onT
         ) : (
           <div className="flex flex-col items-center gap-3 w-full">
             <div className="hz font-semibold" style={{ color: C.dim, fontSize: 40, lineHeight: 1.1 }}>{card.hanzi}</div>
-            <div className="mono text-2xl" style={{ color: C.paper }}>{card.pinyin}</div>
+            <div className="flex items-center gap-1">
+              <div className="mono text-2xl" style={{ color: C.paper }}>{card.pinyin}</div>
+              <SpeakBtn text={card.hanzi} size="lg" />
+            </div>
             <div className="ui text-base text-center leading-relaxed" style={{ color: C.paper }}>{card.meaning}</div>
-            <div className="ui text-xs" style={{ color: C.faint }}>
+            <div className="ui t-meta text-center" style={{ color: C.faint }}>
               {card.pos.join(" · ")}{card.compound ? " · compound" : ""}
               {(card.radical || card.strokes) && (
                 <> — {card.radical ? `radical ${card.radical}` : ""}{card.radical && card.strokes ? " · " : ""}{card.strokes ? `${card.strokes} strokes` : ""}</>
@@ -358,20 +459,49 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onT
       </button>
       </div>
 
-      <div className="ui text-xs" style={{ color: C.faint }}>tap to flip {"·"} swipe left/right for next/back</div>
-
-      <div className="flex gap-3">
-        <button onClick={prev} disabled={idx === 0}
-          className="ui px-6 py-2 text-xs uppercase tracking-widest border rounded"
-          style={{ borderColor: C.line, color: C.dim, opacity: idx === 0 ? 0.35 : 1 }}>
-          ← Back
-        </button>
-        <button onClick={next}
-          className="ui px-8 py-2 text-xs uppercase tracking-widest border rounded"
-          style={{ borderColor: C.paper, color: C.paper }}>
-          Next →
-        </button>
-      </div>
+      {!flipped ? (
+        <>
+          <div className="ui t-meta" style={{ color: C.faint }}>tap to flip {"·"} swipe left/right for next/back</div>
+          <div className="flex gap-3">
+            <button onClick={prev} disabled={idx === 0}
+              className="ui t-btn px-6 py-2 border rounded"
+              style={{ borderColor: C.line, color: C.dim, opacity: idx === 0 ? 0.35 : 1 }}>
+              ← Back
+            </button>
+            <button onClick={flip}
+              className="ui t-btn px-8 py-2 border rounded"
+              style={{ borderColor: C.paper, color: C.paper }}>
+              Reveal
+            </button>
+          </div>
+        </>
+      ) : (
+        /* Self-rating is what turns this from a page-turner into a scheduler:
+           each grade sets when the character comes back. Intervals are
+           previewed on the buttons so the choice is informed. */
+        <div className="w-full max-w-sm flex flex-col gap-2">
+          <div className="ui t-meta text-center" style={{ color: C.faint }}>
+            How well did you recall it?
+          </div>
+          <div className="grid grid-cols-4 gap-2">
+            {GRADES.map(({ grade: g, label, zh }) => (
+              <button key={g} onClick={() => grade(g)}
+                aria-label={`${label} — next review in ${formatInterval(previewIntervalDays(srs[card.id], g))}`}
+                className="flex flex-col items-center gap-1 py-2 rounded border"
+                style={{
+                  borderColor: g === "good" ? C.paper : C.line,
+                  color: g === "good" ? C.paper : C.dim,
+                }}>
+                <span className="hz text-base leading-none">{zh}</span>
+                <span className="ui t-micro">{label}</span>
+                <span className="ui t-micro" style={{ color: C.faint }}>
+                  {formatInterval(previewIntervalDays(srs[card.id], g))}
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

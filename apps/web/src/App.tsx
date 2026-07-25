@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ApiError } from "./api/client";
 import { type Filters } from "./lib/filters";
+import { initSpeech } from "./lib/speech";
 import { ApiStorage } from "./storage/apiStorage";
 import { applyTheme, C, FONT_CSS } from "./theme";
-import type { Card, SeenMap, SyncState, Theme } from "./types";
+import type { Card, Grade, SeenMap, SyncState, Theme } from "./types";
 import { BrowseView } from "./views/BrowseView";
 import { GalleryView } from "./views/GalleryView";
 import { ImportView } from "./views/ImportView";
@@ -20,6 +21,8 @@ export default function App({ onLogout, userEmail }: { onLogout: () => void; use
   const [syncState, setSyncState] = useState<SyncState>("syncing");
   const [theme, setTheme] = useState<Theme>("light");
   const [stack, setStack] = useState<string[]>([]);
+  const [autoSpeak, setAutoSpeak] = useState(true);
+  const [difficulty, setDifficulty] = useState(2);
   // A "study this stack" request from Browse. nonce changes on every request so
   // StudyView can auto-begin exactly once per click, even if the ids are unchanged.
   const [stackSession, setStackSession] = useState<{ ids: string[]; nonce: number } | null>(null);
@@ -29,11 +32,12 @@ export default function App({ onLogout, userEmail }: { onLogout: () => void; use
   const storage = storageRef.current;
 
   useEffect(() => {
+    initSpeech(); // voice lists load async — warm it before the first reveal
     (async () => {
       try {
-        const { bank: b, srs: s, theme: t, stack: st } = await storage.load();
+        const { bank: b, srs: s, theme: t, stack: st, autoSpeak: as, difficulty: d } = await storage.load();
         applyTheme(t); setTheme(t);
-        setBank(b); setSrs(s); setStack(st); setLoaded(true);
+        setBank(b); setSrs(s); setStack(st); setAutoSpeak(as); setDifficulty(d); setLoaded(true);
       } catch (err) {
         if (err instanceof ApiError) onLogout(); // session expired server-side
       }
@@ -43,8 +47,8 @@ export default function App({ onLogout, userEmail }: { onLogout: () => void; use
 
   // Keep the offline cache warm on every change, regardless of which action caused it.
   useEffect(() => {
-    if (loaded) storage.cacheSnapshot(bank, srs, theme, stack);
-  }, [bank, srs, theme, stack, loaded, storage]);
+    if (loaded) storage.cacheSnapshot(bank, srs, theme, stack, autoSpeak, difficulty);
+  }, [bank, srs, theme, stack, autoSpeak, difficulty, loaded, storage]);
 
   function toggleTheme() {
     const t: Theme = theme === "light" ? "dark" : "light";
@@ -61,10 +65,33 @@ export default function App({ onLogout, userEmail }: { onLogout: () => void; use
 
   const onSeen = (id: string) => {
     const prev = srs[id] || { views: 0, last: 0 };
-    setSrs({ ...srs, [id]: { last: Date.now(), views: (prev.views || 0) + 1 } }); // optimistic
+    // Optimistic view bump — preserve any existing scheduling state, since a
+    // raw view never reschedules (only grading does).
+    setSrs({ ...srs, [id]: { ...prev, last: Date.now(), views: (prev.views || 0) + 1 } });
     storage.markSeen(id).then(rec => {
       if (rec) setSrs(s => ({ ...s, [id]: rec })); // reconcile with server truth
     }).catch(() => {});
+  };
+
+  // Self-rating drives the scheduler. The server owns the real interval maths,
+  // so this only bumps the view count locally and then takes the server's word.
+  const onGrade = (id: string, grade: Grade) => {
+    const prev = srs[id] || { views: 0, last: 0 };
+    setSrs(s => ({ ...s, [id]: { ...prev, last: Date.now(), views: (prev.views || 0) + 1 } }));
+    storage.gradeCard(id, grade).then(rec => {
+      if (rec) setSrs(s => ({ ...s, [id]: rec }));
+    }).catch(() => {});
+  };
+
+  const onToggleAutoSpeak = () => {
+    const next = !autoSpeak;
+    setAutoSpeak(next);
+    storage.setAutoSpeak(next).catch(() => {});
+  };
+
+  const onSetDifficulty = (d: number) => {
+    setDifficulty(d);
+    storage.setDifficulty(d).catch(() => {});
   };
 
   const onImport = async (items: unknown[]) => {
@@ -171,7 +198,7 @@ export default function App({ onLogout, userEmail }: { onLogout: () => void; use
         <header className="flex items-end justify-between mb-6">
           <div>
             <div className="hz text-2xl font-black tracking-wide" style={{ color: C.paper }}>字帖</div>
-            <div className="ui text-xs uppercase tracking-widest mt-1" style={{ color: C.faint }}>character study</div>
+            <div className="ui t-label mt-1" style={{ color: C.faint }}>character study</div>
           </div>
           <div className="flex flex-col items-end gap-1">
             {userEmail && (
@@ -184,10 +211,10 @@ export default function App({ onLogout, userEmail }: { onLogout: () => void; use
                 className="px-2 py-1 rounded border flex items-center gap-1"
                 style={{ borderColor: C.line, color: C.dim }}>
                 <span className="hz text-sm leading-none">{theme === "light" ? "暗" : "明"}</span>
-                <span className="ui text-xs uppercase tracking-widest">{theme === "light" ? "dark" : "light"}</span>
+                <span className="ui t-label">{theme === "light" ? "dark" : "light"}</span>
               </button>
               <button onClick={onLogout}
-                className="px-2 py-1 rounded border ui text-xs uppercase tracking-widest"
+                className="px-2 py-1 rounded border ui t-label"
                 style={{ borderColor: C.line, color: C.dim }}>
                 Log out
               </button>
@@ -203,7 +230,7 @@ export default function App({ onLogout, userEmail }: { onLogout: () => void; use
           <div className="ui text-xs pt-10 text-center" style={{ color: C.faint }}>loading…</div>
         ) : (
           <>
-            {tab === "study" && <StudyView bank={bank} srs={srs} filters={filters} setFilters={setFilters} posList={posList} onSeen={onSeen} onToggleStar={onToggleStar} stackSession={stackSession} onExitStackSession={() => setStackSession(null)} stack={stack} onStudyStack={onStudyStack} />}
+            {tab === "study" && <StudyView bank={bank} srs={srs} filters={filters} setFilters={setFilters} posList={posList} onSeen={onSeen} onGrade={onGrade} onToggleStar={onToggleStar} stackSession={stackSession} onExitStackSession={() => setStackSession(null)} stack={stack} onStudyStack={onStudyStack} difficulty={difficulty} onSetDifficulty={onSetDifficulty} autoSpeak={autoSpeak} onToggleAutoSpeak={onToggleAutoSpeak} />}
             {tab === "gallery" && <GalleryView bank={bank} srs={srs} onToggleStar={onToggleStar} stack={stack} onAddToStack={onAddToStack} onRemoveFromStack={onRemoveFromStack} />}
             {tab === "browse" && <BrowseView bank={bank} srs={srs} filters={filters} setFilters={setFilters} posList={posList} onDelete={onDelete} onDeleteMany={onDeleteMany} onClearAll={onClearAll} onResetSeen={onResetSeen} onToggleStar={onToggleStar} stack={stack} onAddToStack={onAddToStack} onRemoveFromStack={onRemoveFromStack} onClearStack={onClearStack} onStudyStack={onStudyStack} />}
             {tab === "import" && <ImportView bank={bank} onImport={onImport} />}
@@ -222,7 +249,7 @@ export default function App({ onLogout, userEmail }: { onLogout: () => void; use
               className="flex-1 py-3 flex flex-col items-center gap-1"
               style={{ color: tab === t.id ? C.paper : C.faint }}>
               <span className="hz text-lg leading-none">{t.zh}</span>
-              <span className="ui text-xs uppercase tracking-widest">{t.en}</span>
+              <span className="ui t-label">{t.en}</span>
             </button>
           ))}
         </div>

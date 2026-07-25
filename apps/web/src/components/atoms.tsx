@@ -1,3 +1,4 @@
+import { canSpeak, speak } from "../lib/speech";
 import { C } from "../theme";
 
 /* ————————————————— small UI atoms ————————————————— */
@@ -63,11 +64,126 @@ export function Switch<T extends string>({ value, options, onChange }: {
   );
 }
 
+// Pronounce-aloud button. Renders nothing when the device has no Mandarin
+// voice, so it never sits there as a dead control.
+export function SpeakBtn({ text, size = "base", className, style }: {
+  text: string; size?: "base" | "lg"; className?: string; style?: React.CSSProperties;
+}) {
+  if (!canSpeak()) return null;
+  return (
+    <button
+      onClick={e => { e.stopPropagation(); speak(text); }}
+      aria-label={`Play pronunciation of ${text}`}
+      className={`px-2 py-1 leading-none ${size === "lg" ? "text-2xl" : "text-base"} ${className ?? ""}`}
+      style={{ color: C.faint, ...style }}>
+      {"🔊"}
+    </button>
+  );
+}
+
+// Monochrome range slider with discrete stops. Native <input type=range> for
+// the pointer/keyboard/a11y behaviour, restyled to match the app.
+export function Slider({ value, max, onChange, label, ticks }: {
+  value: number; max: number; onChange: (v: number) => void; label: string; ticks?: string[];
+}) {
+  return (
+    <div className="w-full flex flex-col gap-1">
+      <input
+        type="range" min={0} max={max} step={1} value={value}
+        onChange={e => onChange(Number(e.target.value))}
+        aria-label={label}
+        className="zt-slider w-full"
+      />
+      {ticks && (
+        <div className="flex justify-between px-0.5" aria-hidden="true">
+          {ticks.map((t, i) => (
+            <span key={i} className="ui" style={{ fontSize: 11, color: i === value ? C.paper : C.faint }}>{t}</span>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Collapsible section. Collapsed by default so the study screen leads with
+// "start a session" rather than a wall of filter chips.
+export function Collapsible({ label, summary, open, onToggle, children }: {
+  label: string; summary?: string; open: boolean; onToggle: () => void; children: React.ReactNode;
+}) {
+  return (
+    <div className="w-full flex flex-col gap-3">
+      <button onClick={onToggle} aria-expanded={open}
+        className="w-full flex items-center justify-between gap-2 py-1"
+        style={{ color: C.dim }}>
+        <span className="flex items-baseline gap-2 min-w-0">
+          <span className="ui t-label" style={{ color: C.faint }}>{label}</span>
+          {summary && <span className="ui t-meta truncate" style={{ color: C.dim }}>{summary}</span>}
+        </span>
+        <span aria-hidden="true" className="ui shrink-0" style={{ color: C.faint, fontSize: 11 }}>
+          {open ? "▲" : "▼"}
+        </span>
+      </button>
+      {open && children}
+    </div>
+  );
+}
+
+// Multi-select dropdown built on a native <details> disclosure — keeps the
+// panel inline (no portal/z-index games) and closes on outside click for free.
+export function MultiSelect({ label, options, selected, onChange, allLabel = "All" }: {
+  label: string;
+  options: { id: string; label: string; count?: number }[];
+  selected: string[];
+  onChange: (next: string[]) => void;
+  allLabel?: string;
+}) {
+  const chosen = new Set(selected);
+  const summary = !selected.length
+    ? allLabel
+    : options.filter(o => chosen.has(o.id)).map(o => o.label).join(", ") || allLabel;
+
+  function toggle(id: string) {
+    onChange(chosen.has(id) ? selected.filter(x => x !== id) : [...selected, id]);
+  }
+
+  return (
+    <details className="w-full zt-details">
+      <summary className="flex items-center justify-between gap-2 px-3 py-2 rounded border cursor-pointer"
+        style={{ borderColor: C.line }}>
+        <span className="flex items-baseline gap-2 min-w-0">
+          <span className="ui t-label" style={{ color: C.faint }}>{label}</span>
+          <span className="ui t-meta truncate" style={{ color: C.paper }}>{summary}</span>
+        </span>
+        <span aria-hidden="true" className="ui shrink-0" style={{ color: C.faint, fontSize: 11 }}>▼</span>
+      </summary>
+      <div className="flex flex-col gap-1 mt-1 p-2 rounded border" style={{ borderColor: C.line, background: C.ink2 }}>
+        <button onClick={() => onChange([])}
+          className="flex items-center justify-between px-2 py-1.5 rounded"
+          style={{ background: selected.length ? "transparent" : C.ink3 }}>
+          <span className="ui t-meta" style={{ color: C.paper }}>{allLabel}</span>
+          {!selected.length && <span aria-hidden="true" className="ui t-meta" style={{ color: C.paper }}>✓</span>}
+        </button>
+        {options.map(o => (
+          <button key={o.id} onClick={() => toggle(o.id)} role="checkbox" aria-checked={chosen.has(o.id)}
+            className="flex items-center justify-between px-2 py-1.5 rounded"
+            style={{ background: chosen.has(o.id) ? C.ink3 : "transparent" }}>
+            <span className="ui t-meta" style={{ color: C.paper }}>
+              {o.label}
+              {o.count != null && <span style={{ color: C.faint }}> · {o.count}</span>}
+            </span>
+            {chosen.has(o.id) && <span aria-hidden="true" className="ui t-meta" style={{ color: C.paper }}>✓</span>}
+          </button>
+        ))}
+      </div>
+    </details>
+  );
+}
+
 export function SectionLabel({ zh, en }: { zh: string; en: string }) {
   return (
     <div className="flex items-baseline gap-2 mb-3">
       <span className="hz text-base" style={{ color: C.dim }}>{zh}</span>
-      <span className="ui text-xs uppercase tracking-widest" style={{ color: C.faint }}>{en}</span>
+      <span className="ui t-label" style={{ color: C.faint }}>{en}</span>
     </div>
   );
 }
@@ -76,7 +192,7 @@ export function Empty({ zh, text }: { zh: string; text: string }) {
   return (
     <div className="flex flex-col items-center gap-3 py-12">
       <div className="hz text-5xl" style={{ color: C.faint }}>{zh}</div>
-      <p className="ui text-xs text-center max-w-xs leading-relaxed" style={{ color: C.dim }}>{text}</p>
+      <p className="ui t-body text-center max-w-xs" style={{ color: C.dim }}>{text}</p>
     </div>
   );
 }

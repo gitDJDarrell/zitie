@@ -103,11 +103,11 @@ export function AuthGate() {
       <form onSubmit={submit} className="w-full max-w-xs flex flex-col gap-5">
         <div className="text-center">
           <div className="hz text-3xl font-black tracking-wide" style={{ color: C.paper }}>字帖</div>
-          <div className="ui text-xs uppercase tracking-widest mt-1" style={{ color: C.faint }}>character study</div>
+          <div className="ui t-label mt-1" style={{ color: C.faint }}>character study</div>
         </div>
 
         {mode === "reset" ? (
-          <div className="ui text-xs text-center leading-relaxed" style={{ color: C.dim }}>
+          <div className="ui t-body text-center" style={{ color: C.dim }}>
             Choose a new password for your account.
           </div>
         ) : (
@@ -148,7 +148,7 @@ export function AuthGate() {
         {notice && <div className="ui text-xs" style={{ color: C.dim }}>{notice}</div>}
 
         <button type="submit" disabled={busy}
-          className="ui px-6 py-3 text-xs tracking-widest uppercase border rounded"
+          className="ui px-6 py-3 t-btn border rounded"
           style={{ borderColor: C.paper, color: C.paper, opacity: busy ? 0.5 : 1 }}>
           {busy ? "please wait…" : submitLabel}
         </button>

@@ -1,4 +1,11 @@
-import type { Card, SeenMap, Theme } from "../types";
+import type { Card, Grade, SeenMap, SeenRecord, Theme } from "../types";
+
+export interface Settings {
+  theme: Theme;
+  stack: string[];
+  autoSpeak: boolean;
+  difficulty: number;
+}
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8787";
 
@@ -44,12 +51,14 @@ export const api = {
   deleteCards: (ids: string[]) => request<{ ok: true }>("/cards", { method: "DELETE", body: JSON.stringify({ ids }) }),
   clearAll: () => request<{ ok: true }>("/cards/clear-all", { method: "POST" }),
 
-  markSeen: (id: string) => request<{ last: number; views: number }>("/seen", { method: "POST", body: JSON.stringify({ id }) }),
+  markSeen: (id: string) => request<SeenRecord>("/seen", { method: "POST", body: JSON.stringify({ id }) }),
+  gradeCard: (id: string, grade: Grade) =>
+    request<SeenRecord>("/seen/grade", { method: "POST", body: JSON.stringify({ id, grade }) }),
   resetSeen: (ids?: string[]) => request<{ ok: true }>("/seen/reset", { method: "POST", body: JSON.stringify({ ids }) }),
 
-  getSettings: () => request<{ theme: Theme; stack: string[] }>("/settings"),
-  setTheme: (theme: Theme) => request<{ theme: Theme; stack: string[] }>("/settings", { method: "PATCH", body: JSON.stringify({ theme }) }),
-  setStack: (stack: string[]) => request<{ theme: Theme; stack: string[] }>("/settings", { method: "PATCH", body: JSON.stringify({ stack }) }),
+  getSettings: () => request<Settings>("/settings"),
+  patchSettings: (patch: Partial<Settings>) =>
+    request<Settings>("/settings", { method: "PATCH", body: JSON.stringify(patch) }),
 
   exportBank: () => request<Record<string, unknown>[]>("/export"),
 

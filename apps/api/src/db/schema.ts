@@ -1,4 +1,4 @@
-import { boolean, integer, jsonb, pgTable, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
+import { boolean, integer, jsonb, pgTable, real, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -43,12 +43,23 @@ export const cards = pgTable("cards", {
   userHanziIdx: uniqueIndex("cards_user_hanzi_idx").on(t.userId, t.hanzi),
 }));
 
-// One row per card once it's been studied at least once.
+// One row per card once it's been studied at least once. `last`/`views` are
+// the raw view tally; the rest is SM-2-lite spaced-repetition state, written
+// only by POST /seen/grade. A row with reps = 0 has been looked at but never
+// graded, so it still counts as "unscheduled".
 export const seenState = pgTable("seen_state", {
   cardId: text("card_id").primaryKey().references(() => cards.id, { onDelete: "cascade" }),
   userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   last: timestamp("last", { withTimezone: true }).notNull(),
   views: integer("views").notNull().default(0),
+  // SM-2 ease factor, clamped to [1.3, 3.0]. Lower = card comes back sooner.
+  ease: real("ease").notNull().default(2.5),
+  // Current scheduling interval in days; fractional for sub-day relearns.
+  intervalDays: real("interval_days").notNull().default(0),
+  // When the card is next due. Null = due immediately (never graded).
+  due: timestamp("due", { withTimezone: true }),
+  reps: integer("reps").notNull().default(0),   // consecutive successful grades
+  lapses: integer("lapses").notNull().default(0), // times graded "again" after a success
 });
 
 // Deep character breakdowns — shared across ALL users (keyed by hanzi, not
@@ -75,4 +86,8 @@ export const settings = pgTable("settings", {
   // User-curated study stack: an ordered list of card ids preselected for a
   // future session, independent of the star flag (see BrowseView "stack" view).
   stack: jsonb("stack").$type<string[]>().notNull().default([]),
+  // Speak the hanzi aloud automatically when a card's answer is revealed.
+  autoSpeak: boolean("auto_speak").notNull().default(true),
+  // Session difficulty step (0-4) — scales card count and HSK level ceiling.
+  difficulty: integer("difficulty").notNull().default(2),
 });

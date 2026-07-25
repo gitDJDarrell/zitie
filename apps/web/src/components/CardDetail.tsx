@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { api, type CharacterInsight, type InsightComponent } from "../api/client";
+import { SpeakBtn } from "./atoms";
 import { DAY } from "../lib/filters";
 import { DEX_LEVELS, DEX_INDEX } from "../data/dex";
 import { C } from "../theme";
@@ -47,7 +48,7 @@ export function CardDetail({ card, srs, onClose, onToggleStar, inStack, onToggle
         style={{ background: C.ink, border: `1px solid ${C.line}` }}>
 
         <div className="flex items-start justify-between">
-          <div className="ui text-xs uppercase tracking-widest" style={{ color: C.faint }}>
+          <div className="ui t-label" style={{ color: C.faint }}>
             {slot
               ? <>图鉴 No. {String(slot.n).padStart(4, "0")} · {level?.label}</>
               : card.compound ? "compound · beyond the dex" : "beyond the dex"}
@@ -74,9 +75,12 @@ export function CardDetail({ card, srs, onClose, onToggleStar, inStack, onToggle
           <div className="hz font-black" style={{ color: C.paper, fontSize: card.hanzi.length > 2 ? 64 : 96, lineHeight: 1.1 }}>
             {card.hanzi}
           </div>
-          <div className="mono text-2xl" style={{ color: C.paper }}>{card.pinyin}</div>
+          <div className="flex items-center gap-1">
+            <div className="mono text-2xl" style={{ color: C.paper }}>{card.pinyin}</div>
+            <SpeakBtn text={card.hanzi} size="lg" />
+          </div>
           <div className="ui text-base text-center leading-relaxed" style={{ color: C.paper }}>{card.meaning}</div>
-          <div className="ui text-xs" style={{ color: C.faint }}>
+          <div className="ui t-meta text-center" style={{ color: C.faint }}>
             {card.pos.join(" · ")}{card.compound ? " · compound" : ""}
             {(card.radical || card.strokes) && (
               <> — {card.radical ? `radical ${card.radical}` : ""}{card.radical && card.strokes ? " · " : ""}{card.strokes ? `${card.strokes} strokes` : ""}</>
@@ -92,7 +96,7 @@ export function CardDetail({ card, srs, onClose, onToggleStar, inStack, onToggle
           <div className="flex flex-col gap-3 pt-3" style={{ borderTop: `1px solid ${C.ink3}` }}>
             <div className="flex items-baseline gap-2">
               <span className="hz text-sm" style={{ color: C.dim }}>解</span>
-              <span className="ui text-xs uppercase tracking-widest" style={{ color: C.faint }}>breakdown</span>
+              <span className="ui t-label" style={{ color: C.faint }}>breakdown</span>
               {insight.structure && <span className="ui text-xs" style={{ color: C.faint }}>· {insight.structure}</span>}
             </div>
 
@@ -107,7 +111,7 @@ export function CardDetail({ card, srs, onClose, onToggleStar, inStack, onToggle
                         {comp.gloss && <span> · {comp.gloss}</span>}
                         <span className="ui" style={{ color: C.faint }}> · {ROLE_LABEL[comp.role]}</span>
                       </div>
-                      {comp.note && <div className="ui text-xs leading-relaxed" style={{ color: C.faint }}>{comp.note}</div>}
+                      {comp.note && <div className="ui t-body" style={{ color: C.faint }}>{comp.note}</div>}
                     </div>
                   </div>
                 ))}
@@ -115,12 +119,12 @@ export function CardDetail({ card, srs, onClose, onToggleStar, inStack, onToggle
             )}
 
             {insight.story && (
-              <div className="ui text-xs leading-relaxed" style={{ color: C.dim }}>{insight.story}</div>
+              <div className="ui t-body" style={{ color: C.dim }}>{insight.story}</div>
             )}
 
             {insight.compounds.length > 0 && (
               <div className="flex flex-col gap-1 pt-2" style={{ borderTop: `1px solid ${C.ink3}` }}>
-                <div className="ui text-xs uppercase tracking-widest mb-1" style={{ color: C.faint }}>appears in</div>
+                <div className="ui t-label mb-1" style={{ color: C.faint }}>appears in</div>
                 {insight.compounds.map((w, i) => (
                   <div key={i} className="flex items-baseline gap-2">
                     <span className="hz text-base" style={{ color: C.paper }}>{w.zh}</span>
@@ -159,12 +163,12 @@ export function CardDetail({ card, srs, onClose, onToggleStar, inStack, onToggle
         {(onPrev || onNext) && (
           <div className="flex justify-between items-center pt-1">
             <button onClick={onPrev} disabled={!onPrev} aria-label="Previous character"
-              className="ui px-4 py-2 text-xs uppercase tracking-widest border rounded"
+              className="ui px-4 py-2 t-btn border rounded"
               style={{ borderColor: C.line, color: onPrev ? C.dim : C.faint, opacity: onPrev ? 1 : 0.35 }}>
               {"←"} prev
             </button>
             <button onClick={onNext} disabled={!onNext} aria-label="Next character"
-              className="ui px-4 py-2 text-xs uppercase tracking-widest border rounded"
+              className="ui px-4 py-2 t-btn border rounded"
               style={{ borderColor: C.line, color: onNext ? C.dim : C.faint, opacity: onNext ? 1 : 0.35 }}>
               next {"→"}
             </button>

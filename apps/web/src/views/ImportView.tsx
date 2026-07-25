@@ -132,7 +132,7 @@ export function ImportView({ bank, onImport }: {
           <SectionLabel zh="选" en="select entries" />
           <span className="ui text-xs" style={{ color: C.faint }}>{selected.size} / {pending.length} selected</span>
         </div>
-        <p className="ui text-xs leading-relaxed" style={{ color: C.dim }}>
+        <p className="ui t-body" style={{ color: C.dim }}>
           Tap a word to leave it out. Everything's selected by default — add the rest to your collection when you're ready.
         </p>
         <div className="grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(92px, 1fr))" }}>
@@ -146,19 +146,19 @@ export function ImportView({ bank, onImport }: {
                 style={{ background: isSel ? C.paper : "transparent", border: `1px solid ${isSel ? C.paper : C.ink3}` }}>
                 <span className="hz text-2xl leading-tight" style={{ color: isSel ? C.ink : C.paper }}>{card.hanzi}</span>
                 <span className="mono" style={{ fontSize: 10, color: isSel ? C.ink : C.dim }}>{card.pinyin}</span>
-                <span className="ui truncate w-full text-center" style={{ fontSize: 9, color: isSel ? C.ink : C.faint }}>{card.meaning}</span>
+                <span className="ui truncate w-full text-center" style={{ fontSize: 11, color: isSel ? C.ink : C.faint }}>{card.meaning}</span>
               </button>
             );
           })}
         </div>
         <div className="flex gap-3 items-center flex-wrap">
           <button onClick={confirmImport} disabled={!selected.size || aiBusy}
-            className="ui px-6 py-2 text-xs uppercase tracking-widest border rounded"
+            className="ui px-6 py-2 t-btn border rounded"
             style={{ borderColor: C.paper, color: C.paper, opacity: selected.size && !aiBusy ? 1 : 0.35 }}>
             {aiBusy ? "Adding…" : `Add ${selected.size} to collection`}
           </button>
           <button onClick={cancelSelection} disabled={aiBusy}
-            className="ui px-4 py-2 text-xs uppercase tracking-widest border rounded"
+            className="ui px-4 py-2 t-btn border rounded"
             style={{ borderColor: C.line, color: C.dim }}>
             Cancel
           </button>
@@ -189,7 +189,7 @@ export function ImportView({ bank, onImport }: {
             {items.length - newCount > 0 && <>, {items.length - newCount} expanded</>}.
           </p>
           <button onClick={() => setReveal(null)}
-            className="ui px-8 py-2 text-xs uppercase tracking-widest border rounded"
+            className="ui px-8 py-2 t-btn border rounded"
             style={{ borderColor: C.paper, color: C.paper }}>Done</button>
         </div>
       );
@@ -201,7 +201,7 @@ export function ImportView({ bank, onImport }: {
 
     return (
       <div className="flex flex-col items-center gap-5 pt-4">
-        <div className="w-full max-w-sm flex justify-between items-baseline ui text-xs tracking-widest uppercase" style={{ color: C.faint }}>
+        <div className="w-full max-w-sm flex justify-between items-baseline ui t-label" style={{ color: C.faint }}>
           <span>entry {idx + 1} of {items.length}</span>
           <button onClick={() => setReveal({ items, idx: items.length })} className="px-1 py-1" style={{ color: C.faint }}>
             skip all »
@@ -211,12 +211,12 @@ export function ImportView({ bank, onImport }: {
         <div key={idx} className="relative w-full max-w-sm rounded-lg px-6 py-10 flex flex-col items-center gap-4"
           style={{ background: C.ink2, border: `1px solid ${C.line}`, minHeight: 340 }}>
           {isNew && (
-            <div className="stamp absolute top-3 right-3 ui text-xs uppercase tracking-widest px-2 py-1 border-2 rounded"
+            <div className="stamp absolute top-3 right-3 ui t-label px-2 py-1 border-2 rounded"
               style={{ borderColor: C.paper, color: C.paper, transform: "rotate(-8deg)" }}>
               new
             </div>
           )}
-          <div className="ui text-xs uppercase tracking-widest" style={{ color: C.faint }}>
+          <div className="ui t-label" style={{ color: C.faint }}>
             {slot
               ? <>图鉴 No. {String(slot.n).padStart(4, "0")} · {level?.label}</>
               : card.compound ? "compound · beyond the dex" : "beyond the dex"}
@@ -249,7 +249,7 @@ export function ImportView({ bank, onImport }: {
         </div>
 
         <button onClick={() => setReveal({ items, idx: idx + 1 })}
-          className="ui px-10 py-3 text-xs uppercase tracking-widest border rounded"
+          className="ui px-10 py-3 t-label border rounded"
           style={{ borderColor: C.paper, color: C.paper }}>
           {idx + 1 === items.length ? "Finish" : "Next →"}
         </button>
@@ -261,7 +261,7 @@ export function ImportView({ bank, onImport }: {
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-3">
         <SectionLabel zh="释" en="generate with ai" />
-        <p className="ui text-xs leading-relaxed" style={{ color: C.dim }}>
+        <p className="ui t-body" style={{ color: C.dim }}>
           Type or paste vocabulary in any form — a word list, sentences, a screenshot pasted
           right here, or a photo of a textbook page. You'll pick which words to keep before
           anything's added. Existing entries only ever expand — nothing is lost.
@@ -288,17 +288,17 @@ export function ImportView({ bank, onImport }: {
         />
         <div className="flex gap-3 items-center flex-wrap">
           <button onClick={generate} disabled={aiBusy || (!aiText.trim() && !aiImage)}
-            className="ui px-6 py-2 text-xs uppercase tracking-widest border rounded"
+            className="ui px-6 py-2 t-btn border rounded"
             style={{ borderColor: C.paper, color: C.paper, opacity: aiBusy || (!aiText.trim() && !aiImage) ? 0.35 : 1 }}>
             {aiBusy ? "Generating…" : "Generate entries"}
           </button>
           <button onClick={takePhoto} disabled={aiBusy}
-            className="ui px-4 py-2 text-xs uppercase tracking-widest border rounded"
+            className="ui px-4 py-2 t-btn border rounded"
             style={{ borderColor: C.line, color: C.dim }}>
             Take photo
           </button>
           <button onClick={() => fileInputRef.current?.click()} disabled={aiBusy}
-            className="ui px-4 py-2 text-xs uppercase tracking-widest border rounded"
+            className="ui px-4 py-2 t-btn border rounded"
             style={{ borderColor: C.line, color: C.dim }}>
             Attach screenshot
           </button>

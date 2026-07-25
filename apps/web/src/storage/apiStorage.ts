@@ -1,5 +1,5 @@
 import { api, ApiError } from "../api/client";
-import type { Card, SeenMap, SeenRecord, Theme } from "../types";
+import type { Card, Grade, SeenMap, SeenRecord, Theme } from "../types";
 import { readCache, writeCache } from "./localCache";
 import type { StorageBackend, SyncListener } from "./types";
 
@@ -11,15 +11,23 @@ export class ApiStorage implements StorageBackend {
   async load() {
     this.notify("syncing");
     try {
-      const [{ cards, seen }, { theme, stack }] = await Promise.all([api.getBank(), api.getSettings()]);
-      writeCache({ bank: cards, srs: seen, theme, stack });
+      const [{ cards, seen }, { theme, stack, autoSpeak, difficulty }] = await Promise.all([api.getBank(), api.getSettings()]);
+      const data = { bank: cards, srs: seen, theme, stack, autoSpeak, difficulty };
+      writeCache(data);
       this.notify("synced");
-      return { bank: cards, srs: seen, theme, stack };
+      return data;
     } catch (err) {
       if (err instanceof ApiError) throw err; // 401 etc — let the auth gate handle it
       this.notify("offline");
       const cached = readCache();
-      return cached ?? { bank: [], srs: {} as SeenMap, theme: "light" as Theme, stack: [] as string[] };
+      return {
+        bank: cached?.bank ?? [],
+        srs: cached?.srs ?? ({} as SeenMap),
+        theme: cached?.theme ?? ("light" as Theme),
+        stack: cached?.stack ?? [],
+        autoSpeak: cached?.autoSpeak ?? true,
+        difficulty: cached?.difficulty ?? 2,
+      };
     }
   }
 
@@ -68,6 +76,21 @@ export class ApiStorage implements StorageBackend {
     }
   }
 
+  // Self-rating: drives the SRS scheduler. Returns the server's authoritative
+  // post-grade state, or null when offline (optimistic local state stands).
+  async gradeCard(id: string, grade: Grade): Promise<SeenRecord | null> {
+    this.notify("syncing");
+    try {
+      const record = await api.gradeCard(id, grade);
+      this.notify("synced");
+      return record;
+    } catch (err) {
+      if (err instanceof ApiError) throw err;
+      this.notify("offline");
+      return null;
+    }
+  }
+
   async resetSeen(ids: string[] | null) {
     this.notify("syncing");
     await api.resetSeen(ids ?? undefined);
@@ -76,17 +99,29 @@ export class ApiStorage implements StorageBackend {
 
   async setTheme(theme: Theme) {
     this.notify("syncing");
-    await api.setTheme(theme);
+    await api.patchSettings({ theme });
     this.notify("synced");
   }
 
   async setStack(ids: string[]) {
     this.notify("syncing");
-    await api.setStack(ids);
+    await api.patchSettings({ stack: ids });
     this.notify("synced");
   }
 
-  cacheSnapshot(bank: Card[], srs: SeenMap, theme: Theme, stack: string[]) {
-    writeCache({ bank, srs, theme, stack });
+  async setAutoSpeak(autoSpeak: boolean) {
+    this.notify("syncing");
+    await api.patchSettings({ autoSpeak });
+    this.notify("synced");
+  }
+
+  async setDifficulty(difficulty: number) {
+    this.notify("syncing");
+    await api.patchSettings({ difficulty });
+    this.notify("synced");
+  }
+
+  cacheSnapshot(bank: Card[], srs: SeenMap, theme: Theme, stack: string[], autoSpeak?: boolean, difficulty?: number) {
+    writeCache({ bank, srs, theme, stack, autoSpeak, difficulty });
   }
 }
