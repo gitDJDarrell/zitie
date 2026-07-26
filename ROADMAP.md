@@ -75,6 +75,77 @@ lending the sound), recursively for components worth explaining.
    ($99/yr), Google Play Console ($25 once), privacy policy, screenshots,
    review. iOS specifically needs a Mac to archive + upload.
 
+## Backlog — UI/UX (queued 2026-07-26, for next session)
+
+Four items raised after the spaced-repetition/audio/typography pass (a0dac6f).
+Notes below flag the decisions and gotchas each one hits, so the work can start
+cold.
+
+### 1. Show the rating on cards in Gallery and Browse
+
+Surface a card's spaced-repetition standing on the dex tiles
+(`apps/web/src/views/GalleryView.tsx`) and the list rows
+(`apps/web/src/views/BrowseView.tsx`) — today the tiles show only the dex
+number + ★, and rows show `pos · compound — seen Nd ago`.
+
+- **Open decision:** "rating" could mean (a) the last grade you gave, or
+  (b) a derived mastery score from `ease`/`reps`/`lapses`. These need different
+  work — **(a) requires a schema change**, because `seen_state` currently stores
+  only the *resulting schedule*, not which button was pressed. Add a
+  `last_grade` column if (a) is what's wanted.
+- (b) needs no migration: `SeenRecord` already carries `ease`, `reps`,
+  `lapses`, `due`, `intervalDays`. Add a `masteryOf(rec)` helper next to the
+  existing `isDue` / `isScheduled` in `apps/web/src/lib/srs.ts`.
+- Gallery tiles are tight (56px) — likely a dot/bar glyph rather than text.
+  The shiny/chrome treatment already occupies the "fully completed" signal, so
+  pick something that reads distinctly from it.
+
+### 2. Rebuild Browse's controls to match the Study tab
+
+Study now leads with a levels `MultiSelect`, a difficulty `Slider`, and a
+`Collapsible` filter block summarising anything active. Browse still uses the
+older `FilterBar` (`apps/web/src/components/FilterBar.tsx`) with always-visible
+search + POS chips + age/starred toggles.
+
+- All three components are already shared in
+  `apps/web/src/components/atoms.tsx` — this is mostly recomposition, not new
+  UI work.
+- Browse's search box has no Study equivalent; decide whether it stays pinned
+  above the collapsible block (probably yes — search is the primary Browse
+  action) or folds in with the rest.
+- Keep Browse's select-mode/bulk-actions row working; it's independent of the
+  filter chrome but shares vertical space.
+
+### 3. Audio on Gallery tiles and Browse rows
+
+`SpeakBtn` (atoms) and the Web Speech API layer (`apps/web/src/lib/speech.ts`)
+already exist, and `CardDetail` — the modal both views open — already speaks.
+The gap is pronunciation *without* opening a card.
+
+- **Gotcha:** Gallery tiles and Browse rows are themselves clickable. A
+  `<button>` inside a `<button>` is invalid HTML and misbehaves in Safari.
+  Gallery tiles will need restructuring (wrapper `div` with two sibling
+  buttons, or a non-button tile) — `SpeakBtn`'s existing `stopPropagation`
+  handles the click bubbling but not the nesting.
+- `SpeakBtn` already renders nothing when no Mandarin voice is installed, so
+  no dead controls on devices without one.
+
+### 4. Write mode: prompt in English, accept hanzi or pinyin
+
+Today (`apps/web/src/views/StudyView.tsx`) write mode shows **pinyin + meaning**
+and requires an exact `card.hanzi` match. Wanted: show the **English** only, and
+accept either the hanzi or the pinyin as a correct answer.
+
+- Showing pinyin today gives the answer away for the pinyin half — that's the
+  main reason to change it.
+- Pinyin matching should be tone- and spacing-insensitive; `normalizePinyin`
+  in `apps/web/src/lib/pinyin.ts` already does this (it backs Browse search)
+  and returns a `.letters` form to compare against.
+- Grading already flows into the scheduler (correct → `good`, miss → `again`),
+  so only the prompt and the comparison in `check()` change.
+- Decide whether hanzi and pinyin are equally correct, or whether pinyin-only
+  counts as a partial (e.g. grades `hard` instead of `good`).
+
 ## Sequencing
 
 1. Mobile UX polish + PWA (foundational; unblocks native).
