@@ -42,6 +42,7 @@ function serialize(row: typeof seenState.$inferSelect) {
     due: row.due ? row.due.getTime() : null,
     reps: row.reps,
     lapses: row.lapses,
+    lastGrade: row.lastGrade,
   };
 }
 
@@ -75,14 +76,14 @@ seenRoute.post("/grade", async (c) => {
     .values({
       cardId: id, userId, last: now, views: 1,
       ease: next.ease, intervalDays: next.intervalDays, due: next.due,
-      reps: next.reps, lapses: next.lapses,
+      reps: next.reps, lapses: next.lapses, lastGrade: grade,
     })
     .onConflictDoUpdate({
       target: seenState.cardId,
       set: {
         last: now, views: sql`${seenState.views} + 1`,
         ease: next.ease, intervalDays: next.intervalDays, due: next.due,
-        reps: next.reps, lapses: next.lapses,
+        reps: next.reps, lapses: next.lapses, lastGrade: grade,
       },
     })
     .returning();

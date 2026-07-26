@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Chip } from "../components/atoms";
+import { Chip, Rating, SpeakBtn } from "../components/atoms";
 import { CardDetail } from "../components/CardDetail";
 import { MysteryCardDetail } from "../components/MysteryCardDetail";
 import { DEX_LEVELS, DEX_INDEX, DEX_ORDER, DEX_TOTAL } from "../data/dex";
@@ -100,23 +100,35 @@ export function GalleryView({ bank, srs, onToggleStar, stack, onAddToStack, onRe
             </div>
           </div>
 
-          <div className="grid gap-1" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(56px, 1fr))" }}>
+          <div className="grid gap-1" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(64px, 1fr))" }}>
             {levelChars.map((ch, i) => {
               const card = byHanzi.get(ch);
               const n = levelOffset + i + 1;
               const dexIndex = n - 1; // DEX_ORDER is 0-based; slot.n is 1-based
               const shiny = card ? isFullyComplete(card) : false;
               return card ? (
-                <button key={ch} onClick={() => setCursor({ kind: "dex", index: dexIndex })}
-                  aria-label={`No. ${n} ${ch} — collected${shiny ? ", fully completed" : ""}, view details`}
-                  className={`flex flex-col items-center py-2 rounded${shiny ? " dex-shiny" : ""}`}
-                  style={shiny ? undefined : { background: C.ink2, border: `1px solid ${C.ink3}` }}>
-                  <span className="hz text-2xl leading-tight" style={{ color: shiny ? "#1a1a1a" : C.paper }}>{ch}</span>
-                  <span className="ui t-micro" style={{ color: shiny ? "#3a3a3a" : C.faint }}>
-                    {String(n).padStart(4, "0")}{card.starred ? " ★" : ""}
-                  </span>
-                </button>
+                // The speak button has to be a sibling of the tile button, not
+                // a child — a <button> inside a <button> is invalid and Safari
+                // drops the inner one's clicks.
+                <div key={ch} className="relative">
+                  <button onClick={() => setCursor({ kind: "dex", index: dexIndex })}
+                    aria-label={`No. ${n} ${ch} — collected${shiny ? ", fully completed" : ""}, view details`}
+                    className={`w-full flex flex-col items-center gap-0.5 py-2 rounded${shiny ? " dex-shiny" : ""}`}
+                    style={shiny ? undefined : { background: C.ink2, border: `1px solid ${C.ink3}` }}>
+                    <span className="hz text-2xl leading-tight" style={{ color: shiny ? "#1a1a1a" : C.paper }}>{ch}</span>
+                    <span className="ui t-micro" style={{ color: shiny ? "#3a3a3a" : C.faint }}>
+                      {String(n).padStart(4, "0")}{card.starred ? " ★" : ""}
+                    </span>
+                    <span style={{ color: shiny ? "#3a3a3a" : C.dim }}>
+                      <Rating rec={srs[card.id]} compact />
+                    </span>
+                  </button>
+                  <SpeakBtn text={ch} className="absolute top-0 right-0 !px-1 !py-0.5"
+                    style={{ fontSize: 10, color: shiny ? "#3a3a3a" : C.faint }} />
+                </div>
               ) : (
+                // No speak button here on purpose: hearing an uncollected
+                // character would give away the reading the dex is holding back.
                 <button key={ch} onClick={() => setCursor({ kind: "dex", index: dexIndex })}
                   aria-label={`No. ${n} — not yet collected, tap to view`}
                   className="flex flex-col items-center py-2 rounded"
@@ -140,13 +152,20 @@ export function GalleryView({ bank, srs, onToggleStar, stack, onAddToStack, onRe
             {extras.map((card, i) => {
               const shiny = isFullyComplete(card);
               return (
-                <button key={card.id} onClick={() => setCursor({ kind: "extra", index: i })}
-                  aria-label={`${card.hanzi} — view details${shiny ? " (fully completed)" : ""}`}
-                  className={`flex flex-col items-center py-2 px-1 rounded${shiny ? " dex-shiny" : ""}`}
-                  style={shiny ? undefined : { background: C.ink2, border: `1px solid ${C.ink3}` }}>
-                  <span className="hz text-xl leading-tight" style={{ color: shiny ? "#1a1a1a" : C.paper }}>{card.hanzi}</span>
-                  <span className="ui t-micro truncate w-full text-center" style={{ color: shiny ? "#3a3a3a" : C.faint }}>{card.pinyin}</span>
-                </button>
+                <div key={card.id} className="relative">
+                  <button onClick={() => setCursor({ kind: "extra", index: i })}
+                    aria-label={`${card.hanzi} — view details${shiny ? " (fully completed)" : ""}`}
+                    className={`w-full flex flex-col items-center gap-0.5 py-2 px-1 rounded${shiny ? " dex-shiny" : ""}`}
+                    style={shiny ? undefined : { background: C.ink2, border: `1px solid ${C.ink3}` }}>
+                    <span className="hz text-xl leading-tight" style={{ color: shiny ? "#1a1a1a" : C.paper }}>{card.hanzi}</span>
+                    <span className="ui t-micro truncate w-full text-center" style={{ color: shiny ? "#3a3a3a" : C.faint }}>{card.pinyin}</span>
+                    <span style={{ color: shiny ? "#3a3a3a" : C.dim }}>
+                      <Rating rec={srs[card.id]} compact />
+                    </span>
+                  </button>
+                  <SpeakBtn text={card.hanzi} className="absolute top-0 right-0 !px-1 !py-0.5"
+                    style={{ fontSize: 10, color: shiny ? "#3a3a3a" : C.faint }} />
+                </div>
               );
             })}
           </div>

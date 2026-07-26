@@ -1,0 +1,1 @@
+ALTER TABLE "seen_state" ADD COLUMN "last_grade" text;

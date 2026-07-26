@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Chip, Collapsible, Empty, MultiSelect, Slider, SpeakBtn, StarBtn, StarToggle, Switch } from "../components/atoms";
 import { availableLevels, buildSession, DIFFICULTY_STEPS, filterByLevels, sessionSize, stepFor } from "../lib/difficulty";
+import { checkAnswer, type AnswerKind } from "../lib/answer";
 import { applyFilters, type Filters } from "../lib/filters";
 import { POS_HANZI } from "../lib/posLabels";
 import { canSpeak, speak } from "../lib/speech";
@@ -40,6 +41,9 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
   const [flipped, setFlipped] = useState(false);
   const [input, setInput] = useState("");
   const [verdict, setVerdict] = useState<null | "ok" | "no">(null);
+  // Which form the answer took — characters or reading. Drives both the grade
+  // and the nudge shown on the reveal.
+  const [answerKind, setAnswerKind] = useState<AnswerKind>(null);
   const [score, setScore] = useState({ ok: 0, no: 0 });
   const [initialLen, setInitialLen] = useState(0);
   const [levels, setLevels] = useState<string[]>([]); // empty = every level
@@ -146,18 +150,21 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
 
   function check() {
     if (!input.trim() || !card) return;
-    const ok = input.replace(/\s+/g, "") === card.hanzi;
+    const kind = checkAnswer(input, card);
+    setAnswerKind(kind);
+    const ok = kind !== null;
     setVerdict(ok ? "ok" : "no");
     setScore(s => ok ? { ...s, ok: s.ok + 1 } : { ...s, no: s.no + 1 });
     if (!ok) setQueue(q => [...(q as string[]), card.id]); // shuffle miss to end of deck
-    // Typing the character correctly is a stronger signal than tapping "good"
-    // in read mode, but it maps to the same scheduler grades.
-    onGrade(card.id, ok ? "good" : "again");
+    // Producing the characters is the harder recall and the thing this app
+    // teaches; giving only the reading is a step short of it, so it grades
+    // "hard" rather than "good" and comes back sooner.
+    onGrade(card.id, kind === "hanzi" ? "good" : kind === "pinyin" ? "hard" : "again");
     if (autoSpeak) speak(card.hanzi);
   }
 
-  function next() { setIdx(i => i + 1); setFlipped(false); setInput(""); setVerdict(null); }
-  function prev() { setIdx(i => Math.max(i - 1, 0)); setFlipped(false); setInput(""); setVerdict(null); }
+  function next() { setIdx(i => i + 1); setFlipped(false); setInput(""); setVerdict(null); setAnswerKind(null); }
+  function prev() { setIdx(i => Math.max(i - 1, 0)); setFlipped(false); setInput(""); setVerdict(null); setAnswerKind(null); }
 
   if (!bank.length) return (
     <Empty zh="库空" text="No characters yet. Open Import and paste your vocabulary to begin." />
@@ -363,13 +370,17 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
 
         {verdict === null ? (
           <>
-            <div className="mono text-3xl text-center" style={{ color: C.paper }}>{card.pinyin}</div>
-            <div className="ui text-base text-center leading-relaxed" style={{ color: C.dim }}>{card.meaning}</div>
+            {/* English only — showing the pinyin here would hand over half
+                the answer, since the reading is now an accepted response. */}
+            <div className="ui text-2xl text-center leading-snug" style={{ color: C.paper }}>{card.meaning}</div>
+            <div className="ui t-meta" style={{ color: C.faint }}>
+              {card.pos.join(" · ")}{card.compound ? " · compound" : ""}
+            </div>
             <input
               value={input}
               onChange={e => setInput(e.target.value)}
               onKeyDown={e => { if (e.key === "Enter") check(); }}
-              placeholder="type the character"
+              placeholder="characters or pinyin"
               autoCapitalize="none" autoCorrect="off" spellCheck={false}
               className="hz w-full px-4 py-3 text-2xl text-center rounded border bg-transparent"
               style={{ borderColor: C.line, color: C.paper }}
@@ -387,8 +398,13 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
               {verdict === "ok" ? "✓" : "✕"}
             </div>
             {verdict === "no" && (
-              <div className="ui text-xs" style={{ color: C.faint }}>
+              <div className="ui t-meta text-center" style={{ color: C.faint }}>
                 you wrote <span className="hz text-base" style={{ color: C.dim }}>{input.trim() || "—"}</span> — repeats at end of deck
+              </div>
+            )}
+            {answerKind === "pinyin" && (
+              <div className="ui t-meta text-center max-w-xs" style={{ color: C.faint }}>
+                Reading correct — try for the characters next time.
               </div>
             )}
             <div className="flex flex-col items-center gap-2">

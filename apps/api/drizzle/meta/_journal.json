@@ -36,6 +36,13 @@
       "when": 1784941134336,
       "tag": "0004_aromatic_bug",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1785099488778,
+      "tag": "0005_young_vertigo",
+      "breakpoints": true
     }
   ]
 }

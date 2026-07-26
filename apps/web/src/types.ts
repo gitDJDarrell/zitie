@@ -29,6 +29,9 @@ export interface SeenRecord {
   due?: number | null; // epoch ms; null/absent = due now
   reps?: number;
   lapses?: number;
+  /** The grade last pressed — what you rated it, as opposed to what the
+   *  scheduler derived from it. Null until the card has been graded once. */
+  lastGrade?: Grade | null;
 }
 
 export type SeenMap = Record<string, SeenRecord>;

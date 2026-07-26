@@ -1,5 +1,7 @@
 import type { Card, Grade, SeenMap, SeenRecord } from "../types";
 
+export type { Grade };
+
 // Client-side mirror of the server's SM-2-lite scheduler (apps/api/src/lib/srs.ts).
 // Used only to *preview* what each grade would do, so the buttons can be
 // labelled "good · 3d" before you press them. The server stays authoritative:
@@ -75,3 +77,45 @@ function rank(rec: SeenRecord | undefined, now: number): number {
 export function countDue(cards: Card[], srs: SeenMap, now = Date.now()): number {
   return cards.filter(c => isDue(srs[c.id], now)).length;
 }
+
+/* ————————————————— rating readouts ————————————————— */
+
+export const MASTERY_MAX = 4;
+
+/**
+ * How well the card is known, 0–4, derived from the schedule rather than the
+ * last button pressed — a card you rated "good" once is not as solid as one
+ * you've held at a 3-month interval, and this is the number that says so.
+ *
+ * Driven by the current interval, since that is precisely the scheduler's own
+ * estimate of how long the memory lasts. Ease and lapses only pull it down:
+ * a card you keep forgetting shouldn't read as mastered just because its
+ * interval crept up.
+ */
+export function masteryOf(rec: SeenRecord | undefined): number {
+  if (!rec || !(rec.reps ?? 0)) return 0; // never graded — no evidence either way
+
+  const days = rec.intervalDays ?? 0;
+  let level =
+    days >= 90 ? 4 :
+    days >= 21 ? 3 :
+    days >= 7 ? 2 :
+    days >= 1 ? 1 : 0;
+
+  // A low ease means it keeps needing help; repeated lapses mean it keeps
+  // being forgotten outright. Either caps how "known" it can claim to be.
+  if ((rec.ease ?? 2.5) <= 1.6) level = Math.min(level, 2);
+  if ((rec.lapses ?? 0) >= 3) level = Math.min(level, 2);
+
+  return level;
+}
+
+/** Short label for a mastery level, for tooltips and screen readers. */
+export function masteryLabel(level: number): string {
+  return ["new", "learning", "familiar", "strong", "mastered"][level] ?? "new";
+}
+
+/** Single-glyph shorthand for a grade, matching the study buttons. */
+export const GRADE_GLYPH: Record<Grade, string> = {
+  again: "忘", hard: "难", good: "好", easy: "易",
+};

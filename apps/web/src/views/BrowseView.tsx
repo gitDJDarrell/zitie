@@ -1,10 +1,17 @@
-import { useState } from "react";
-import { Chip, Empty } from "../components/atoms";
+import { useMemo, useState } from "react";
+import { Chip, Collapsible, Empty, MultiSelect, Rating, SpeakBtn, StarToggle, Switch } from "../components/atoms";
 import { CardDetail } from "../components/CardDetail";
-import { FilterBar } from "../components/FilterBar";
+import { availableLevels, filterByLevels } from "../lib/difficulty";
 import { applyFilters, DAY, type Filters } from "../lib/filters";
+import { POS_HANZI } from "../lib/posLabels";
 import { C } from "../theme";
 import type { Card, SeenMap } from "../types";
+
+const AGE_OPTIONS: { value: Filters["age"]; label: string }[] = [
+  { value: "all", label: "all" },
+  { value: "new", label: "unseen" },
+  { value: "old", label: "seen" },
+];
 
 /* ————————————————— browse ————————————————— */
 export function BrowseView({
@@ -24,10 +31,25 @@ export function BrowseView({
   const [confirmClear, setConfirmClear] = useState(false);
   const [confirmReset, setConfirmReset] = useState(false);
   const [confirmClearStack, setConfirmClearStack] = useState(false);
+  const [levels, setLevels] = useState<string[]>([]); // empty = every level
+  const [filtersOpen, setFiltersOpen] = useState(false);
+
+  const levelOptions = useMemo(() => availableLevels(bank), [bank]);
+
+  // Mirrors the Study tab: folding the filters away must never hide an
+  // active constraint, so the collapsed header names them.
+  const filterSummary = useMemo(() => {
+    const parts: string[] = [];
+    if (filters.starred) parts.push("★ starred");
+    if (filters.age !== "all") parts.push(filters.age === "new" ? "unseen" : "seen");
+    if (filters.includeCompound) parts.push("compounds");
+    if (filters.pos.length) parts.push(filters.pos.join(", "));
+    return parts.length ? parts.join(" · ") : "none";
+  }, [filters]);
 
   const byId = new Map(bank.map(c => [c.id, c]));
   const stackSet = new Set(stack);
-  const allRows = applyFilters(bank, srs, filters);
+  const allRows = filterByLevels(applyFilters(bank, srs, filters), levels);
   // preserve stack order — that order is what a stack study session uses
   const stackRows = stack.map(id => byId.get(id)).filter((c): c is Card => !!c);
   const rows = view === "stack" ? stackRows : allRows;
@@ -94,7 +116,54 @@ export function BrowseView({
         </Chip>
       </div>
 
-      {view === "all" && <FilterBar filters={filters} setFilters={setFilters} posList={posList} />}
+      {/* Same control shape as the Study tab: search stays pinned (it's the
+          primary Browse action), levels get their own multi-select, and the
+          rest folds away behind a summary that still names what's active. */}
+      {view === "all" && (
+        <div className="flex flex-col gap-3">
+          <input
+            value={filters.q}
+            onChange={e => setFilters(f => ({ ...f, q: e.target.value }))}
+            placeholder="Search hanzi, pinyin, or meaning"
+            autoCapitalize="none" autoCorrect="off" spellCheck={false}
+            className="ui w-full px-4 py-3 text-sm rounded border bg-transparent"
+            style={{ borderColor: C.line, color: C.paper }}
+          />
+
+          <MultiSelect label="levels" allLabel="All levels"
+            options={levelOptions} selected={levels} onChange={setLevels} />
+
+          <Collapsible label="filters" summary={filterSummary}
+            open={filtersOpen} onToggle={() => setFiltersOpen(o => !o)}>
+            <div className="flex flex-col gap-3">
+              <div className="flex flex-wrap gap-3 items-center">
+                <StarToggle active={filters.starred}
+                  label={filters.starred ? "Showing starred only — tap to show all" : "Show starred only"}
+                  onClick={() => setFilters(f => ({ ...f, starred: !f.starred }))} />
+                <Switch value={filters.age} options={AGE_OPTIONS}
+                  onChange={age => setFilters(f => ({ ...f, age }))} />
+                <Chip active={filters.includeCompound}
+                  onClick={() => setFilters(f => ({ ...f, includeCompound: !f.includeCompound }))}>
+                  {filters.includeCompound ? "compounds: shown" : "compounds: hidden"}
+                </Chip>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <button onClick={() => setFilters(f => ({ ...f, pos: [] }))} disabled={!filters.pos.length}
+                  className="ui px-3 py-1 text-xs tracking-wide rounded-full border"
+                  style={{ borderColor: C.line, color: filters.pos.length ? C.dim : C.faint, opacity: filters.pos.length ? 1 : 0.5 }}>
+                  Clear
+                </button>
+                {posList.map(p => (
+                  <Chip key={p} active={filters.pos.includes(p)}
+                    onClick={() => setFilters(f => ({ ...f, pos: f.pos.includes(p) ? f.pos.filter(x => x !== p) : [...f.pos, p] }))}>
+                    {POS_HANZI[p] && <span className="hz">{POS_HANZI[p]} </span>}{p}
+                  </Chip>
+                ))}
+              </div>
+            </div>
+          </Collapsible>
+        </div>
+      )}
 
       {view === "stack" && stack.length > 0 && (
         <div className="flex items-center justify-between gap-2 flex-wrap">
@@ -209,10 +278,16 @@ export function BrowseView({
               )}
               <div className="hz text-3xl font-semibold w-16 shrink-0" style={{ color: C.paper }}>{c.hanzi}</div>
               <div className="flex-1 min-w-0">
-                <div className="mono text-sm" style={{ color: C.paper }}>{c.pinyin}</div>
-                <div className="ui text-xs truncate" style={{ color: C.dim }}>{c.meaning}</div>
-                <div className="ui text-xs mt-1" style={{ color: C.faint }}>
-                  {c.pos.join(" · ")}{c.compound ? " · compound" : ""} — {rec ? (ago === 0 ? "seen today" : `seen ${ago}d ago`) : "new"}
+                <div className="flex items-center gap-1">
+                  <span className="mono text-sm" style={{ color: C.paper }}>{c.pinyin}</span>
+                  {!selectMode && <SpeakBtn text={c.hanzi} className="!px-1 !py-0" />}
+                </div>
+                <div className="ui t-meta truncate" style={{ color: C.dim }}>{c.meaning}</div>
+                <div className="ui t-micro mt-1 flex items-center gap-2" style={{ color: C.faint }}>
+                  <Rating rec={rec} />
+                  <span className="truncate">
+                    {c.pos.join(" · ")}{c.compound ? " · compound" : ""} — {rec ? (ago === 0 ? "seen today" : `seen ${ago}d ago`) : "new"}
+                  </span>
                 </div>
               </div>
               {!selectMode && (

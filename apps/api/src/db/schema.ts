@@ -60,6 +60,10 @@ export const seenState = pgTable("seen_state", {
   due: timestamp("due", { withTimezone: true }),
   reps: integer("reps").notNull().default(0),   // consecutive successful grades
   lapses: integer("lapses").notNull().default(0), // times graded "again" after a success
+  // The button actually pressed last time — again|hard|good|easy. Kept
+  // alongside the derived schedule because "what did I rate this?" and "how
+  // well do I know it?" are different questions the UI answers separately.
+  lastGrade: text("last_grade"),
 });
 
 // Deep character breakdowns — shared across ALL users (keyed by hanzi, not

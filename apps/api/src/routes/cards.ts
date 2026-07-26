@@ -28,7 +28,7 @@ cardsRoute.get("/", async (c) => {
       last: r.last.getTime(), views: r.views,
       ease: r.ease, intervalDays: r.intervalDays,
       due: r.due ? r.due.getTime() : null,
-      reps: r.reps, lapses: r.lapses,
+      reps: r.reps, lapses: r.lapses, lastGrade: r.lastGrade,
     };
   }
 
