@@ -20,6 +20,7 @@ cp apps/web/.env.example apps/web/.env      # fill in VITE_API_URL
 
 npm run db:migrate                          # apply schema
 npm run db:seed                             # load seed-dev.json for the dev user
+npm run db:seed-reference --workspace apps/api   # HSK words + character breakdowns
 
 npm run dev:api                             # http://localhost:8787
 npm run dev:web                             # http://localhost:5173
@@ -36,5 +37,14 @@ Alternatives if you'd rather bring your own database:
 
 - [Neon](https://neon.tech) free tier (also what's recommended for production — see below)
 - Docker: `docker run -e POSTGRES_PASSWORD=zitie -e POSTGRES_DB=zitie -p 5432:5432 postgres:16`
+
+## Reference data
+
+The app ships with the whole of HSK 3.0 already in the database: 10,954 words
+with readings and glosses, and a breakdown for each of the 3,000 dex
+characters. Nothing a learner unlocks has to be looked up or generated first.
+`npm run db:deploy` (migrate + seed) puts it there; the files, how they're
+built, and the licenses they carry are in
+[apps/api/data/ATTRIBUTION.md](./apps/api/data/ATTRIBUTION.md).
 
 See [DEPLOY.md](./DEPLOY.md) for hosting + DNS once you're ready to ship.

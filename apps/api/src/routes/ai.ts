@@ -2,6 +2,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { Hono } from "hono";
 import { z } from "zod";
 import { requireAuth } from "../lib/auth.js";
+import { lookupReference, reconcileCards } from "../lib/reference.js";
 import { rateLimit } from "../lib/rateLimit.js";
 
 export const aiRoute = new Hono();
@@ -127,8 +128,11 @@ aiRoute.post("/extract", async (c) => {
     if (!textBlock || textBlock.type !== "text") {
       return c.json({ error: "The model returned no usable output — try again." }, 502);
     }
-    const { cards } = JSON.parse(textBlock.text) as { cards: unknown[] };
-    return c.json({ cards });
+    const { cards } = JSON.parse(textBlock.text) as { cards: Record<string, unknown>[] };
+    // Every HSK word already has an authoritative reading in the database;
+    // where the extraction and the standard disagree, the standard wins.
+    const reference = await lookupReference(cards.map((card) => String(card.hanzi ?? "")));
+    return c.json({ cards: reconcileCards(cards, reference) });
   } catch (err) {
     if (err instanceof Anthropic.RateLimitError) {
       return c.json({ error: "AI service is rate-limited right now — try again in a minute." }, 429);
