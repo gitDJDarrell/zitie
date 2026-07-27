@@ -152,10 +152,15 @@ they were queued:
 3. **Haiku for the extraction hot path** (`apps/api/src/routes/ai.ts` still runs
    the top tier for screenshot extraction — the model split the roadmap
    describes is only half done).
-4. **Offline write path.** The shell and bank now survive offline, but grading a
-   card still posts to `/seen` and fails silently. Queueing those and replaying
-   on reconnect is the difference between "the app opens offline" and "you can
-   study offline".
+4. ~~**Offline write path.**~~ — SHIPPED. Grades, views, card edits and settings
+   that fail on the network are parked in a localStorage outbox
+   (`storage/outbox.ts`) and replayed in order on reconnect and on next load;
+   the header shows how many writes are waiting. Deletes and imports stay out
+   on purpose — those should fail at the click, not succeed an hour later.
+   Fixing this surfaced a second bug worth knowing about: `api.me()` failing
+   for *any* reason dropped you on the login screen, so an offline reload
+   logged you out and stranded the queue behind a form you couldn't submit. A
+   rejected session and an unreachable one are now told apart.
 5. **Window the character dex too.** The word dex renders ~50 tiles regardless
    of level size; the character dex still renders a whole level at once, which
    is 1,200 tiles in HSK 7-9. `lib/windowing.ts` is already there — this is

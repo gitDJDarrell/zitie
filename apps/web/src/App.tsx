@@ -19,6 +19,10 @@ export default function App({ onLogout, userEmail }: { onLogout: () => void; use
   const [tab, setTab] = useState<"study" | "gallery" | "browse" | "import">("study");
   const [filters, setFilters] = useState<Filters>({ q: "", pos: [], includeCompound: false, age: "all", starred: false });
   const [syncState, setSyncState] = useState<SyncState>("syncing");
+  // Writes waiting for the network. Shown in the header so an offline session
+  // reads as "held, not lost" — the difference between trusting the app on a
+  // train and re-grading everything afterwards.
+  const [pending, setPending] = useState(0);
   const [theme, setTheme] = useState<Theme>("light");
   const [stack, setStack] = useState<string[]>([]);
   const [autoSpeak, setAutoSpeak] = useState(true);
@@ -28,7 +32,7 @@ export default function App({ onLogout, userEmail }: { onLogout: () => void; use
   const [stackSession, setStackSession] = useState<{ ids: string[]; nonce: number } | null>(null);
 
   const storageRef = useRef<ApiStorage | null>(null);
-  if (!storageRef.current) storageRef.current = new ApiStorage(setSyncState);
+  if (!storageRef.current) storageRef.current = new ApiStorage(setSyncState, setPending);
   const storage = storageRef.current;
 
   useEffect(() => {
@@ -181,8 +185,10 @@ export default function App({ onLogout, userEmail }: { onLogout: () => void; use
     { id: "import" as const, zh: "入", en: "Import" },
   ];
 
-  const syncLabel = syncState === "offline" ? "offline — cached locally"
-    : syncState === "syncing" ? "syncing…" : "✓ synced";
+  const syncLabel = syncState === "offline"
+      ? (pending ? `offline — ${pending} waiting to sync` : "offline — cached locally")
+    : syncState === "syncing" ? "syncing…"
+    : pending ? `${pending} waiting to sync` : "✓ synced";
 
   return (
     <div className="min-h-screen w-full" style={{ background: C.ink, color: C.paper }}>

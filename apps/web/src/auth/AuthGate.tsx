@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { api, ApiError } from "../api/client";
 import App from "../App";
+import { forgetSession, rememberedSession, rememberSession } from "./session";
 import { C, FONT_CSS } from "../theme";
 
 type Status = "checking" | "guest" | "authed";
@@ -27,8 +28,21 @@ export function AuthGate() {
       return;
     }
     api.me().then(
-      (me) => { setUserEmail(me.email); setStatus("authed"); },
-      () => setStatus("guest"),
+      (me) => { rememberSession(me.email); setUserEmail(me.email); setStatus("authed"); },
+      (err) => {
+        // A rejected session means log in again. A session we couldn't *reach*
+        // means the network is down — the cookie is still good, the bank is
+        // cached, and there may be writes queued, so carry on offline rather
+        // than presenting a login form that can't be submitted.
+        const remembered = rememberedSession();
+        if (!(err instanceof ApiError) && remembered) {
+          setUserEmail(remembered);
+          setStatus("authed");
+          return;
+        }
+        forgetSession();
+        setStatus("guest");
+      },
     );
   }, []);
 
@@ -59,6 +73,7 @@ export function AuthGate() {
         const user = mode === "signup"
           ? await api.signup(email, password)
           : await api.login(email, password);
+        rememberSession(user.email);
         setUserEmail(user.email);
         setStatus("authed");
       }
@@ -70,6 +85,7 @@ export function AuthGate() {
   }
 
   function logout() {
+    forgetSession();
     api.logout().finally(() => {
       setEmail("");
       setPassword("");
