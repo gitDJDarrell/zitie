@@ -67,6 +67,11 @@ export const api = {
 
   getInsights: (hanzi: string[]) =>
     request<{ insights: Record<string, CharacterInsight> }>("/insights", { method: "POST", body: JSON.stringify({ hanzi }) }),
+
+  // Ask the server to work out a breakdown it has never cached. Returns which
+  // characters were taken on and which it can't do at all.
+  enrichInsights: (hanzi: string[]) =>
+    request<{ queued: string[]; unavailable: string[] }>("/insights/enrich", { method: "POST", body: JSON.stringify({ hanzi }) }),
 };
 
 export interface InsightComponent {

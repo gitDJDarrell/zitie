@@ -24,19 +24,53 @@ export function CardDetail({ card, srs, onClose, onToggleStar, inStack, onToggle
   const level = slot ? DEX_LEVELS.find(l => l.id === slot.levelId) : undefined;
 
   // Deep breakdown is shared/cached server-side and fetched lazily on open.
+  // On a miss the server can work one out in the background, so we ask, then
+  // poll until it lands — "decoding…" covers both waits, which read the same
+  // from here.
   const [insight, setInsight] = useState<CharacterInsight | null>(null);
   const [insightState, setInsightState] = useState<"loading" | "ready" | "none">("loading");
   useEffect(() => {
     let live = true;
+    let timer: ReturnType<typeof setTimeout> | undefined;
     setInsightState("loading"); setInsight(null);
+
+    const show = (found: CharacterInsight) => {
+      setInsight(found);
+      setInsightState("ready");
+    };
+
+    // Compounds are made of characters the dex already covers; there is no
+    // per-word breakdown to generate, so don't ask for one.
+    const enrichable = !card.compound && card.hanzi.length === 1;
+
+    // Enrichment is a model call over a lookup loop — tens of seconds, not
+    // hundreds. Poll gently, then stop rather than spin forever.
+    const poll = (left: number) => {
+      timer = setTimeout(() => {
+        api.getInsights([card.hanzi]).then(({ insights }) => {
+          if (!live) return;
+          const found = insights[card.hanzi];
+          if (found) show(found);
+          else if (left > 1) poll(left - 1);
+          else setInsightState("none");
+        }).catch(() => { if (live) setInsightState("none"); });
+      }, 5000);
+    };
+
     api.getInsights([card.hanzi]).then(({ insights }) => {
       if (!live) return;
       const found = insights[card.hanzi];
-      setInsight(found ?? null);
-      setInsightState(found ? "ready" : "none");
+      if (found) return show(found);
+      if (!enrichable) return setInsightState("none");
+      return api.enrichInsights([card.hanzi]).then(({ queued }) => {
+        if (!live) return;
+        if (queued.includes(card.hanzi)) poll(12);
+        else setInsightState("none");
+      });
     }).catch(() => { if (live) setInsightState("none"); });
-    return () => { live = false; };
-  }, [card.hanzi]);
+
+    return () => { live = false; if (timer) clearTimeout(timer); };
+  }, [card.hanzi, card.compound]);
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center"
