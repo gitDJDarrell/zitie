@@ -163,10 +163,22 @@ function anthropic(): Anthropic {
 }
 
 /**
+ * The slice of the SDK this loop uses. Narrow on purpose: it lets the loop be
+ * driven by a scripted client in tests, so the mechanics — that the tool gets
+ * called, that its results are fed back, that the final JSON is parsed and
+ * grounded — are checked without a key or a live call.
+ */
+export interface MessageClient {
+  messages: {
+    create(params: Anthropic.MessageCreateParamsNonStreaming): Promise<Anthropic.Message>;
+  };
+}
+
+/**
  * One enrichment: a tool-use loop the model drives, ending in a structured
  * breakdown. Exported for scripts that want to generate without the queue.
  */
-export async function generateInsight(hanzi: string): Promise<DraftInsight> {
+export async function generateInsight(hanzi: string, api: MessageClient = anthropic()): Promise<DraftInsight> {
   const messages: Anthropic.MessageParam[] = [{
     role: "user",
     content: `Write the breakdown for 「${hanzi}」. Look it up first.`,
@@ -175,7 +187,7 @@ export async function generateInsight(hanzi: string): Promise<DraftInsight> {
   // Enough turns for the character plus a handful of components; a loop that
   // wanders past this is not converging and should not keep spending.
   for (let turn = 0; turn < 10; turn++) {
-    const response = await anthropic().messages.create({
+    const response = await api.messages.create({
       model: MODEL,
       max_tokens: 8000,
       thinking: { type: "adaptive" },

@@ -27,3 +27,5 @@ export interface StorageBackend {
 
 export type SyncState = "syncing" | "synced" | "offline";
 export type SyncListener = (state: SyncState) => void;
+/** How many writes are parked in the outbox, waiting for the network. */
+export type PendingListener = (depth: number) => void;

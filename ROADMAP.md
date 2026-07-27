@@ -65,10 +65,22 @@ lending the sound), recursively for components worth explaining.
   dictionary heuristic gets wrong (打 is dǎ, not dá) are corrected in
   `readings-override.json`. Extraction reconciles against it: the standard's
   reading beats the model's, since a wrong tone is a wrong word.
-- **Model split:** cheap model (Haiku) for the hot-path screenshot extraction;
-  top-tier for the amortized deep enrichment (now Opus 5 — the enrichment
-  worker uses it; the extraction path still runs Opus 4.8 and is the place to
-  try Haiku).
+- **Word dex — SHIPPED:** the vocabulary half of the collection game. All
+  10,954 HSK words are slots in a second catalog (词鉴), collected the same way
+  characters are — by having a card for them — with the same tracing-outline
+  language for what you haven't got yet. The gallery switches between the two
+  (字 / 词). Only written forms and levels are bundled client-side
+  (`apps/web/src/data/wordDex.ts`, generated): a collected word's reading comes
+  from the user's own card and an uncollected one is a mystery by design, so
+  the whole catalog draws offline with no lookup. Rows are windowed
+  (`lib/windowing.ts`) — HSK 7-9 alone is 5,602 slots and only ~50 tiles are
+  ever in the DOM.
+- **Model split — SHIPPED:** deep enrichment runs the top tier (Opus 5), since
+  it happens once per character and is then reused by everyone forever.
+  Extraction splits by difficulty rather than frequency: a photo stays on Opus
+  4.8 (handwriting, glare, characters a stroke apart), typed or pasted text
+  goes to Haiku 4.5, which is transcription. A 400 from the small model falls
+  back to the large one.
 
 ## Track B — Take photo
 
@@ -134,18 +146,35 @@ they were queued:
    how they came to mean…"). Those are the ones worth hand-writing or enriching
    next, highest-frequency first — the machinery reads them back from
    `character_insights` by `source = 'seed:hsk-derived'`.
-2. **Watch the first real enrichment runs.** The worker has never talked to the
-   API in anger — no `ANTHROPIC_API_KEY` in this environment. Before leaning on
-   it, run one character end to end and check the grounding filter isn't
-   silently eating legitimate components (it drops anything the dataset doesn't
-   place inside the character, two levels deep).
-3. **Haiku for the extraction hot path** (`apps/api/src/routes/ai.ts` still runs
-   the top tier for screenshot extraction — the model split the roadmap
-   describes is only half done).
-4. **Offline write path.** The shell and bank now survive offline, but grading a
-   card still posts to `/seen` and fails silently. Queueing those and replaying
-   on reconnect is the difference between "the app opens offline" and "you can
-   study offline".
+2. **Watch the first real enrichment run.** The loop's mechanics are now
+   covered by tests that drive it with a scripted client (`enrich.loop.test.ts`
+   — tool offered, results fed back, JSON parsed, every failure mode raising
+   rather than storing nonsense), so what's left unverified is narrow: whether
+   the live API accepts this request shape, and whether the model's breakdowns
+   read well. Both need a key — none in the dev environment; if one is in Fly
+   secrets, the first uncollected non-HSK character opened after deploy is the
+   test. Watch that the grounding filter isn't eating legitimate components.
+3. ~~**Haiku for the extraction hot path**~~ — SHIPPED, split by difficulty
+   rather than by frequency: a photo stays on the top tier (handwriting,
+   glare, characters a stroke apart), typed or pasted text goes to Haiku,
+   which is transcription. A 400 from the small model falls back to the large
+   one, so a rejected request shape can't break someone's import. **Unverified
+   against the live API** — no key in this environment — so watch the first
+   text import after deploying.
+4. ~~**Offline write path.**~~ — SHIPPED. Grades, views, card edits and settings
+   that fail on the network are parked in a localStorage outbox
+   (`storage/outbox.ts`) and replayed in order on reconnect and on next load;
+   the header shows how many writes are waiting. Deletes and imports stay out
+   on purpose — those should fail at the click, not succeed an hour later.
+   Fixing this surfaced a second bug worth knowing about: `api.me()` failing
+   for *any* reason dropped you on the login screen, so an offline reload
+   logged you out and stranded the queue behind a form you couldn't submit. A
+   rejected session and an unreachable one are now told apart.
+5. ~~**Window the character dex too.**~~ — SHIPPED. Both catalogs now share
+   `lib/useGridWindow`; ~60 tiles in the DOM whatever the level holds.
+6. **Study from the word dex.** Words are collectable and browsable now but
+   there's no "study the words I'm missing from HSK 3" path; the stack
+   mechanism is the obvious place to hang it.
 
 ## Sequencing
 

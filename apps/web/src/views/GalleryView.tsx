@@ -1,10 +1,17 @@
 import { useMemo, useState } from "react";
-import { Chip, Rating, SpeakBtn } from "../components/atoms";
+import { Chip, Rating, SpeakBtn, Switch } from "../components/atoms";
 import { CardDetail } from "../components/CardDetail";
 import { MysteryCardDetail } from "../components/MysteryCardDetail";
 import { DEX_LEVELS, DEX_INDEX, DEX_ORDER, DEX_TOTAL } from "../data/dex";
 import { C } from "../theme";
 import type { Card, SeenMap } from "../types";
+import { WordDex } from "./WordDex";
+import { useGridWindow } from "../lib/useGridWindow";
+
+// Character tiles are square-ish and small — five or six to a phone row.
+const TILE_MIN = 64;
+const TILE_HEIGHT = 68;
+const GAP = 4;
 
 // What's currently open in the detail modal: a position in the global dex
 // order (collected or not — mystery slots are viewable too), or a position
@@ -31,6 +38,9 @@ export function GalleryView({ bank, srs, onToggleStar, stack, onAddToStack, onRe
   bank: Card[]; srs: SeenMap; onToggleStar: (id: string) => void;
   stack: string[]; onAddToStack: (ids: string[]) => void; onRemoveFromStack: (ids: string[]) => void;
 }) {
+  // Which catalog is on screen. Characters lead: they're the smaller, more
+  // finishable set, and every word in the other dex is built out of them.
+  const [catalog, setCatalog] = useState<"characters" | "words">("characters");
   const [levelId, setLevelId] = useState<string>(DEX_LEVELS[0].id);
   const [cursor, setCursor] = useState<Cursor | null>(null);
   const stackSet = useMemo(() => new Set(stack), [stack]);
@@ -47,9 +57,12 @@ export function GalleryView({ bank, srs, onToggleStar, stack, onAddToStack, onRe
   );
 
   const level = DEX_LEVELS.find(l => l.id === levelId);
-  const levelChars = level ? [...level.chars] : [];
+  const levelChars = useMemo(() => (level ? [...level.chars] : []), [level]);
   const levelCaught = levelChars.filter(ch => byHanzi.has(ch)).length;
   const showing = levelId === "extras" ? null : level;
+
+  const { ref: gridRef, columns, rowCount, firstRow, lastRow } =
+    useGridWindow(levelChars.length, { tileMin: TILE_MIN, tileHeight: TILE_HEIGHT, gap: GAP });
 
   // dex numbers are global across levels — precompute this level's starting offset
   const levelOffset = useMemo(() => {
@@ -62,8 +75,29 @@ export function GalleryView({ bank, srs, onToggleStar, stack, onAddToStack, onRe
   }, [levelId]);
 
 
+  const catalogSwitch = (
+    <div className="flex justify-center">
+      <Switch value={catalog} options={[
+        { value: "characters", label: "字 characters" },
+        { value: "words", label: "词 words" },
+      ]} onChange={setCatalog} />
+    </div>
+  );
+
+  if (catalog === "words") {
+    return (
+      <div className="flex flex-col gap-4">
+        {catalogSwitch}
+        <WordDex bank={bank} srs={srs} onToggleStar={onToggleStar}
+          stack={stack} onAddToStack={onAddToStack} onRemoveFromStack={onRemoveFromStack} />
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-4">
+      {catalogSwitch}
+
       <div className="flex items-baseline justify-between">
         <div className="flex items-baseline gap-2">
           <span className="hz text-base" style={{ color: C.dim }}>图鉴</span>
@@ -100,8 +134,15 @@ export function GalleryView({ bank, srs, onToggleStar, stack, onAddToStack, onRe
             </div>
           </div>
 
-          <div className="grid gap-1" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(64px, 1fr))" }}>
-            {levelChars.map((ch, i) => {
+          <div ref={gridRef} className="grid gap-1"
+            style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}>
+            {/* Same windowing as the word dex: HSK 7-9 is 1,200 slots, and
+                a phone shouldn't lay all of them out to show twenty. */}
+            {firstRow > 0 && (
+              <div aria-hidden="true" style={{ gridColumn: "1 / -1", height: firstRow * (TILE_HEIGHT + GAP) }} />
+            )}
+            {levelChars.slice(firstRow * columns, (lastRow + 1) * columns).map((ch, offset) => {
+              const i = firstRow * columns + offset;
               const card = byHanzi.get(ch);
               const n = levelOffset + i + 1;
               const dexIndex = n - 1; // DEX_ORDER is 0-based; slot.n is 1-based
@@ -139,6 +180,10 @@ export function GalleryView({ bank, srs, onToggleStar, stack, onAddToStack, onRe
                 </button>
               );
             })}
+            {lastRow < rowCount - 1 && (
+              <div aria-hidden="true"
+                style={{ gridColumn: "1 / -1", height: (rowCount - 1 - lastRow) * (TILE_HEIGHT + GAP) }} />
+            )}
           </div>
         </>
       )}

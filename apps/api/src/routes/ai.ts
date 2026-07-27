@@ -107,15 +107,41 @@ aiRoute.post("/extract", async (c) => {
   });
 
   const client = new Anthropic();
+
+  // The roadmap's model split, drawn where the difficulty actually is. Reading
+  // vocabulary off a photo — handwriting, glare, a page at an angle,
+  // characters that differ by one stroke — is the hard case and stays on the
+  // top tier. A typed or pasted list is transcription, which the cheap model
+  // does well for a fraction of the cost. Either way an HSK word's reading is
+  // corrected against the standard afterwards.
+  const deep = {
+    model: "claude-opus-4-8",
+    max_tokens: 16000,
+    thinking: { type: "adaptive" as const },
+    system: SYSTEM_PROMPT,
+    output_config: { format: outputFormat },
+    messages: [{ role: "user" as const, content }],
+  };
+  const cheap = {
+    model: "claude-haiku-4-5",
+    max_tokens: 16000,
+    system: SYSTEM_PROMPT,
+    output_config: { format: outputFormat },
+    messages: [{ role: "user" as const, content }],
+  };
+
   try {
-    const response = await client.messages.create({
-      model: "claude-opus-4-8",
-      max_tokens: 16000,
-      thinking: { type: "adaptive" },
-      system: SYSTEM_PROMPT,
-      output_config: { format: outputFormat },
-      messages: [{ role: "user", content }],
-    });
+    let response;
+    try {
+      response = await client.messages.create(image ? deep : cheap);
+    } catch (err) {
+      // A 400 means the small model wouldn't take the request as shaped — a
+      // reason to fall back rather than to fail an import in front of someone
+      // who just photographed their homework.
+      if (image || !(err instanceof Anthropic.APIError) || err.status !== 400) throw err;
+      console.warn(`[ai] ${cheap.model} rejected the request (${err.message}); retrying on ${deep.model}`);
+      response = await client.messages.create(deep);
+    }
 
     if (response.stop_reason === "refusal") {
       return c.json({ error: "The model declined this input — try different content." }, 422);
