@@ -1,10 +1,10 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Chip, Rating, SpeakBtn, Switch } from "../components/atoms";
 import { CardDetail } from "../components/CardDetail";
 import { MysteryCardDetail } from "../components/MysteryCardDetail";
 import { WORD_DEX_LEVELS, WORD_INDEX, WORD_ORDER, WORD_TOTAL } from "../data/wordDex";
 import { normalizePinyin } from "../lib/pinyin";
-import { columnCount, visibleRows } from "../lib/windowing";
+import { useGridWindow } from "../lib/useGridWindow";
 import { C } from "../theme";
 import type { Card, SeenMap } from "../types";
 
@@ -13,62 +13,6 @@ const TILE_HEIGHT = 62;
 const GAP = 4;
 
 type Show = "all" | "collected" | "missing";
-
-/**
- * Tracks how many rows the grid has and which of them are near the viewport.
- * The whole catalog's height is reserved with spacers, so the scrollbar tells
- * the truth while only ~30 rows exist in the DOM.
- */
-function useGridWindow(itemCount: number) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [columns, setColumns] = useState(4);
-  const [range, setRange] = useState({ firstRow: 0, lastRow: 20 });
-
-  // Column count follows the element's width, not the viewport's — the grid
-  // sits inside a padded, max-width column. Re-attaches when the grid comes
-  // back after a filter emptied it, which unmounts the element.
-  const hasItems = itemCount > 0;
-  useLayoutEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const measure = () => setColumns(columnCount(el.clientWidth, TILE_MIN, GAP));
-    measure();
-    const observer = new ResizeObserver(measure);
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [hasItems]);
-
-  const rowCount = Math.ceil(itemCount / columns);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    let frame = 0;
-    const update = () => {
-      frame = 0;
-      const top = el.getBoundingClientRect().top + window.scrollY;
-      setRange(visibleRows({
-        scrollTop: window.scrollY,
-        viewportHeight: window.innerHeight,
-        gridTop: top,
-        rowHeight: TILE_HEIGHT + GAP,
-        rowCount,
-      }));
-    };
-    // Coalesce scroll events into one measurement per frame.
-    const onScroll = () => { if (!frame) frame = requestAnimationFrame(update); };
-    update();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-      if (frame) cancelAnimationFrame(frame);
-    };
-  }, [rowCount]);
-
-  return { ref, columns, rowCount, ...range };
-}
 
 /* ————————————————— the word dex —————————————————
    The character dex's sibling: every word in the official HSK 3.0 vocabulary
@@ -114,7 +58,8 @@ export function WordDex({ bank, srs, onToggleStar, stack, onAddToStack, onRemove
     });
   }, [level, byHanzi, show, query]);
 
-  const { ref, columns, rowCount, firstRow, lastRow } = useGridWindow(visible.length);
+  const { ref, columns, rowCount, firstRow, lastRow } =
+    useGridWindow(visible.length, { tileMin: TILE_MIN, tileHeight: TILE_HEIGHT, gap: GAP });
   const start = firstRow * columns;
   const end = Math.min(visible.length, (lastRow + 1) * columns);
   const rendered = visible.slice(start, end);
