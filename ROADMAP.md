@@ -146,11 +146,14 @@ they were queued:
    how they came to mean…"). Those are the ones worth hand-writing or enriching
    next, highest-frequency first — the machinery reads them back from
    `character_insights` by `source = 'seed:hsk-derived'`.
-2. **Watch the first real enrichment runs.** The worker has never talked to the
-   API in anger — no `ANTHROPIC_API_KEY` in this environment. Before leaning on
-   it, run one character end to end and check the grounding filter isn't
-   silently eating legitimate components (it drops anything the dataset doesn't
-   place inside the character, two levels deep).
+2. **Watch the first real enrichment run.** The loop's mechanics are now
+   covered by tests that drive it with a scripted client (`enrich.loop.test.ts`
+   — tool offered, results fed back, JSON parsed, every failure mode raising
+   rather than storing nonsense), so what's left unverified is narrow: whether
+   the live API accepts this request shape, and whether the model's breakdowns
+   read well. Both need a key — none in the dev environment; if one is in Fly
+   secrets, the first uncollected non-HSK character opened after deploy is the
+   test. Watch that the grounding filter isn't eating legitimate components.
 3. ~~**Haiku for the extraction hot path**~~ — SHIPPED, split by difficulty
    rather than by frequency: a photo stays on the top tier (handwriting,
    glare, characters a stroke apart), typed or pasted text goes to Haiku,
