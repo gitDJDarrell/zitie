@@ -3,6 +3,7 @@ import { api, type CharacterInsight, type InsightComponent } from "../api/client
 import { SpeakBtn } from "./atoms";
 import { DAY } from "../lib/filters";
 import { DEX_LEVELS, DEX_INDEX } from "../data/dex";
+import { WORD_DEX_LEVELS, WORD_INDEX } from "../data/wordDex";
 import { C } from "../theme";
 import type { Card, SeenMap } from "../types";
 
@@ -20,8 +21,12 @@ export function CardDetail({ card, srs, onClose, onToggleStar, inStack, onToggle
 }) {
   const rec = srs[card.id];
   const ago = rec ? Math.floor((Date.now() - rec.last) / DAY) : null;
+  // A card belongs to one of two catalogs: single characters to the character
+  // dex, words to the word dex. Anything in neither is a genuine extra.
   const slot = DEX_INDEX.get(card.hanzi);
   const level = slot ? DEX_LEVELS.find(l => l.id === slot.levelId) : undefined;
+  const wordSlot = slot ? undefined : WORD_INDEX.get(card.hanzi);
+  const wordLevel = wordSlot ? WORD_DEX_LEVELS.find(l => l.id === wordSlot.levelId) : undefined;
 
   // Deep breakdown is shared/cached server-side and fetched lazily on open.
   // On a miss the server can work one out in the background, so we ask, then
@@ -85,7 +90,9 @@ export function CardDetail({ card, srs, onClose, onToggleStar, inStack, onToggle
           <div className="ui t-label" style={{ color: C.faint }}>
             {slot
               ? <>图鉴 No. {String(slot.n).padStart(4, "0")} · {level?.label}</>
-              : card.compound ? "compound · beyond the dex" : "beyond the dex"}
+              : wordSlot
+                ? <>词鉴 No. {String(wordSlot.n).padStart(5, "0")} · {wordLevel?.label}</>
+                : card.compound ? "compound · beyond the dex" : "beyond the dex"}
           </div>
           <div className="flex items-center gap-1">
             <button onClick={onToggleStack}

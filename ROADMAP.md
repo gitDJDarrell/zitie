@@ -65,6 +65,16 @@ lending the sound), recursively for components worth explaining.
   dictionary heuristic gets wrong (打 is dǎ, not dá) are corrected in
   `readings-override.json`. Extraction reconciles against it: the standard's
   reading beats the model's, since a wrong tone is a wrong word.
+- **Word dex — SHIPPED:** the vocabulary half of the collection game. All
+  10,954 HSK words are slots in a second catalog (词鉴), collected the same way
+  characters are — by having a card for them — with the same tracing-outline
+  language for what you haven't got yet. The gallery switches between the two
+  (字 / 词). Only written forms and levels are bundled client-side
+  (`apps/web/src/data/wordDex.ts`, generated): a collected word's reading comes
+  from the user's own card and an uncollected one is a mystery by design, so
+  the whole catalog draws offline with no lookup. Rows are windowed
+  (`lib/windowing.ts`) — HSK 7-9 alone is 5,602 slots and only ~50 tiles are
+  ever in the DOM.
 - **Model split:** cheap model (Haiku) for the hot-path screenshot extraction;
   top-tier for the amortized deep enrichment (now Opus 5 — the enrichment
   worker uses it; the extraction path still runs Opus 4.8 and is the place to
@@ -146,6 +156,13 @@ they were queued:
    card still posts to `/seen` and fails silently. Queueing those and replaying
    on reconnect is the difference between "the app opens offline" and "you can
    study offline".
+5. **Window the character dex too.** The word dex renders ~50 tiles regardless
+   of level size; the character dex still renders a whole level at once, which
+   is 1,200 tiles in HSK 7-9. `lib/windowing.ts` is already there — this is
+   applying it, and worth doing before the two catalogs diverge in feel.
+6. **Study from the word dex.** Words are collectable and browsable now but
+   there's no "study the words I'm missing from HSK 3" path; the stack
+   mechanism is the obvious place to hang it.
 
 ## Sequencing
 

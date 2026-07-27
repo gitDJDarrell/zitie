@@ -1,10 +1,11 @@
 import { useMemo, useState } from "react";
-import { Chip, Rating, SpeakBtn } from "../components/atoms";
+import { Chip, Rating, SpeakBtn, Switch } from "../components/atoms";
 import { CardDetail } from "../components/CardDetail";
 import { MysteryCardDetail } from "../components/MysteryCardDetail";
 import { DEX_LEVELS, DEX_INDEX, DEX_ORDER, DEX_TOTAL } from "../data/dex";
 import { C } from "../theme";
 import type { Card, SeenMap } from "../types";
+import { WordDex } from "./WordDex";
 
 // What's currently open in the detail modal: a position in the global dex
 // order (collected or not — mystery slots are viewable too), or a position
@@ -31,6 +32,9 @@ export function GalleryView({ bank, srs, onToggleStar, stack, onAddToStack, onRe
   bank: Card[]; srs: SeenMap; onToggleStar: (id: string) => void;
   stack: string[]; onAddToStack: (ids: string[]) => void; onRemoveFromStack: (ids: string[]) => void;
 }) {
+  // Which catalog is on screen. Characters lead: they're the smaller, more
+  // finishable set, and every word in the other dex is built out of them.
+  const [catalog, setCatalog] = useState<"characters" | "words">("characters");
   const [levelId, setLevelId] = useState<string>(DEX_LEVELS[0].id);
   const [cursor, setCursor] = useState<Cursor | null>(null);
   const stackSet = useMemo(() => new Set(stack), [stack]);
@@ -62,8 +66,29 @@ export function GalleryView({ bank, srs, onToggleStar, stack, onAddToStack, onRe
   }, [levelId]);
 
 
+  const catalogSwitch = (
+    <div className="flex justify-center">
+      <Switch value={catalog} options={[
+        { value: "characters", label: "字 characters" },
+        { value: "words", label: "词 words" },
+      ]} onChange={setCatalog} />
+    </div>
+  );
+
+  if (catalog === "words") {
+    return (
+      <div className="flex flex-col gap-4">
+        {catalogSwitch}
+        <WordDex bank={bank} srs={srs} onToggleStar={onToggleStar}
+          stack={stack} onAddToStack={onAddToStack} onRemoveFromStack={onRemoveFromStack} />
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-4">
+      {catalogSwitch}
+
       <div className="flex items-baseline justify-between">
         <div className="flex items-baseline gap-2">
           <span className="hz text-base" style={{ color: C.dim }}>图鉴</span>
