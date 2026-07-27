@@ -48,12 +48,23 @@ lending the sound), recursively for components worth explaining.
   place inside the character are dropped before the row is written. This
   background worker is the long-term agentic surface — later powers
   compound-unlock hints, leveled examples, related characters.
-- **Seed (build-time, $0 API) — STARTED:** HSK 1 partially covered
-  (`apps/api/data/insights-hsk1.json`, 18 characters). Remaining: the rest of
-  the current bank (~111 single-character cards) and HSK 1 proper (300),
-  expanding outward across sessions. Until then those characters fall to the
-  runtime worker, which costs credits — seeding them in-session is the cheaper
-  path and the reviewed one.
+- **Seed (build-time, $0 API) — SHIPPED, complete coverage:** every one of the
+  3,000 HSK 3.0 dex characters has a breakdown in the database at release
+  (`apps/api/data/insights-hsk.json`), composed from verified facts rather than
+  written by a model — structure from the IDS operator, components and roles
+  from the recorded etymology, "appears in" from real HSK vocabulary ranked by
+  level then frequency. Where the data records no account of a character, the
+  story says so. The 18 hand-written HSK 1 entries still win, and a re-seed
+  leaves AI-enriched rows alone, so the runtime worker only ever runs for
+  characters outside the dex — which is what it was for.
+- **Word bank — SHIPPED:** all 10,954 HSK 3.0 word forms with reading, gloss,
+  the level they're first examinable at, and the standard's part-of-speech
+  annotations (`hsk_words`, migration 0006). Complete: the 272 entries
+  CC-CEDICT doesn't list (transparent phrases like 车上, 看到) are hand-written
+  in `hsk-words-supplement.json`, and 38 heteronyms whose everyday reading the
+  dictionary heuristic gets wrong (打 is dǎ, not dá) are corrected in
+  `readings-override.json`. Extraction reconciles against it: the standard's
+  reading beats the model's, since a wrong tone is a wrong word.
 - **Model split:** cheap model (Haiku) for the hot-path screenshot extraction;
   top-tier for the amortized deep enrichment (now Opus 5 — the enrichment
   worker uses it; the extraction path still runs Opus 4.8 and is the place to
@@ -117,10 +128,12 @@ they were queued:
 
 ## Backlog — next (queued 2026-07-27)
 
-1. **Seed the rest of the bank's insights** (Track A, build-time): ~111
-   single-character cards still have no reviewed breakdown, so they fall to the
-   credit-spending runtime worker. Generating them in-session and committing to
-   `apps/api/data/` is both cheaper and reviewed. Then HSK 1 proper.
+1. **Upgrade the generated stories where they read flattest.** All 3,000 dex
+   characters now have a grounded breakdown, but ~200 of them have no recorded
+   etymology and say so plainly ("the data records the parts but no account of
+   how they came to mean…"). Those are the ones worth hand-writing or enriching
+   next, highest-frequency first — the machinery reads them back from
+   `character_insights` by `source = 'seed:hsk-derived'`.
 2. **Watch the first real enrichment runs.** The worker has never talked to the
    API in anger — no `ANTHROPIC_API_KEY` in this environment. Before leaning on
    it, run one character end to end and check the grounding filter isn't

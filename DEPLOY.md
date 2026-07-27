@@ -65,9 +65,11 @@ its remote builders — you do **not** need Docker installed locally.
    fly deploy
    ```
    The `release_command` in `fly.toml` (`npm run db:deploy`) runs **before**
-   traffic shifts: it applies migrations and upserts the shared character-insight
-   reference data — so you don't need to migrate manually. You'll get
-   `https://zitie-api.fly.dev` (or your chosen name).
+   traffic shifts: it applies migrations and upserts the shared reference data —
+   all 10,954 HSK 3.0 words and the 3,000 dex character breakdowns — so you
+   don't need to migrate or seed manually. The seed is idempotent and takes a
+   few seconds; hand-written and AI-enriched rows survive it untouched. You'll
+   get `https://zitie-api.fly.dev` (or your chosen name).
 5. Sanity check: `curl https://zitie-api.fly.dev/health` → `{"ok":true}`.
 
 Then tell me the URL and I'll rebuild the mobile app + `cap sync` pointing at it,

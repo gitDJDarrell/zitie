@@ -1,4 +1,4 @@
-import { boolean, integer, jsonb, pgTable, real, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
+import { boolean, index, integer, jsonb, pgTable, real, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -83,6 +83,24 @@ export const characterInsights = pgTable("character_insights", {
   source: text("source").notNull().default("seed"), // seed:hsk1 | ai:<model>
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
+
+// The official HSK 3.0 vocabulary, shared across all users and shipped with
+// the release — every word a learner can unlock already has its reading and
+// meaning, so unlocking one never waits on a model call. Keyed by the written
+// form; a word listed at several levels keeps the earliest in `level` and all
+// of them in `levels`.
+export const hskWords = pgTable("hsk_words", {
+  zh: text("zh").primaryKey(),
+  pinyin: text("pinyin"),                   // tone marks, e.g. "àihào"
+  meaning: text("meaning"),                 // English gloss, senses split by "; "
+  level: text("level").notNull(),           // "1".."6" | "7-9" — matches the dex level ids
+  levels: jsonb("levels").$type<string[]>().notNull().default([]),
+  // Parts of speech only where the standard annotates one (它 vs 他（代）).
+  pos: jsonb("pos").$type<string[]>().notNull().default([]),
+  compound: boolean("compound").notNull().default(true),
+}, (table) => ({
+  levelIdx: index("hsk_words_level_idx").on(table.level),
+}));
 
 export const settings = pgTable("settings", {
   userId: uuid("user_id").primaryKey().references(() => users.id, { onDelete: "cascade" }),
