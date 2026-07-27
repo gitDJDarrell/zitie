@@ -149,9 +149,13 @@ they were queued:
    it, run one character end to end and check the grounding filter isn't
    silently eating legitimate components (it drops anything the dataset doesn't
    place inside the character, two levels deep).
-3. **Haiku for the extraction hot path** (`apps/api/src/routes/ai.ts` still runs
-   the top tier for screenshot extraction — the model split the roadmap
-   describes is only half done).
+3. ~~**Haiku for the extraction hot path**~~ — SHIPPED, split by difficulty
+   rather than by frequency: a photo stays on the top tier (handwriting,
+   glare, characters a stroke apart), typed or pasted text goes to Haiku,
+   which is transcription. A 400 from the small model falls back to the large
+   one, so a rejected request shape can't break someone's import. **Unverified
+   against the live API** — no key in this environment — so watch the first
+   text import after deploying.
 4. ~~**Offline write path.**~~ — SHIPPED. Grades, views, card edits and settings
    that fail on the network are parked in a localStorage outbox
    (`storage/outbox.ts`) and replayed in order on reconnect and on next load;
@@ -161,10 +165,8 @@ they were queued:
    for *any* reason dropped you on the login screen, so an offline reload
    logged you out and stranded the queue behind a form you couldn't submit. A
    rejected session and an unreachable one are now told apart.
-5. **Window the character dex too.** The word dex renders ~50 tiles regardless
-   of level size; the character dex still renders a whole level at once, which
-   is 1,200 tiles in HSK 7-9. `lib/windowing.ts` is already there — this is
-   applying it, and worth doing before the two catalogs diverge in feel.
+5. ~~**Window the character dex too.**~~ — SHIPPED. Both catalogs now share
+   `lib/useGridWindow`; ~60 tiles in the DOM whatever the level holds.
 6. **Study from the word dex.** Words are collectable and browsable now but
    there's no "study the words I'm missing from HSK 3" path; the stack
    mechanism is the obvious place to hang it.
