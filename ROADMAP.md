@@ -75,10 +75,12 @@ lending the sound), recursively for components worth explaining.
   the whole catalog draws offline with no lookup. Rows are windowed
   (`lib/windowing.ts`) — HSK 7-9 alone is 5,602 slots and only ~50 tiles are
   ever in the DOM.
-- **Model split:** cheap model (Haiku) for the hot-path screenshot extraction;
-  top-tier for the amortized deep enrichment (now Opus 5 — the enrichment
-  worker uses it; the extraction path still runs Opus 4.8 and is the place to
-  try Haiku).
+- **Model split — SHIPPED:** deep enrichment runs the top tier (Opus 5), since
+  it happens once per character and is then reused by everyone forever.
+  Extraction splits by difficulty rather than frequency: a photo stays on Opus
+  4.8 (handwriting, glare, characters a stroke apart), typed or pasted text
+  goes to Haiku 4.5, which is transcription. A 400 from the small model falls
+  back to the large one.
 
 ## Track B — Take photo
 
