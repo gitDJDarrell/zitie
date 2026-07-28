@@ -64,6 +64,15 @@ export const seenState = pgTable("seen_state", {
   // alongside the derived schedule because "what did I rate this?" and "how
   // well do I know it?" are different questions the UI answers separately.
   lastGrade: text("last_grade"),
+  // Proof of recall, one flag per direction, and the two together are what
+  // earns a character its dex slot. They are deliberately separate from the
+  // schedule: the SRS says how well you are holding the card, these say
+  // whether you have ever actually produced the answer — recognised the
+  // meaning from the character (read), and produced the character or its
+  // reading from the English (write). Set once, never cleared by a later
+  // miss; a collected character stays collected, the schedule takes the hit.
+  readOk: boolean("read_ok").notNull().default(false),
+  writeOk: boolean("write_ok").notNull().default(false),
 });
 
 // Deep character breakdowns — shared across ALL users (keyed by hanzi, not

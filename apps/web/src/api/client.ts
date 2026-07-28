@@ -1,4 +1,4 @@
-import type { Card, Grade, SeenMap, SeenRecord, Theme } from "../types";
+import type { Card, Grade, Proof, SeenMap, SeenRecord, Theme } from "../types";
 
 export interface Settings {
   theme: Theme;
@@ -52,8 +52,8 @@ export const api = {
   clearAll: () => request<{ ok: true }>("/cards/clear-all", { method: "POST" }),
 
   markSeen: (id: string) => request<SeenRecord>("/seen", { method: "POST", body: JSON.stringify({ id }) }),
-  gradeCard: (id: string, grade: Grade) =>
-    request<SeenRecord>("/seen/grade", { method: "POST", body: JSON.stringify({ id, grade }) }),
+  gradeCard: (id: string, grade: Grade, proof?: Proof) =>
+    request<SeenRecord>("/seen/grade", { method: "POST", body: JSON.stringify({ id, grade, proof }) }),
   resetSeen: (ids?: string[]) => request<{ ok: true }>("/seen/reset", { method: "POST", body: JSON.stringify({ ids }) }),
 
   getSettings: () => request<Settings>("/settings"),

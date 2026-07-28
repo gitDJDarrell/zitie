@@ -32,11 +32,23 @@ export interface SeenRecord {
   /** The grade last pressed — what you rated it, as opposed to what the
    *  scheduler derived from it. Null until the card has been graded once. */
   lastGrade?: Grade | null;
+  /** Recognised: picked the meaning correctly from the character (read mode). */
+  readOk?: boolean;
+  /** Produced: gave the character or its reading from the English (write mode). */
+  writeOk?: boolean;
 }
 
 export type SeenMap = Record<string, SeenRecord>;
 
 export type Grade = "again" | "hard" | "good" | "easy";
+
+/**
+ * Which direction a correct answer was produced in. Sent with a grade only
+ * when the answer was right; one of each is what earns a character its dex
+ * slot. "read" is recognition — the meaning picked from the character —
+ * and "write" is production, the character or its reading from the English.
+ */
+export type Proof = "read" | "write";
 
 export type Theme = "light" | "dark";
 

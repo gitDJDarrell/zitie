@@ -5,7 +5,8 @@ import { DEX_LEVELS, DEX_INDEX } from "../data/dex";
 import { captureNativePhoto, isNativePlatform } from "../lib/camera";
 import { fileToApiImage } from "../lib/image";
 import { C } from "../theme";
-import type { Card } from "../types";
+import { isCollected } from "../lib/srs";
+import type { Card, SeenMap, StudyIds } from "../types";
 
 interface GenCard {
   hanzi: string; pinyin: string; meaning: string; pos: string[]; compound: boolean;
@@ -16,8 +17,10 @@ interface GenCard {
 interface RevealItem { card: GenCard; isNew: boolean }
 
 /* ————————————————— import ————————————————— */
-export function ImportView({ bank, onImport }: {
-  bank: Card[]; onImport: (items: unknown[]) => Promise<{ added: number; updated: number }>;
+export function ImportView({ bank, srs, onImport, onStudyIds }: {
+  bank: Card[]; srs: SeenMap;
+  onImport: (items: unknown[]) => Promise<{ added: number; updated: number }>;
+  onStudyIds: StudyIds;
 }) {
   const [aiText, setAiText] = useState("");
   const [aiImage, setAiImage] = useState<{ mediaType: string; data: string; name: string } | null>(null);
@@ -179,18 +182,50 @@ export function ImportView({ bank, onImport }: {
     const newCount = items.filter(i => i.isNew).length;
 
     if (idx >= items.length) {
+      // An import fills the bank, not the dex. Saying so here — and offering
+      // the session that would earn them — is what stops a pasted paragraph
+      // from feeling like a hundred characters you never met.
+      // The reveal holds extracted shapes; the stored cards (with ids) are in
+      // the bank the import just refreshed, matched by written form.
+      const byHanzi = new Map(bank.map(c => [c.hanzi, c]));
+      const unearned = items
+        .map(i => byHanzi.get(i.card.hanzi))
+        .filter((c): c is Card => !!c && !isCollected(srs[c.id]));
       return (
         <div className="flex flex-col items-center gap-5 pt-10">
           <div className="hz text-5xl" style={{ color: C.paper }}>获</div>
           <p className="ui text-sm text-center leading-relaxed" style={{ color: C.dim }}>
-            Collection updated —{" "}
+            Bank updated —{" "}
             <span style={{ color: C.paper }}>{newCount}</span> new{" "}
-            {newCount === 1 ? "entry" : "entries"} caught
+            {newCount === 1 ? "entry" : "entries"}
             {items.length - newCount > 0 && <>, {items.length - newCount} expanded</>}.
           </p>
-          <button onClick={() => setReveal(null)}
-            className="ui px-8 py-2 t-btn border rounded"
-            style={{ borderColor: C.paper, color: C.paper }}>Done</button>
+          {unearned.length > 0 && (
+            <p className="ui t-body text-center max-w-xs leading-relaxed" style={{ color: C.faint }}>
+              {unearned.length === 1 ? "It isn't" : `${unearned.length} of them aren't`} in the
+              dex yet. Recognise {unearned.length === 1 ? "it" : "each one"} from the character
+              and write it back from the English, and the slot is yours.
+            </p>
+          )}
+          <div className="flex gap-3 flex-wrap justify-center">
+            {unearned.length > 0 && (
+              <button
+                onClick={() => {
+                  setReveal(null);
+                  onStudyIds(unearned.map(c => c.id), {
+                    zh: "入", label: "just imported", noun: "just imported",
+                    emptyText: "Nothing left to earn from that import.",
+                  });
+                }}
+                className="ui px-6 py-2 t-btn border rounded"
+                style={{ borderColor: C.paper, color: C.paper }}>
+                学 study these {unearned.length}
+              </button>
+            )}
+            <button onClick={() => setReveal(null)}
+              className="ui px-6 py-2 t-btn border rounded"
+              style={{ borderColor: C.line, color: C.dim }}>Done</button>
+          </div>
         </div>
       );
     }
@@ -244,7 +279,7 @@ export function ImportView({ bank, onImport }: {
             </div>
           )}
           {!isNew && (
-            <div className="ui text-xs italic" style={{ color: C.faint }}>already collected — entry expanded</div>
+            <div className="ui text-xs italic" style={{ color: C.faint }}>already in your bank — entry expanded</div>
           )}
         </div>
 

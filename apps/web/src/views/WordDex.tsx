@@ -5,6 +5,7 @@ import { MysteryCardDetail } from "../components/MysteryCardDetail";
 import { WORD_DEX_LEVELS, WORD_INDEX, WORD_ORDER, WORD_TOTAL } from "../data/wordDex";
 import { normalizePinyin } from "../lib/pinyin";
 import { useGridWindow } from "../lib/useGridWindow";
+import { isCollected, proofsOf } from "../lib/srs";
 import { C } from "../theme";
 import type { Card, SeenMap, StudyIds } from "../types";
 
@@ -12,7 +13,7 @@ const TILE_MIN = 88;   // px — four columns on a phone, and a four-character i
 const TILE_HEIGHT = 62;
 const GAP = 4;
 
-type Show = "all" | "collected" | "missing";
+type Show = "all" | "collected" | "progress" | "missing";
 
 /* ————————————————— the word dex —————————————————
    The character dex's sibling: every word in the official HSK 3.0 vocabulary
@@ -32,15 +33,28 @@ export function WordDex({ bank, srs, onToggleStar, stack, onAddToStack, onRemove
   const stackSet = useMemo(() => new Set(stack), [stack]);
 
   const byHanzi = useMemo(() => new Map(bank.map(c => [c.hanzi, c])), [bank]);
+
+  // Same rule as the character dex: a slot is earned by proving the word in
+  // both directions, not by having imported a card for it.
+  const earned = (w: string) => isCollected(srs[byHanzi.get(w)?.id ?? ""]);
+  const held = (w: string) => byHanzi.has(w) && !earned(w);
+
   const collectedTotal = useMemo(
-    () => [...WORD_INDEX.keys()].filter(w => byHanzi.has(w)).length,
-    [byHanzi],
+    () => [...WORD_INDEX.keys()].filter(earned).length,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [byHanzi, srs],
+  );
+  const heldTotal = useMemo(
+    () => [...WORD_INDEX.keys()].filter(held).length,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [byHanzi, srs],
   );
 
   const level = WORD_DEX_LEVELS.find(l => l.id === levelId) ?? WORD_DEX_LEVELS[0];
   const levelCollected = useMemo(
-    () => level.words.filter(w => byHanzi.has(w)).length,
-    [level, byHanzi],
+    () => level.words.filter(earned).length,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [level, byHanzi, srs],
   );
 
   // Search matches the written form always, and the reading for words already
@@ -51,11 +65,12 @@ export function WordDex({ bank, srs, onToggleStar, stack, onAddToStack, onRemove
     const letters = q ? normalizePinyin(q).letters : "";
     return level.words.filter(word => {
       const card = byHanzi.get(word);
-      if (show === "collected" && !card) return false;
-      if (show === "missing" && card) return false;
+      if (show === "collected" && !earned(word)) return false;
+      if (show === "progress" && !held(word)) return false;
+      if (show === "missing" && byHanzi.has(word)) return false;
       if (!q) return true;
       if (word.includes(q)) return true;
-      return !!card && !!letters && normalizePinyin(card.pinyin).letters.includes(letters);
+      return !!card && earned(word) && !!letters && normalizePinyin(card.pinyin).letters.includes(letters);
     });
   }, [level, byHanzi, show, query]);
 
@@ -80,8 +95,16 @@ export function WordDex({ bank, srs, onToggleStar, stack, onAddToStack, onRemove
   // narrower set — studying what you're looking at is the least surprising
   // reading of the button.
   const studyable = useMemo(
-    () => visible.map(w => byHanzi.get(w)?.id).filter((id): id is string => !!id),
-    [visible, byHanzi],
+    // In-progress first — the button's job is to finish what you started.
+    () => [...visible.filter(held), ...visible.filter(earned)]
+      .map(w => byHanzi.get(w)?.id).filter((id): id is string => !!id),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [visible, byHanzi, srs],
+  );
+  const studyableHeld = useMemo(
+    () => visible.filter(held).length,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [visible, byHanzi, srs],
   );
 
   const openWord = (word: string) => {
@@ -96,9 +119,14 @@ export function WordDex({ bank, srs, onToggleStar, stack, onAddToStack, onRemove
           <span className="hz text-base" style={{ color: C.dim }}>词鉴</span>
           <span className="ui t-label" style={{ color: C.faint }}>word dex</span>
         </div>
-        <div className="ui text-xs" style={{ color: C.dim }}>
-          <span style={{ color: C.paper }}>{collectedTotal}</span>
-          <span style={{ color: C.faint }}> / {WORD_TOTAL} collected</span>
+        <div className="ui text-xs text-right" style={{ color: C.dim }}>
+          <div>
+            <span style={{ color: C.paper }}>{collectedTotal}</span>
+            <span style={{ color: C.faint }}> / {WORD_TOTAL} collected</span>
+          </div>
+          {heldTotal > 0 && (
+            <div className="ui t-micro" style={{ color: C.faint }}>{heldTotal} in progress</div>
+          )}
         </div>
       </div>
 
@@ -134,6 +162,7 @@ export function WordDex({ bank, srs, onToggleStar, stack, onAddToStack, onRemove
         <Switch value={show} options={[
           { value: "all", label: "all" },
           { value: "collected", label: "collected" },
+          { value: "progress", label: "in progress" },
           { value: "missing", label: "missing" },
         ]} onChange={setShow} />
       </div>
@@ -141,11 +170,13 @@ export function WordDex({ bank, srs, onToggleStar, stack, onAddToStack, onRemove
       {studyable.length > 0 && (
         <button onClick={() => onStudyIds(studyable, {
           zh: "词", label: `${level.label} — words you have`,
-          noun: "collected", emptyText: "No words collected here yet.",
+          noun: "in your bank", emptyText: "No words from this level are in your bank yet.",
         })}
           className="ui self-start px-4 py-2 t-btn border rounded"
           style={{ borderColor: C.line, color: C.paper }}>
-          学 study these {studyable.length}
+          {studyableHeld > 0
+            ? <>学 earn these {studyableHeld}</>
+            : <>学 study these {studyable.length}</>}
         </button>
       )}
 
@@ -154,8 +185,10 @@ export function WordDex({ bank, srs, onToggleStar, stack, onAddToStack, onRemove
           {query.trim()
             ? <>Nothing in {level.label} matches “{query.trim()}”.</>
             : show === "collected"
-              ? <>No words collected in {level.label} yet — import a page with some.</>
-              : <>Every word in {level.label} is collected. 全部收集.</>}
+              ? <>Nothing earned in {level.label} yet — study a word both ways to collect it.</>
+              : show === "progress"
+                ? <>Nothing part-way in {level.label}. Import a page with some, or pick a level you're working through.</>
+                : <>Every word in {level.label} is in your bank. 全部收集.</>}
         </p>
       ) : (
         <div ref={ref} className="grid gap-1"
@@ -170,7 +203,8 @@ export function WordDex({ bank, srs, onToggleStar, stack, onAddToStack, onRemove
             const card = byHanzi.get(word);
             const slot = WORD_INDEX.get(word);
             const n = slot?.n ?? 0;
-            return card ? (
+            const proofs = card ? proofsOf(srs[card.id]) : { read: false, write: false };
+            return card && proofs.read && proofs.write ? (
               // Speak button as a sibling, not a child — a button inside a
               // button is invalid and Safari drops the inner one's clicks.
               <div key={word} className="relative" style={{ height: TILE_HEIGHT }}>
@@ -188,6 +222,24 @@ export function WordDex({ bank, srs, onToggleStar, stack, onAddToStack, onRemove
                 <SpeakBtn text={word} className="absolute top-0 right-0 !px-1 !py-0.5"
                   style={{ fontSize: 10, color: C.faint }} />
               </div>
+            ) : card ? (
+              // In your bank, not yet earned: the word is shown, the slot is
+              // not, and the two glyphs say which half is still owed. No
+              // speaker — the reading is the reward for the read half.
+              <button key={word} onClick={() => openWord(word)}
+                aria-label={`No. ${n} ${word} — in your bank, ${
+                  proofs.read ? "recognised" : "not yet recognised"}, ${
+                  proofs.write ? "written" : "not yet written"}. Tap to view.`}
+                className="flex flex-col items-center justify-center gap-0.5 px-1 rounded"
+                style={{ height: TILE_HEIGHT, border: `1px dashed ${C.line}` }}>
+                <span className="hz leading-tight truncate w-full text-center"
+                  style={{ color: C.dim, fontSize: word.length > 3 ? 15 : 19 }}>{word}</span>
+                <span className="ui t-micro" style={{ color: C.faint }}>{String(n).padStart(5, "0")}</span>
+                <span className="ui t-micro" aria-hidden="true">
+                  <span style={{ color: proofs.read ? C.paper : C.ink3 }}>认</span>
+                  <span style={{ color: proofs.write ? C.paper : C.ink3 }}>写</span>
+                </span>
+              </button>
             ) : (
               // No speaker and no reading: hearing an uncollected word would
               // give away exactly what the slot is holding back.

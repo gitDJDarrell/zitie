@@ -194,6 +194,42 @@ they were queued:
    session says where it came from (`StudyOrigin`): "HSK 3 — words you have ·
    drawn from 63 collected" rather than claiming to be your stack.
 
+## Backlog — next (queued 2026-07-28)
+
+1. **Collection is earned, not imported — SHIPPED.** A dex slot used to fill
+   itself the moment a card existed, so pasting a paragraph filled a hundred
+   of them at once and none of them meant anything. A slot is now earned by
+   proving the character in both directions, and the two proofs are recorded
+   on `seen_state` (`read_ok`, `write_ok`, migration 0007):
+   - **认 recognise** — read mode became a test. The character is shown with
+     four English meanings, one of them right; distractors come from the
+     user's own bank, ranked to share a part of speech so the answer is never
+     the odd one out (`lib/choices.ts`). A correct pick grades "good" and
+     banks the read proof, a wrong one grades "again" and sends the card back
+     to the end of the deck — the same contract write mode already had, so
+     both directions are tests rather than one test and one self-report. A
+     bank too small to field plausible distractors keeps the classic
+     flip-and-self-rate.
+   - **写 write** — unchanged, and still accepts the reading as well as the
+     characters. Producing the characters grades better, but requiring them
+     for the proof would shut out anyone without a Chinese keyboard.
+   - **The reward.** The moment the second proof lands, a banner names the
+     slot — 收 collected · 字鉴 No. 0142. A banner rather than a modal: it
+     arrives mid-session, and a dialog you have to dismiss to keep studying
+     turns a reward into an interruption.
+   - **The middle state.** A character in your bank but not yet earned gets
+     its own tile — solid character, outlined slot, 认/写 showing which half
+     is owed — and both dexes count it separately ("85 collected · 31 in
+     progress"). The level button becomes "学 earn these N" and puts the
+     unearned ones first.
+   - **Migration.** Cards that were merely imported lose their slot, which is
+     the point. Cards that had actually passed a review keep it: they were
+     studied in good faith under the old rules, and taking the slot away
+     retroactively would read as data loss rather than as a game.
+   - Proofs are one-way. Forgetting a character later costs you the schedule,
+     not the slot — `masteryOf` still moves both ways and is what the tile's
+     strength bar shows.
+
 ## Sequencing
 
 1. ~~Mobile UX polish + PWA~~ — done (11bd2c8, 1a31893).

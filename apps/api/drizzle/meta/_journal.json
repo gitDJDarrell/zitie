@@ -50,6 +50,13 @@
       "when": 1785182196271,
       "tag": "0006_marvelous_speedball",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1785275208163,
+      "tag": "0007_lonely_piledriver",
+      "breakpoints": true
     }
   ]
 }

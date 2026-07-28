@@ -1,4 +1,4 @@
-import type { Card, Grade, SeenMap, SeenRecord, Theme } from "../types";
+import type { Card, Grade, SeenMap, SeenRecord, Theme, Proof } from "../types";
 
 export interface LoadedState {
   bank: Card[];
@@ -16,7 +16,7 @@ export interface StorageBackend {
   deleteCards(ids: string[]): Promise<void>;
   clearAll(): Promise<void>;
   markSeen(id: string): Promise<SeenRecord | null>;
-  gradeCard(id: string, grade: Grade): Promise<SeenRecord | null>;
+  gradeCard(id: string, grade: Grade, proof?: Proof): Promise<SeenRecord | null>;
   resetSeen(ids: string[] | null): Promise<void>;
   setTheme(theme: Theme): Promise<void>;
   setStack(ids: string[]): Promise<void>;
