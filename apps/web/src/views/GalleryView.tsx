@@ -4,7 +4,7 @@ import { CardDetail } from "../components/CardDetail";
 import { MysteryCardDetail } from "../components/MysteryCardDetail";
 import { DEX_LEVELS, DEX_INDEX, DEX_ORDER, DEX_TOTAL } from "../data/dex";
 import { C } from "../theme";
-import type { Card, SeenMap } from "../types";
+import type { Card, SeenMap, StudyIds } from "../types";
 import { WordDex } from "./WordDex";
 import { useGridWindow } from "../lib/useGridWindow";
 
@@ -34,9 +34,10 @@ function isFullyComplete(card: Card): boolean {
    HSK 3.0 character-list levels (7-9 combined the same way the standard
    itself combines them). Dex numbers are a stable catalog index, not a
    difficulty or frequency rank — same as a Pokédex number. */
-export function GalleryView({ bank, srs, onToggleStar, stack, onAddToStack, onRemoveFromStack }: {
+export function GalleryView({ bank, srs, onToggleStar, stack, onAddToStack, onRemoveFromStack, onStudyIds }: {
   bank: Card[]; srs: SeenMap; onToggleStar: (id: string) => void;
   stack: string[]; onAddToStack: (ids: string[]) => void; onRemoveFromStack: (ids: string[]) => void;
+  onStudyIds: StudyIds;
 }) {
   // Which catalog is on screen. Characters lead: they're the smaller, more
   // finishable set, and every word in the other dex is built out of them.
@@ -89,7 +90,8 @@ export function GalleryView({ bank, srs, onToggleStar, stack, onAddToStack, onRe
       <div className="flex flex-col gap-4">
         {catalogSwitch}
         <WordDex bank={bank} srs={srs} onToggleStar={onToggleStar}
-          stack={stack} onAddToStack={onAddToStack} onRemoveFromStack={onRemoveFromStack} />
+          stack={stack} onAddToStack={onAddToStack} onRemoveFromStack={onRemoveFromStack}
+          onStudyIds={onStudyIds} />
       </div>
     );
   }
@@ -133,6 +135,18 @@ export function GalleryView({ bank, srs, onToggleStar, stack, onAddToStack, onRe
               <span style={{ color: C.paper }}>{levelCaught}</span> / {levelChars.length}
             </div>
           </div>
+
+          {levelCaught > 0 && (
+            <button
+              onClick={() => onStudyIds(
+                levelChars.map(ch => byHanzi.get(ch)?.id).filter((id): id is string => !!id),
+                { zh: "鉴", label: `${level?.label ?? "dex"} — characters you have`, noun: "collected", emptyText: "Nothing collected in this level yet." },
+              )}
+              className="ui self-start px-4 py-2 t-btn border rounded"
+              style={{ borderColor: C.line, color: C.paper }}>
+              学 study these {levelCaught}
+            </button>
+          )}
 
           <div ref={gridRef} className="grid gap-1"
             style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}>

@@ -8,7 +8,7 @@ import type { Card, Grade, SeenMap, SyncState, Theme } from "./types";
 import { BrowseView } from "./views/BrowseView";
 import { GalleryView } from "./views/GalleryView";
 import { ImportView } from "./views/ImportView";
-import { StudyView } from "./views/StudyView";
+import { StudyView, type StackSession } from "./views/StudyView";
 
 const DEFAULT_POS = ["noun", "verb", "pronoun", "adjective", "adverb", "measure word", "particle"];
 
@@ -29,7 +29,7 @@ export default function App({ onLogout, userEmail }: { onLogout: () => void; use
   const [difficulty, setDifficulty] = useState(2);
   // A "study this stack" request from Browse. nonce changes on every request so
   // StudyView can auto-begin exactly once per click, even if the ids are unchanged.
-  const [stackSession, setStackSession] = useState<{ ids: string[]; nonce: number } | null>(null);
+  const [stackSession, setStackSession] = useState<StackSession | null>(null);
 
   const storageRef = useRef<ApiStorage | null>(null);
   if (!storageRef.current) storageRef.current = new ApiStorage(setSyncState, setPending);
@@ -154,13 +154,20 @@ export default function App({ onLogout, userEmail }: { onLogout: () => void; use
     storage.setStack([]).catch(() => {});
   };
 
-  const onStudyStack = () => {
+  // Study a specific set of cards right now, without touching the saved
+  // stack. The dex uses this for "study this level" — a one-off session, not
+  // an edit to the list the user curated in Browse. `origin` is what the study
+  // screen calls the run, so a dex selection doesn't present itself as the
+  // stack; omitted means it *is* the stack.
+  const onStudyIds = (ids: string[], origin?: StackSession["origin"]) => {
     const existing = new Set(bank.map(c => c.id));
-    const ids = stack.filter(id => existing.has(id));
-    if (!ids.length) return;
-    setStackSession({ ids, nonce: Date.now() });
+    const use = ids.filter(id => existing.has(id));
+    if (!use.length) return;
+    setStackSession({ ids: use, nonce: Date.now(), origin });
     setTab("study");
   };
+
+  const onStudyStack = () => onStudyIds(stack);
 
   const onToggleStar = (id: string) => {
     const card = bank.find(c => c.id === id);
@@ -237,7 +244,7 @@ export default function App({ onLogout, userEmail }: { onLogout: () => void; use
         ) : (
           <>
             {tab === "study" && <StudyView bank={bank} srs={srs} filters={filters} setFilters={setFilters} posList={posList} onSeen={onSeen} onGrade={onGrade} onToggleStar={onToggleStar} stackSession={stackSession} onExitStackSession={() => setStackSession(null)} stack={stack} onStudyStack={onStudyStack} difficulty={difficulty} onSetDifficulty={onSetDifficulty} autoSpeak={autoSpeak} onToggleAutoSpeak={onToggleAutoSpeak} />}
-            {tab === "gallery" && <GalleryView bank={bank} srs={srs} onToggleStar={onToggleStar} stack={stack} onAddToStack={onAddToStack} onRemoveFromStack={onRemoveFromStack} />}
+            {tab === "gallery" && <GalleryView bank={bank} srs={srs} onToggleStar={onToggleStar} stack={stack} onAddToStack={onAddToStack} onRemoveFromStack={onRemoveFromStack} onStudyIds={onStudyIds} />}
             {tab === "browse" && <BrowseView bank={bank} srs={srs} filters={filters} setFilters={setFilters} posList={posList} onDelete={onDelete} onDeleteMany={onDeleteMany} onClearAll={onClearAll} onResetSeen={onResetSeen} onToggleStar={onToggleStar} stack={stack} onAddToStack={onAddToStack} onRemoveFromStack={onRemoveFromStack} onClearStack={onClearStack} onStudyStack={onStudyStack} />}
             {tab === "import" && <ImportView bank={bank} onImport={onImport} />}
           </>

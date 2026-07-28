@@ -6,7 +6,7 @@ import { WORD_DEX_LEVELS, WORD_INDEX, WORD_ORDER, WORD_TOTAL } from "../data/wor
 import { normalizePinyin } from "../lib/pinyin";
 import { useGridWindow } from "../lib/useGridWindow";
 import { C } from "../theme";
-import type { Card, SeenMap } from "../types";
+import type { Card, SeenMap, StudyIds } from "../types";
 
 const TILE_MIN = 88;   // px — four columns on a phone, and a four-character idiom still fits
 const TILE_HEIGHT = 62;
@@ -20,9 +20,10 @@ type Show = "all" | "collected" | "missing";
    where the characters go once they combine, so the two catalogs are the same
    game played at two scales, and share the tracing-outline language: an
    uncollected slot shows the shape and nothing else. */
-export function WordDex({ bank, srs, onToggleStar, stack, onAddToStack, onRemoveFromStack }: {
+export function WordDex({ bank, srs, onToggleStar, stack, onAddToStack, onRemoveFromStack, onStudyIds }: {
   bank: Card[]; srs: SeenMap; onToggleStar: (id: string) => void;
   stack: string[]; onAddToStack: (ids: string[]) => void; onRemoveFromStack: (ids: string[]) => void;
+  onStudyIds: StudyIds;
 }) {
   const [levelId, setLevelId] = useState<string>(WORD_DEX_LEVELS[0].id);
   const [show, setShow] = useState<Show>("all");
@@ -73,6 +74,15 @@ export function WordDex({ bank, srs, onToggleStar, stack, onAddToStack, onRemove
     const top = el.getBoundingClientRect().top + window.scrollY;
     if (window.scrollY > top) window.scrollTo({ top: top - 8 });
   }, [levelId, show, query, ref]);
+
+  // Study exactly what's on screen: with no filter that's the level's
+  // collected words, and with a search or the "collected" filter it's that
+  // narrower set — studying what you're looking at is the least surprising
+  // reading of the button.
+  const studyable = useMemo(
+    () => visible.map(w => byHanzi.get(w)?.id).filter((id): id is string => !!id),
+    [visible, byHanzi],
+  );
 
   const openWord = (word: string) => {
     const index = WORD_ORDER.indexOf(word);
@@ -127,6 +137,17 @@ export function WordDex({ bank, srs, onToggleStar, stack, onAddToStack, onRemove
           { value: "missing", label: "missing" },
         ]} onChange={setShow} />
       </div>
+
+      {studyable.length > 0 && (
+        <button onClick={() => onStudyIds(studyable, {
+          zh: "词", label: `${level.label} — words you have`,
+          noun: "collected", emptyText: "No words collected here yet.",
+        })}
+          className="ui self-start px-4 py-2 t-btn border rounded"
+          style={{ borderColor: C.line, color: C.paper }}>
+          学 study these {studyable.length}
+        </button>
+      )}
 
       {visible.length === 0 ? (
         <p className="ui t-body py-8 text-center" style={{ color: C.faint }}>

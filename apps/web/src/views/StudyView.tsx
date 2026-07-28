@@ -7,9 +7,24 @@ import { POS_HANZI } from "../lib/posLabels";
 import { canSpeak, speak } from "../lib/speech";
 import { countDue, formatInterval, previewIntervalDays } from "../lib/srs";
 import { C } from "../theme";
-import type { Card, Grade, SeenMap } from "../types";
+import type { Card, Grade, SeenMap, StudyOrigin } from "../types";
 
-interface StackSession { ids: string[]; nonce: number }
+/**
+ * A preselected run: exactly these cards, in this order. `origin` says where
+ * the selection came from, because the two callers are different promises —
+ * the saved stack is a list you curated and can come back to, a dex selection
+ * is a one-off that leaves the stack alone. Calling both "your stack" would be
+ * a lie in one of the two cases.
+ */
+export interface StackSession {
+  ids: string[];
+  nonce: number;
+  origin?: StudyOrigin;
+}
+
+const STACK_ORIGIN: StudyOrigin = {
+  zh: "▤", label: "your stack", noun: "stacked", emptyText: "Your stack is empty.",
+};
 
 const AGE_OPTIONS: { value: Filters["age"]; label: string }[] = [
   { value: "all", label: "all" },
@@ -172,6 +187,7 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
 
   const step = stepFor(difficulty);
   const plannedCount = stackSession ? pool.length : sessionSize(pool, difficulty);
+  const origin = stackSession?.origin ?? STACK_ORIGIN;
 
   /* ——— session start ——— */
   if (!queue) return (
@@ -179,12 +195,12 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
       {stackSession ? (
         <div className="flex flex-col items-center gap-2">
           <div className="flex items-baseline gap-2">
-            <span className="hz text-base" style={{ color: C.dim }}>{"▤"}</span>
-            <span className="ui t-label" style={{ color: C.faint }}>your stack</span>
+            <span className="hz text-base" style={{ color: C.dim }}>{origin.zh}</span>
+            <span className="ui t-label" style={{ color: C.faint }}>{origin.label}</span>
           </div>
           {onExitStackSession && (
             <button onClick={onExitStackSession} className="ui text-xs" style={{ color: C.faint }}>
-              {"✕"} exit stack mode — back to lessons
+              {"✕"} exit — back to lessons
             </button>
           )}
         </div>
@@ -252,7 +268,7 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
       <div className="ui t-meta text-center" style={{ color: C.dim }}>
         <div>
           <span style={{ color: C.paper }}>{plannedCount}</span> in this session
-          <span style={{ color: C.faint }}> · drawn from {pool.length} {stackSession ? "stacked" : "matching"}</span>
+          <span style={{ color: C.faint }}> · drawn from {pool.length} {stackSession ? origin.noun : "matching"}</span>
         </div>
         <div style={{ color: C.faint }}>
           {dueCount > 0 && <><span style={{ color: C.paper }}>{dueCount}</span> due for review</>}
@@ -289,7 +305,7 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
       )}
       {!plannedCount && (
         <p className="ui t-body" style={{ color: C.faint }}>
-          {stackSession ? "Your stack is empty." : "Nothing matches the current filters."}
+          {stackSession ? origin.emptyText : "Nothing matches the current filters."}
         </p>
       )}
     </div>

@@ -172,9 +172,14 @@ they were queued:
    rejected session and an unreachable one are now told apart.
 5. ~~**Window the character dex too.**~~ — SHIPPED. Both catalogs now share
    `lib/useGridWindow`; ~60 tiles in the DOM whatever the level holds.
-6. **Study from the word dex.** Words are collectable and browsable now but
-   there's no "study the words I'm missing from HSK 3" path; the stack
-   mechanism is the obvious place to hang it.
+6. ~~**Study from the word dex.**~~ — SHIPPED. Both catalogs now carry a "学
+   study these N" button that opens a session over exactly what's on screen,
+   so a search or the collected filter narrows it. It runs through the same
+   preselected-session mechanism as the stack but deliberately **does not
+   write to the stack** — a dex selection is a one-off, the stack is a list
+   you curated and come back to. Since the two now share that mechanism, a
+   session says where it came from (`StudyOrigin`): "HSK 3 — words you have ·
+   drawn from 63 collected" rather than claiming to be your stack.
 
 ## Sequencing
 

@@ -41,3 +41,16 @@ export type Grade = "again" | "hard" | "good" | "easy";
 export type Theme = "light" | "dark";
 
 export type SyncState = "idle" | "syncing" | "synced" | "offline" | "failed";
+
+/** How a preselected study session names itself on the study screen. */
+export interface StudyOrigin {
+  /** One hanzi standing for the source, matching the app's icon language. */
+  zh: string;
+  label: string;
+  /** Plural noun for the pool, as in "drawn from 63 collected". */
+  noun: string;
+  emptyText: string;
+}
+
+/** "Study exactly these cards now" — see App's onStudyIds. */
+export type StudyIds = (ids: string[], origin?: StudyOrigin) => void;
