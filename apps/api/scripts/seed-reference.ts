@@ -110,6 +110,12 @@ async function main() {
   const curated = await seedInsights("insights-hsk1.json", "seed:hsk1");
   console.log(`· ${curated} hand-written breakdowns upserted (these win)`);
 
+  // The characters the dataset records no etymology for, written by hand and
+  // built by scripts/build-curated.ts. Same precedence as the HSK 1 set: they
+  // were reviewed in-session, so they overwrite the generated fallback.
+  const written = await seedInsights("insights-curated.json", "seed:written");
+  console.log(`· ${written} hand-written breakdowns for characters the data has no account of`);
+
   console.log("Reference data is loaded.");
   process.exit(0);
 }
