@@ -23,8 +23,19 @@ export interface BrushPadProps {
   hanzi: string;
   /** Null while loading, and for a character with no stroke data at all. */
   target: CharacterStrokes | null;
-  /** Fires once per finished attempt, when every target stroke has been drawn. */
-  onComplete?: (verdict: Verdict) => void;
+  /**
+   * Hand the attempt in. Fires on the learner's say-so, not the pad's: whatever
+   * is on the paper gets graded, complete or not. Null verdict means there was
+   * nothing to grade it against (no stroke data for this character).
+   *
+   * It used to fire itself the instant the last stroke landed, which meant a
+   * wrong attempt could never be submitted at all — the only way past a
+   * character you had got wrong was to skip it, and a skip records nothing. An
+   * attempt you can't hand in is an attempt the scheduler never learns from.
+   */
+  onSubmit?: (verdict: Verdict | null) => void;
+  /** Graded already: the paper is read-only and the actions step aside. */
+  submitted?: boolean;
   ink: InkParams;
   onInk: (ink: InkParams) => void;
   surface: Surface;
@@ -36,7 +47,7 @@ const PAPER = "#f4f1ea";
 const INK_COLOR = "#1a1a1a";
 
 export function BrushPad({
-  hanzi, target, onComplete, ink, surface, mode, showStrokeOrder,
+  hanzi, target, onSubmit, submitted = false, ink, surface, mode, showStrokeOrder,
 }: BrushPadProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const wrapRef = useRef<HTMLDivElement | null>(null);
@@ -46,7 +57,6 @@ export function BrushPad({
   const startedAt = useRef(0);
   // The stroke index being demonstrated by "show me", or null when idle.
   const [teaching, setTeaching] = useState<number | null>(null);
-  const announced = useRef(false);
 
   // Square, and as wide as the column allows.
   useEffect(() => {
@@ -63,7 +73,6 @@ export function BrushPad({
   useEffect(() => {
     setStrokes([]);
     setTeaching(null);
-    announced.current = false;
   }, [hanzi]);
 
   const medians = useMemo<Point[][]>(
@@ -77,12 +86,6 @@ export function BrushPad({
     return gradeAttempt(drawn, medians);
   }, [strokes, medians, size]);
 
-  // Announce completion exactly once per character, not on every later stroke.
-  useEffect(() => {
-    if (!verdict?.complete || announced.current) return;
-    announced.current = true;
-    onComplete?.(verdict);
-  }, [verdict, onComplete]);
 
   /* ——— rendering ——— */
   const draw = useCallback(() => {
@@ -229,6 +232,7 @@ export function BrushPad({
   };
 
   const onPointerDown = (e: React.PointerEvent) => {
+    if (submitted) return; // graded — the paper is a record now, not a draft
     e.preventDefault();
     canvasRef.current?.setPointerCapture(e.pointerId);
     startedAt.current = performance.now();
@@ -254,14 +258,10 @@ export function BrushPad({
     setStrokes((s) => [...s, { points }]);
   };
 
-  const undo = () => {
-    setStrokes((s) => s.slice(0, -1));
-    announced.current = false;
-  };
+  const undo = () => setStrokes((s) => s.slice(0, -1));
   const clear = () => {
     setStrokes([]);
     setTeaching(null);
-    announced.current = false;
   };
 
   /** Walk the taught order stroke by stroke. */
@@ -313,30 +313,49 @@ export function BrushPad({
         }}
       />
 
-      <div className="w-full flex items-center justify-between" style={{ maxWidth: size }}>
-        <div className="flex gap-2">
-          <button onClick={undo} disabled={!strokes.length}
-            className="ui px-3 py-1 t-btn border rounded-full"
-            style={{ borderColor: C.line, color: strokes.length ? C.dim : C.faint, opacity: strokes.length ? 1 : 0.5 }}>
-            undo
-          </button>
-          <button onClick={clear} disabled={!strokes.length}
-            className="ui px-3 py-1 t-btn border rounded-full"
-            style={{ borderColor: C.line, color: strokes.length ? C.dim : C.faint, opacity: strokes.length ? 1 : 0.5 }}>
-            clear
-          </button>
+      {!submitted && (
+        <div className="w-full flex items-center justify-between gap-2" style={{ maxWidth: size }}>
+          <div className="flex gap-2">
+            <button onClick={undo} disabled={!strokes.length}
+              className="ui px-3 py-1 t-btn border rounded-full"
+              style={{ borderColor: C.line, color: strokes.length ? C.dim : C.faint, opacity: strokes.length ? 1 : 0.5 }}>
+              undo
+            </button>
+            <button onClick={clear} disabled={!strokes.length}
+              className="ui px-3 py-1 t-btn border rounded-full"
+              style={{ borderColor: C.line, color: strokes.length ? C.dim : C.faint, opacity: strokes.length ? 1 : 0.5 }}>
+              clear
+            </button>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="ui t-micro" style={{ color: C.faint }}>
+              {strokes.length}{medians.length ? ` / ${medians.length}` : ""}
+            </div>
+            {/* Deliberately enabled for an unfinished character: handing in a
+                wrong attempt is how the scheduler finds out you're shaky on it. */}
+            {onSubmit && (
+              <button onClick={() => onSubmit(verdict)} disabled={!strokes.length}
+                className="ui px-4 py-1 t-btn border rounded-full"
+                style={{
+                  borderColor: strokes.length ? C.paper : C.line,
+                  color: strokes.length ? C.paper : C.faint,
+                  opacity: strokes.length ? 1 : 0.5,
+                }}>
+                submit
+              </button>
+            )}
+          </div>
         </div>
-        <div className="ui t-micro" style={{ color: C.faint }}>
-          {strokes.length}{medians.length ? ` / ${medians.length}` : ""}
-        </div>
-      </div>
+      )}
 
-      {feedback && (
+      {/* While writing this is live coaching. Once graded the verdict belongs to
+          whoever owns the session, so only the teaching aid stays. */}
+      {(submitted || feedback) && (
         <div className="ui t-micro text-center" style={{ color: C.faint, maxWidth: size }}>
-          {feedback}
+          {!submitted && feedback}
           {medians.length > 0 && (
             <>
-              {" · "}
+              {!submitted && feedback ? " · " : ""}
               <button onClick={showMe} className="ui underline" style={{ color: C.dim }}>show me</button>
             </>
           )}

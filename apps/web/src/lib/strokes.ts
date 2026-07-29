@@ -179,6 +179,38 @@ export function gradeAttempt(drawn: Point[][], medians: Point[][]): Verdict {
   };
 }
 
+/**
+ * What a handed-in brush attempt means for scheduling.
+ *
+ * Separated out and tested because the interesting cases are the failures, and
+ * they used to be unreachable: the pad graded itself the instant the character
+ * was complete, so an attempt could only ever be submitted if it was already
+ * right. A wrong attempt had nowhere to go but "skip", which records nothing —
+ * so the mode graded successes and quietly discarded every failure.
+ *
+ * - complete, right order, no strays → "good", and the brush proof is earned
+ * - complete otherwise               → "hard"; the character was written, the
+ *                                      execution needs work, proof still earned
+ * - incomplete                       → "again", no proof, back into the deck
+ * - nothing to check against         → "good" on trust, and *no* proof, because
+ *                                      we cannot claim to have verified it
+ */
+export interface BrushOutcome {
+  grade: "again" | "hard" | "good";
+  /** Whether this attempt banks the brush proof toward the dex slot. */
+  earnsProof: boolean;
+  /** Whether the card goes back into the deck to be met again this session. */
+  requeue: boolean;
+  /** Whether it counts toward the session's correct tally. */
+  correct: boolean;
+}
+
+export function brushOutcome(v: Verdict | null): BrushOutcome {
+  if (!v) return { grade: "good", earnsProof: false, requeue: false, correct: true };
+  if (!v.complete) return { grade: "again", earnsProof: false, requeue: true, correct: false };
+  return { grade: v.perfect ? "good" : "hard", earnsProof: true, requeue: false, correct: true };
+}
+
 /** Points on a canvas → the glyph's coordinate space, so distances compare. */
 export function toGlyphSpace(points: Point[], size: number): Point[] {
   const scale = GLYPH_BOX / size;

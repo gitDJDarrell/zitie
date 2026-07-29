@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
-  GLYPH_BASELINE, GLYPH_DESCENT, glyphCanvasTransform,
+  brushOutcome, GLYPH_BASELINE, GLYPH_DESCENT, glyphCanvasTransform,
   gradeAttempt, matchStrokes, pathLength, resample, strokeDistance,
-  toCanvasSpace, toGlyphSpace, type Point,
+  toCanvasSpace, toGlyphSpace, type Point, type Verdict,
 } from "./strokes.js";
 
 /** A straight line from a to b, sampled unevenly on purpose. */
@@ -221,6 +221,73 @@ describe("coordinate spaces", () => {
     const [[, atDescent]] = toCanvasSpace([[0, -GLYPH_DESCENT]], size);
     assert.equal(atBaseline, 0);
     assert.equal(atDescent, size);
+  });
+});
+
+describe("brushOutcome", () => {
+  /** A verdict with the shape the pad produces, overridden per case. */
+  const v = (over: Partial<Verdict>): Verdict => ({
+    perfect: false, complete: false, orderOk: true,
+    matched: 0, expected: 11, stray: 0, missing: [], matches: [], ...over,
+  });
+
+  /**
+   * The regression this whole change exists for. Brush mode used to grade
+   * itself the instant the character was complete, so a wrong attempt could
+   * not be submitted at all — the only way past it was "skip", which records
+   * nothing. Every failure was silently discarded, which makes the grading
+   * meaningless: a scheduler that only ever hears about successes will keep
+   * telling you a character you cannot write is due in three weeks.
+   */
+  it("grades an incomplete attempt instead of discarding it", () => {
+    const o = brushOutcome(v({ matched: 4, expected: 11, missing: [4, 5, 6, 7, 8, 9, 10] }));
+    assert.equal(o.grade, "again", "a half-written character must not pass");
+    assert.equal(o.correct, false);
+    assert.equal(o.earnsProof, false, "an unfinished character cannot earn the dex slot");
+    assert.equal(o.requeue, true, "it has to come back, like any wrong answer");
+  });
+
+  it("gives a clean attempt the proof and the best grade", () => {
+    const o = brushOutcome(v({ complete: true, perfect: true, matched: 11 }));
+    assert.equal(o.grade, "good");
+    assert.equal(o.earnsProof, true);
+    assert.equal(o.requeue, false);
+    assert.equal(o.correct, true);
+  });
+
+  it("still earns the proof when every stroke is down in the wrong order", () => {
+    // Writing 思 with the box built backwards is still writing 思 — order is
+    // coached, not gated. It costs the grade, not the slot.
+    const o = brushOutcome(v({ complete: true, perfect: false, orderOk: false, matched: 11 }));
+    assert.equal(o.grade, "hard");
+    assert.equal(o.earnsProof, true);
+    assert.equal(o.requeue, false);
+  });
+
+  it("shades the grade for stray marks without failing the attempt", () => {
+    const o = brushOutcome(v({ complete: true, perfect: false, matched: 11, stray: 2 }));
+    assert.equal(o.grade, "hard");
+    assert.equal(o.earnsProof, true);
+  });
+
+  it("claims no proof for a character it cannot check", () => {
+    // No stroke data: nothing to be right or wrong about. Schedule on trust,
+    // but never bank a proof we did not actually verify.
+    const o = brushOutcome(null);
+    assert.equal(o.grade, "good");
+    assert.equal(o.earnsProof, false);
+    assert.equal(o.requeue, false);
+  });
+
+  it("only ever earns the proof when the character was complete", () => {
+    for (const complete of [true, false]) {
+      for (const perfect of [true, false]) {
+        if (perfect && !complete) continue;         // not a state the pad produces
+        const o = brushOutcome(v({ complete, perfect, matched: complete ? 11 : 5 }));
+        assert.equal(o.earnsProof, complete,
+          `complete=${complete} perfect=${perfect} should${complete ? "" : " not"} earn the proof`);
+      }
+    }
   });
 });
 

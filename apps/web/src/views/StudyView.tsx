@@ -8,7 +8,7 @@ import { POS_HANZI } from "../lib/posLabels";
 import { canSpeak, speak } from "../lib/speech";
 import { BrushPad, type PadMode, type Surface } from "../components/BrushPad";
 import { DEFAULT_INK, type InkParams } from "../lib/ink";
-import type { Verdict } from "../lib/strokes";
+import { brushOutcome, type Verdict } from "../lib/strokes";
 import { useStrokes } from "../lib/useStrokes";
 import { countDue, formatInterval, previewIntervalDays, PROOF_GLYPH, proofsOf } from "../lib/srs";
 import { C } from "../theme";
@@ -95,6 +95,7 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
   const [showStrokeOrder, setShowStrokeOrder] = useState(false);
   const [inkOpen, setInkOpen] = useState(false);
   const [brushDone, setBrushDone] = useState(false);
+  const [brushVerdict, setBrushVerdict] = useState<Verdict | null>(null);
 
   // A stack session bypasses the lesson-filter pool entirely and studies
   // exactly the preselected cards, in the order they were stacked.
@@ -147,13 +148,15 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
   function begin(shuffle: boolean) {
     let q = sessionCards.map(c => c.id);
     if (shuffle) q = [...q].sort(() => Math.random() - 0.5);
-    setQueue(q); setIdx(0); setFlipped(false); setWasShuffled(shuffle);
-    setInput(""); setVerdict(null); setPicked(null); setScore({ ok: 0, no: 0 }); setInitialLen(q.length);
+    setQueue(q); setIdx(0); setWasShuffled(shuffle);
+    setScore({ ok: 0, no: 0 }); setInitialLen(q.length);
+    reset(); // every per-card flag, so a fresh deck never opens mid-answer
   }
 
   function quit() {
-    setQueue(null); setIdx(0); setFlipped(false);
-    setInput(""); setVerdict(null); setPicked(null); setScore({ ok: 0, no: 0 });
+    setQueue(null); setIdx(0);
+    setScore({ ok: 0, no: 0 });
+    reset();
   }
 
   // Land on the (stack-aware) picker whenever a new stack session is requested
@@ -227,18 +230,39 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
   }
 
   /**
-   * Brush mode's answer, fired by the pad the moment every stroke of the
-   * character is down. Completeness earns the proof; stroke order and stray
-   * marks only shade the grade, because a learner who wrote the character with
-   * the box built the wrong way round has still written the character.
+   * Brush mode's answer, handed in by the learner rather than detected by the
+   * pad. An attempt is gradeable whether or not it's right — that's the point
+   * of grading it. Completeness earns the proof; stroke order and stray marks
+   * only shade the grade, because someone who wrote the character with the box
+   * built the wrong way round has still written the character. An incomplete
+   * attempt grades "again" and goes back to the end of the deck, exactly as a
+   * wrong answer does in read and write mode.
+   *
+   * A null verdict means the character has no stroke data to check against.
+   * There's nothing to be right or wrong about, so it schedules on trust and
+   * banks no proof — claiming one we couldn't verify would be a lie.
    */
-  function onBrushComplete(v: Verdict) {
+  function onBrushSubmit(v: Verdict | null) {
     if (!card || brushDone) return;
     setBrushDone(true);
-    setScore(s => ({ ...s, ok: s.ok + 1 }));
+    setBrushVerdict(v);
     onSeen(card.id);
-    onGrade(card.id, v.perfect ? "good" : "hard", "brush");
+
+    const { grade, earnsProof, requeue, correct } = brushOutcome(v);
+    setScore(s => correct ? { ...s, ok: s.ok + 1 } : { ...s, no: s.no + 1 });
+    onGrade(card.id, grade, earnsProof ? "brush" : undefined);
+    if (requeue) setQueue(q => [...(q as string[]), card.id]);
     if (autoSpeak) speak(card.hanzi);
+  }
+
+  /** How the handed-in attempt actually did, for the reveal. */
+  function brushSummary(v: Verdict | null): string | null {
+    if (!v) return null;
+    if (v.perfect) return "written as taught";
+    if (v.complete && !v.orderOk) return "every stroke down, but in a different order";
+    if (v.complete) return `every stroke down · ${v.stray} stray mark${v.stray === 1 ? "" : "s"}`;
+    const missed = v.expected - v.matched;
+    return `${v.matched} of ${v.expected} strokes · ${missed} missed — it comes back later in this session`;
   }
 
   /**
@@ -264,7 +288,7 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
   function prev() { setIdx(i => Math.max(i - 1, 0)); reset(); }
   function reset() {
     setFlipped(false); setInput(""); setVerdict(null);
-    setAnswerKind(null); setPicked(null); setBrushDone(false);
+    setAnswerKind(null); setPicked(null); setBrushDone(false); setBrushVerdict(null);
   }
 
   if (!bank.length) return (
@@ -524,7 +548,8 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
           surface={surface}
           mode={padMode}
           showStrokeOrder={showStrokeOrder}
-          onComplete={onBrushComplete}
+          onSubmit={onBrushSubmit}
+          submitted={brushDone}
         />
 
         {brushDone ? (
@@ -536,6 +561,14 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
                 <SpeakBtn text={card.hanzi} />
               </div>
             </div>
+            {/* What the attempt scored. A miss is stated plainly rather than
+                hidden — being told which strokes went astray is the lesson. */}
+            {brushSummary(brushVerdict) && (
+              <div className="ui t-meta text-center max-w-xs"
+                style={{ color: brushVerdict?.complete ? C.paper : C.cinnabar }}>
+                {brushSummary(brushVerdict)}
+              </div>
+            )}
             {proofHint && (
               <div className="ui t-meta text-center max-w-xs" style={{ color: C.faint }}>{proofHint}</div>
             )}
@@ -543,6 +576,8 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
               style={{ borderColor: C.paper, color: C.paper }}>Next →</button>
           </div>
         ) : (
+          // Distinct from submit: skipping records nothing at all, for a
+          // character you don't want to attempt rather than one you got wrong.
           <button onClick={next} className="ui t-btn px-4 py-1" style={{ color: C.faint }}>
             skip this one »
           </button>
