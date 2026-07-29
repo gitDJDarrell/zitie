@@ -52,6 +52,9 @@ its remote builders — you do **not** need Docker installed locally.
    fly secrets set ANTHROPIC_API_KEY="<your anthropic key>"   # AI card extraction
    fly secrets set RESEND_API_KEY="<your resend key>"         # password reset emails
    fly secrets set WEB_ORIGIN="https://<your-web-app-url>"    # optional now; see note
+   # WEB_ORIGIN takes a comma-separated list, so a preview deploy and
+   # production can both call the API:
+   #   fly secrets set WEB_ORIGIN="https://zitie.vercel.app,https://zitie-git-main-you.vercel.app"
    ```
    `NODE_ENV=production` and `PORT` are already set in `fly.toml` `[env]` — the
    production cookie mode (`SameSite=None; Secure`) keys off `NODE_ENV`.
@@ -89,9 +92,16 @@ vars → gives you a `*.up.railway.app` URL.
    - **Build command**: `npm run build` (Vercel auto-detects Vite)
    - **Output directory**: `dist`
 3. Env var: `VITE_API_URL=https://zitie-api.fly.dev` (or your Railway URL).
+   `apps/web/vercel.json` already supplies the SPA rewrite and keeps `/sw.js`
+   uncached, so a new build isn't shadowed by a stale service worker.
 4. Deploy. You'll get `https://<project>.vercel.app`.
 5. Go back to Fly/Railway and set `WEB_ORIGIN` to this exact URL if you
-   didn't already (step 2.3) — CORS will reject requests otherwise.
+   didn't already (step 2.3) — CORS will reject requests otherwise. Vercel
+   gives every preview deployment its own hostname, and those are rejected
+   too; add the ones you actually test against to the comma-separated list.
+   Origins are matched exactly, never by pattern: cookies ride on these
+   requests, so `*.vercel.app` would let any app on that shared domain call
+   the API as a logged-in user. A trailing slash is tolerated.
 
 Cloudflare Pages works the same way if you'd rather keep DNS and hosting in
 one dashboard: root directory `apps/web`, build command `npm run build`,

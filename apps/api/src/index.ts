@@ -11,23 +11,17 @@ import { cardsRoute } from "./routes/cards.js";
 import { exportRoute } from "./routes/export.js";
 import { seenRoute } from "./routes/seen.js";
 import { settingsRoute } from "./routes/settings.js";
+import { allowedOrigins, originChecker } from "./lib/origins.js";
 
 const app = new Hono();
 
 app.use("*", secureHeaders());
-// Allowed browser/WebView origins. Includes the deployed web origin plus the
-// Capacitor native shells — Android serves the app from http(s)://localhost,
-// iOS from capacitor://localhost — so the mobile app's API calls pass CORS.
-const allowedOrigins = [
-  process.env.WEB_ORIGIN ?? "http://localhost:5173",
-  "http://localhost",
-  "https://localhost",
-  "capacitor://localhost",
-];
-app.use("*", cors({
-  origin: (origin) => (!origin || allowedOrigins.includes(origin) ? (origin ?? allowedOrigins[0]) : undefined),
-  credentials: true,
-}));
+// Allowed browser/WebView origins: WEB_ORIGIN (a comma-separated list, so a
+// preview deploy and production can both work) plus the Capacitor shells.
+// See lib/origins.ts for why these stay exact strings rather than patterns.
+const origins = allowedOrigins();
+console.log(`[cors] allowing ${origins.join(", ")}`);
+app.use("*", cors({ origin: originChecker(origins), credentials: true }));
 // Bulk card imports are the largest legitimate payload; 2 MB is ~10x the
 // full 116-card seed bank, so real usage stays far below it.
 app.use("*", bodyLimit({
