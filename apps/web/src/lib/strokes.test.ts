@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
+  GLYPH_BASELINE, GLYPH_DESCENT, glyphCanvasTransform,
   gradeAttempt, matchStrokes, pathLength, resample, strokeDistance,
   toCanvasSpace, toGlyphSpace, type Point,
 } from "./strokes.js";
@@ -164,6 +165,62 @@ describe("coordinate spaces", () => {
     const [[, highY]] = toGlyphSpace([[100, 10]], 320);
     const [[, lowY]] = toGlyphSpace([[100, 310]], 320);
     assert.ok(highY > lowY, `top of canvas (${highY}) should exceed bottom (${lowY})`);
+  });
+
+  /**
+   * The traced outline and the graded medians have to land in the same place.
+   * They didn't: the canvas transform was hand-written with the descent applied
+   * after the y flip, so the outline sat 248 units — a quarter of the pad —
+   * below the strokes being matched. Tracing exactly what was on screen scored
+   * 0.242 against a 0.18 tolerance, so every stroke read "unrecognised" and the
+   * numbered stroke order floated above the character it belonged to.
+   */
+  it("draws the target glyph where the medians are graded", () => {
+    for (const size of [220, 320, 420]) {
+      const { ty, sx, sy } = glyphCanvasTransform(size);
+      // Apply the transform the way canvas does: translate, then scale.
+      const viaTransform = ([x, y]: Point): Point => [x * sx, y * sy + ty];
+
+      for (const p of [[0, 0], [512, 450], [1024, GLYPH_BASELINE], [300, -GLYPH_DESCENT]] as Point[]) {
+        const [want] = toCanvasSpace([p], size);
+        const got = viaTransform(p);
+        assert.ok(Math.abs(got[0] - want[0]) < 1e-9 && Math.abs(got[1] - want[1]) < 1e-9,
+          `size ${size}, glyph point ${p}: transform gave ${got}, toCanvasSpace gives ${want}`);
+      }
+    }
+  });
+
+  /**
+   * The property a learner actually cares about: if you trace the outline the
+   * pad shows you, it counts. This is the end-to-end version of the check
+   * above — canvas projection out, grading projection back — and it is what
+   * silently broke, turning a careful trace into "8 unrecognised".
+   */
+  it("scores a trace of the drawn outline as a match", () => {
+    const size = 320;
+    const medians: Point[][] = [
+      [[200, 700], [200, 300]],
+      [[150, 500], [600, 500]],
+      [[300, 800], [700, 200]],
+    ];
+    // Draw exactly where the pad renders the target, then grade it.
+    const drawn = medians.map(m => toGlyphSpace(toCanvasSpace(m, size), size));
+    const v = gradeAttempt(drawn, medians);
+
+    assert.equal(v.complete, true, "a perfect trace must be complete");
+    assert.equal(v.stray, 0, "a perfect trace must leave nothing unrecognised");
+    for (const m of v.matches) {
+      assert.ok(m.distance < 1e-9, `expected a near-zero distance, got ${m.distance}`);
+    }
+  });
+
+  it("keeps the glyph box inside the pad", () => {
+    const size = 320;
+    // Baseline at the top edge, full descent at the bottom edge.
+    const [[, atBaseline]] = toCanvasSpace([[0, GLYPH_BASELINE]], size);
+    const [[, atDescent]] = toCanvasSpace([[0, -GLYPH_DESCENT]], size);
+    assert.equal(atBaseline, 0);
+    assert.equal(atDescent, size);
   });
 });
 

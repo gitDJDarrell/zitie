@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { bristles, DEFAULT_INK, strokeOutline, widthProfile, type InkParams, type SamplePoint } from "../lib/ink";
-import { gradeAttempt, toCanvasSpace, toGlyphSpace, type CharacterStrokes, type Point, type Verdict } from "../lib/strokes";
+import { glyphCanvasTransform, gradeAttempt, toCanvasSpace, toGlyphSpace, type CharacterStrokes, type Point, type Verdict } from "../lib/strokes";
 import { C } from "../theme";
 
 /* ————————————————— 墨 the brush pad —————————————————
@@ -127,10 +127,11 @@ export function BrushPad({
       ctx.save();
       ctx.globalAlpha = 0.16;
       ctx.fillStyle = INK_COLOR;
-      const scale = size / 1024;
-      ctx.translate(0, size);
-      ctx.scale(scale, -scale);
-      ctx.translate(0, -124);
+      // Shared with toCanvasSpace, so the outline you trace is exactly where
+      // the medians being graded are.
+      const { ty, sx, sy } = glyphCanvasTransform(size);
+      ctx.translate(0, ty);
+      ctx.scale(sx, sy);
       for (const path of target.strokes) {
         ctx.fill(new Path2D(path));
       }
