@@ -94,6 +94,7 @@ export default function App({ onLogout, userEmail }: { onLogout: () => void; use
       ...prev, last: Date.now(), views: (prev.views || 0) + 1,
       readOk: prev.readOk || proof === "read",
       writeOk: prev.writeOk || proof === "write",
+      brushOk: prev.brushOk || proof === "brush",
     };
     setSrs(s => ({ ...s, [id]: optimistic }));
     announceIfEarned(id, prev, optimistic);

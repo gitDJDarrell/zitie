@@ -6,7 +6,11 @@ import { CHOICE_COUNT, meaningChoices } from "../lib/choices";
 import { applyFilters, type Filters } from "../lib/filters";
 import { POS_HANZI } from "../lib/posLabels";
 import { canSpeak, speak } from "../lib/speech";
-import { countDue, formatInterval, previewIntervalDays, proofsOf } from "../lib/srs";
+import { BrushPad, type PadMode, type Surface } from "../components/BrushPad";
+import { DEFAULT_INK, type InkParams } from "../lib/ink";
+import type { Verdict } from "../lib/strokes";
+import { useStrokes } from "../lib/useStrokes";
+import { countDue, formatInterval, previewIntervalDays, PROOF_GLYPH, proofsOf } from "../lib/srs";
 import { C } from "../theme";
 import type { Card, Grade, Proof, SeenMap, StudyOrigin } from "../types";
 
@@ -22,6 +26,18 @@ export interface StackSession {
   nonce: number;
   origin?: StudyOrigin;
 }
+
+/** The three ways a card can be studied — and the three proofs a dex slot wants. */
+type StudyMode = "read" | "write" | "brush";
+
+// The ink controls, and how finely each one steps. Kept as data so the panel
+// is a map rather than five near-identical blocks.
+const INK_SLIDERS: { key: "weight" | "wetness" | "speed" | "formality"; label: string; steps: number }[] = [
+  { key: "weight", label: "weight", steps: 100 },
+  { key: "wetness", label: "wetness", steps: 100 },
+  { key: "speed", label: "speed", steps: 100 },
+  { key: "formality", label: "formality", steps: 100 },
+];
 
 const STACK_ORIGIN: StudyOrigin = {
   zh: "▤", label: "your stack", noun: "stacked", emptyText: "Your stack is empty.",
@@ -54,7 +70,7 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
 }) {
   const [queue, setQueue] = useState<string[] | null>(null);
   const [idx, setIdx] = useState(0);
-  const [mode, setMode] = useState<"read" | "write">("read");
+  const [mode, setMode] = useState<StudyMode>("read");
   const [flipped, setFlipped] = useState(false);
   const [input, setInput] = useState("");
   const [verdict, setVerdict] = useState<null | "ok" | "no">(null);
@@ -70,6 +86,15 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
   const [filtersOpen, setFiltersOpen] = useState(false);
   const touchRef = useRef<{ x: number; y: number } | null>(null);
   const swipedRef = useRef(false);
+  // Brush mode. The ink and paper settings persist across cards within a
+  // session — a hand you've dialled in shouldn't reset every time the card
+  // turns over.
+  const [ink, setInk] = useState<InkParams>(DEFAULT_INK);
+  const [surface, setSurface] = useState<Surface>("grid");
+  const [padMode, setPadMode] = useState<PadMode>("write");
+  const [showStrokeOrder, setShowStrokeOrder] = useState(false);
+  const [inkOpen, setInkOpen] = useState(false);
+  const [brushDone, setBrushDone] = useState(false);
 
   // A stack session bypasses the lesson-filter pool entirely and studies
   // exactly the preselected cards, in the order they were stacked.
@@ -102,6 +127,11 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [card?.id, idx, bank],
   );
+  // Stroke geometry for the card on screen — fetched once per character and
+  // cached, so flipping back and forth costs nothing and an offline session can
+  // still practise anything already seen.
+  const strokeState = useStrokes(card?.hanzi);
+
   const unseenCount = pool.filter(c => !srs[c.id]).length;
   const dueCount = useMemo(() => countDue(pool, srs), [pool, srs]);
 
@@ -197,6 +227,21 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
   }
 
   /**
+   * Brush mode's answer, fired by the pad the moment every stroke of the
+   * character is down. Completeness earns the proof; stroke order and stray
+   * marks only shade the grade, because a learner who wrote the character with
+   * the box built the wrong way round has still written the character.
+   */
+  function onBrushComplete(v: Verdict) {
+    if (!card || brushDone) return;
+    setBrushDone(true);
+    setScore(s => ({ ...s, ok: s.ok + 1 }));
+    onSeen(card.id);
+    onGrade(card.id, v.perfect ? "good" : "hard", "brush");
+    if (autoSpeak) speak(card.hanzi);
+  }
+
+  /**
    * Read mode's answer: the meaning picked out of the options. Correct grades
    * "good" and banks the read proof, wrong grades "again" and sends the card
    * back to the end of the deck — the same contract write mode already has, so
@@ -217,7 +262,10 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
 
   function next() { setIdx(i => i + 1); reset(); }
   function prev() { setIdx(i => Math.max(i - 1, 0)); reset(); }
-  function reset() { setFlipped(false); setInput(""); setVerdict(null); setAnswerKind(null); setPicked(null); }
+  function reset() {
+    setFlipped(false); setInput(""); setVerdict(null);
+    setAnswerKind(null); setPicked(null); setBrushDone(false);
+  }
 
   if (!bank.length) return (
     <Empty zh="库空" text="No characters yet. Open Import and paste your vocabulary to begin." />
@@ -240,11 +288,19 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
   // only on the gallery screen the user may not have opened yet.
   const proofHint = ((): string | null => {
     if (!card) return null;
-    const { read, write } = proofsOf(srs[card.id]);
-    if (read && write) return null;             // earned — the banner says so
-    if (!write && read) return "写 write it from the English to collect it.";
-    if (!read && write) return "认 recognise it from the character to collect it.";
-    return null;
+    const proofs = proofsOf(srs[card.id]);
+    const owed = PROOF_GLYPH.filter(g => !proofs[g.key]);
+    if (!owed.length) return null;              // earned — the banner says so
+    // Only nudge once the character is genuinely close, and never toward the
+    // mode you are already in: "write it" is not news while you are writing it.
+    const elsewhere = owed.filter(g => g.key !== mode);
+    if (!elsewhere.length || elsewhere.length === PROOF_GLYPH.length) return null;
+    const names: Record<string, string> = {
+      read: "認 recognise it from the character",
+      write: "写 write it from the English",
+      brush: "描 brush it by hand",
+    };
+    return `${elsewhere.map(g => names[g.key]).join(", then ")} to collect it.`;
   })();
   const plannedCount = stackSession ? pool.length : sessionSize(pool, difficulty);
   const origin = stackSession?.origin ?? STACK_ORIGIN;
@@ -342,6 +398,7 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
           认 read — {quizAvailable ? "pick the meaning" : "flip cards"}
         </Chip>
         <Chip active={mode === "write"} onClick={() => setMode("write")}>写 write — type hanzi</Chip>
+        <Chip active={mode === "brush"} onClick={() => setMode("brush")}>描 brush — write by hand</Chip>
         {canSpeak() && (
           <Chip active={autoSpeak} onClick={onToggleAutoSpeak}>
             {autoSpeak ? "🔊" : "🔇"} say it aloud
@@ -363,6 +420,13 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
       {mode === "write" && (
         <p className="ui t-body text-center max-w-xs" style={{ color: C.faint }}>
           Write mode needs a Chinese keyboard (pinyin IME) enabled on your device.
+          Brush mode doesn't — you draw the character instead.
+        </p>
+      )}
+      {mode === "brush" && (
+        <p className="ui t-body text-center max-w-xs" style={{ color: C.faint }}>
+          Draw each stroke with a finger or the mouse. Every stroke of the
+          character earns the slot; the order is coached, not required.
         </p>
       )}
       {!plannedCount && (
@@ -398,7 +462,7 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
   const inFirstPass = idx < initialLen;
   const graded = score.ok + score.no;
   const accuracy = graded ? Math.round((score.ok / graded) * 100) : null;
-  const scored = mode === "write" || quiz;
+  const scored = mode === "write" || mode === "brush" || quiz;
   const progress = scored
     ? graded / (graded + (queue.length - idx))
     : (idx + 1) / queue.length;
@@ -433,6 +497,96 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
       </div>
       <div className="w-full h-1 rounded-full overflow-hidden" style={{ background: C.ink3 }} aria-hidden="true">
         <div className="h-full rounded-full" style={{ width: `${Math.round(progress * 100)}%`, background: C.paper, transition: "width 300ms ease" }} />
+      </div>
+    </div>
+  );
+
+  /* ——— brush mode: write it by hand ——— */
+  if (mode === "brush") return (
+    <div className="flex flex-col items-center gap-4 pt-4">
+      {header}
+      <div className="relative w-full max-w-sm flex flex-col items-center gap-3">
+        <StarBtn starred={!!card.starred} onClick={() => onToggleStar(card.id)} />
+        {/* The prompt is the English, same as write mode: the character is what
+            you're producing, so showing it would defeat the exercise —
+            except in trace mode, where copying the shape *is* the exercise. */}
+        <div className="ui text-lg text-center leading-snug px-8" style={{ color: C.paper }}>
+          {card.meaning}
+        </div>
+        <div className="mono t-meta" style={{ color: C.faint }}>{card.pinyin}</div>
+
+        <BrushPad
+          key={card.id}
+          hanzi={card.hanzi}
+          target={strokeState.data}
+          ink={ink}
+          onInk={setInk}
+          surface={surface}
+          mode={padMode}
+          showStrokeOrder={showStrokeOrder}
+          onComplete={onBrushComplete}
+        />
+
+        {brushDone ? (
+          <div className="w-full flex flex-col items-center gap-3">
+            <div className="flex flex-col items-center gap-1">
+              <div className="hz font-black" style={{ color: C.paper, fontSize: 44, lineHeight: 1.1 }}>{card.hanzi}</div>
+              <div className="flex items-center gap-1">
+                <div className="mono text-base" style={{ color: C.paper }}>{card.pinyin}</div>
+                <SpeakBtn text={card.hanzi} />
+              </div>
+            </div>
+            {proofHint && (
+              <div className="ui t-meta text-center max-w-xs" style={{ color: C.faint }}>{proofHint}</div>
+            )}
+            <button onClick={next} className="ui px-8 py-2 t-btn border rounded"
+              style={{ borderColor: C.paper, color: C.paper }}>Next →</button>
+          </div>
+        ) : (
+          <button onClick={next} className="ui t-btn px-4 py-1" style={{ color: C.faint }}>
+            skip this one »
+          </button>
+        )}
+
+        {/* The ink and paper controls, folded away — the pad should lead with
+            paper to write on, not with five sliders. */}
+        <Collapsible label="墨 ink & paper" open={inkOpen} onToggle={() => setInkOpen(o => !o)}
+          summary={`${padMode}${showStrokeOrder ? " · numbered" : ""} · ${surface}`}>
+          <div className="w-full flex flex-col gap-3">
+            {INK_SLIDERS.map(({ key, label, steps }) => (
+              <div key={key} className="w-full flex flex-col gap-1">
+                <div className="flex items-baseline justify-between">
+                  <span className="ui t-label" style={{ color: C.faint }}>{label}</span>
+                  <span className="mono t-micro" style={{ color: C.dim }}>{ink[key].toFixed(2)}</span>
+                </div>
+                <Slider value={Math.round(ink[key] * steps)} max={steps} label={label}
+                  onChange={v => setInk(i => ({ ...i, [key]: v / steps }))} />
+              </div>
+            ))}
+            <div className="w-full flex flex-col gap-1">
+              <div className="flex items-baseline justify-between">
+                <span className="ui t-label" style={{ color: C.faint }}>seed</span>
+                <span className="mono t-micro" style={{ color: C.dim }}>{ink.seed}</span>
+              </div>
+              <Slider value={ink.seed} max={99} label="Brush seed"
+                onChange={v => setInk(i => ({ ...i, seed: v }))} />
+            </div>
+            <div className="flex flex-wrap items-center gap-2 justify-center">
+              <Switch value={surface} options={[
+                { value: "plain" as const, label: "plain" },
+                { value: "grid" as const, label: "grid" },
+                { value: "scroll" as const, label: "scroll" },
+              ]} onChange={setSurface} />
+              <Switch value={padMode} options={[
+                { value: "write" as const, label: "write" },
+                { value: "trace" as const, label: "trace" },
+              ]} onChange={setPadMode} />
+              <Chip active={showStrokeOrder} onClick={() => setShowStrokeOrder(v => !v)}>
+                習 stroke order
+              </Chip>
+            </div>
+          </div>
+        </Collapsible>
       </div>
     </div>
   );

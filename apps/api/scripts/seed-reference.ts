@@ -14,7 +14,7 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { sql } from "drizzle-orm";
 import { db } from "../src/db/client.js";
-import { characterInsights, hskWords } from "../src/db/schema.js";
+import { characterInsights, characterStrokes, hskWords } from "../src/db/schema.js";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const data = (name: string) => JSON.parse(readFileSync(join(here, "../data", name), "utf8"));
@@ -23,6 +23,9 @@ const data = (name: string) => JSON.parse(readFileSync(join(here, "../data", nam
 // comfortably under it while still making the 11k-row load a few round trips.
 const WORD_CHUNK = 500;
 const INSIGHT_CHUNK = 200;
+// Stroke rows carry SVG paths and are an order of magnitude fatter than the
+// rest, so they go in smaller batches to keep each statement modest.
+const STROKE_CHUNK = 100;
 
 function chunks<T>(rows: T[], size: number): T[][] {
   const out: T[][] = [];
@@ -100,6 +103,28 @@ async function seedInsights(file: string, source: string, refreshOnly?: string):
   return rows.length;
 }
 
+interface SeedStrokes { hanzi: string; strokes: string[]; medians: number[][][] }
+
+/**
+ * Stroke geometry for brush mode. Regenerated wholesale each run: it is derived
+ * straight from makemeahanzi with no hand-editing anywhere in the chain, so
+ * there is nothing here for a re-seed to trample.
+ */
+async function seedStrokes(): Promise<number> {
+  const rows = (data("strokes-hsk.json") as SeedStrokes[]).map((r) => ({
+    hanzi: r.hanzi,
+    strokes: r.strokes as never,
+    medians: r.medians as never,
+  }));
+  for (const batch of chunks(rows, STROKE_CHUNK)) {
+    await db.insert(characterStrokes).values(batch).onConflictDoUpdate({
+      target: characterStrokes.hanzi,
+      set: { strokes: sql`excluded.strokes`, medians: sql`excluded.medians` },
+    });
+  }
+  return rows.length;
+}
+
 async function main() {
   const words = await seedWords();
   console.log(`· ${words} HSK words upserted`);
@@ -115,6 +140,9 @@ async function main() {
   // were reviewed in-session, so they overwrite the generated fallback.
   const written = await seedInsights("insights-curated.json", "seed:written");
   console.log(`· ${written} hand-written breakdowns for characters the data has no account of`);
+
+  const strokes = await seedStrokes();
+  console.log(`· ${strokes} characters' stroke geometry upserted`);
 
   console.log("Reference data is loaded.");
   process.exit(0);

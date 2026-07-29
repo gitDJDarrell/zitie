@@ -36,6 +36,8 @@ export interface SeenRecord {
   readOk?: boolean;
   /** Produced: gave the character or its reading from the English (write mode). */
   writeOk?: boolean;
+  /** Brushed: drew every stroke of the character by hand (brush mode). */
+  brushOk?: boolean;
 }
 
 export type SeenMap = Record<string, SeenRecord>;
@@ -46,9 +48,10 @@ export type Grade = "again" | "hard" | "good" | "easy";
  * Which direction a correct answer was produced in. Sent with a grade only
  * when the answer was right; one of each is what earns a character its dex
  * slot. "read" is recognition — the meaning picked from the character —
- * and "write" is production, the character or its reading from the English.
+ * "write" is production, the character or its reading from the English, and
+ * "brush" is writing it out by hand, stroke by stroke.
  */
-export type Proof = "read" | "write";
+export type Proof = "read" | "write" | "brush";
 
 export type Theme = "light" | "dark";
 

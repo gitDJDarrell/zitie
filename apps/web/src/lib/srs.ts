@@ -113,35 +113,47 @@ export function masteryOf(rec: SeenRecord | undefined): number {
 /* ————————————————— collection ————————————————— */
 
 /**
- * The two proofs a character needs before its dex slot lights up: recognised
- * (meaning picked from the character, read mode) and produced (character or
- * reading given from the English, write mode).
+ * The three proofs a character needs before its dex slot lights up:
+ *   认 recognised — the meaning picked from the character (read mode)
+ *   写 written    — the character or its reading given from the English
+ *   描 brushed    — drawn by hand, every stroke of it
  *
  * This is deliberately not `masteryOf`. Mastery is the scheduler's running
  * estimate of how well a memory is holding, and it moves both ways; a slot you
  * have earned should not empty because you missed a review three weeks later.
  * Collection asks a different, one-way question — have you ever actually
- * produced this character's answer in both directions?
+ * produced this character's answer, each of the three ways?
  */
-export function proofsOf(rec: SeenRecord | undefined): { read: boolean; write: boolean } {
-  return { read: !!rec?.readOk, write: !!rec?.writeOk };
+export interface Proofs { read: boolean; write: boolean; brush: boolean }
+
+export const PROOF_COUNT = 3;
+
+export function proofsOf(rec: SeenRecord | undefined): Proofs {
+  return { read: !!rec?.readOk, write: !!rec?.writeOk, brush: !!rec?.brushOk };
 }
 
-/** Both proofs in: the character has been earned. */
+/** All three in: the character has been earned. */
 export function isCollected(rec: SeenRecord | undefined): boolean {
-  const { read, write } = proofsOf(rec);
-  return read && write;
+  const { read, write, brush } = proofsOf(rec);
+  return read && write && brush;
 }
+
+/** The glyph for each proof, in the order the modes appear in Study. */
+export const PROOF_GLYPH: { key: keyof Proofs; zh: string; label: string }[] = [
+  { key: "read", zh: "认", label: "recognised" },
+  { key: "write", zh: "写", label: "written" },
+  { key: "brush", zh: "描", label: "brushed" },
+];
 
 /** Owned but not yet earned — the state the dex nudges you to finish. */
 export function inProgress(rec: SeenRecord | undefined): boolean {
   return !isCollected(rec);
 }
 
-/** How many of the two proofs are in, for a progress readout. */
+/** How many of the three proofs are in, for a progress readout. */
 export function proofCount(rec: SeenRecord | undefined): number {
-  const { read, write } = proofsOf(rec);
-  return (read ? 1 : 0) + (write ? 1 : 0);
+  const { read, write, brush } = proofsOf(rec);
+  return (read ? 1 : 0) + (write ? 1 : 0) + (brush ? 1 : 0);
 }
 
 /** Short label for a mastery level, for tooltips and screen readers. */

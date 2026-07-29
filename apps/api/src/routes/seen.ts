@@ -45,6 +45,7 @@ function serialize(row: typeof seenState.$inferSelect) {
     lastGrade: row.lastGrade,
     readOk: row.readOk,
     writeOk: row.writeOk,
+    brushOk: row.brushOk,
   };
 }
 
@@ -53,7 +54,7 @@ const gradeSchema = z.object({
   grade: z.enum(["again", "hard", "good", "easy"]),
   // Which direction the answer was produced in, sent only when the answer was
   // right. Two of these — one each way — is what earns a dex slot.
-  proof: z.enum(["read", "write"]).optional(),
+  proof: z.enum(["read", "write", "brush"]).optional(),
 });
 
 // POST /seen/grade — record a self-rating and reschedule the card.
@@ -62,7 +63,7 @@ seenRoute.post("/grade", async (c) => {
   const userId = c.get("userId");
   const parsed = gradeSchema.safeParse(await c.req.json().catch(() => null));
   if (!parsed.success) {
-    return c.json({ error: "Expected { id: string, grade: again|hard|good|easy, proof?: read|write }." }, 400);
+    return c.json({ error: "Expected { id: string, grade: again|hard|good|easy, proof?: read|write|brush }." }, 400);
   }
   const { id, grade, proof } = parsed.data;
 
@@ -84,6 +85,7 @@ seenRoute.post("/grade", async (c) => {
   const proofSet = {
     ...(earned === "read" ? { readOk: true } : {}),
     ...(earned === "write" ? { writeOk: true } : {}),
+    ...(earned === "brush" ? { brushOk: true } : {}),
   };
 
   const [row] = await db.insert(seenState)

@@ -3,7 +3,7 @@ import { Chip, Rating, SpeakBtn, Switch } from "../components/atoms";
 import { CardDetail } from "../components/CardDetail";
 import { MysteryCardDetail } from "../components/MysteryCardDetail";
 import { DEX_LEVELS, DEX_INDEX, DEX_ORDER, DEX_TOTAL } from "../data/dex";
-import { isCollected, proofsOf } from "../lib/srs";
+import { isCollected, PROOF_GLYPH, proofsOf } from "../lib/srs";
 import { C } from "../theme";
 import type { Card, SeenMap, StudyIds } from "../types";
 import { WordDex } from "./WordDex";
@@ -190,8 +190,8 @@ export function GalleryView({ bank, srs, onToggleStar, stack, onAddToStack, onRe
               const n = levelOffset + i + 1;
               const dexIndex = n - 1; // DEX_ORDER is 0-based; slot.n is 1-based
               const shiny = card ? isFullyComplete(card) : false;
-              const proofs = card ? proofsOf(srs[card.id]) : { read: false, write: false };
-              const got = card ? proofs.read && proofs.write : false;
+              const proofs = proofsOf(card ? srs[card.id] : undefined);
+              const got = card ? proofs.read && proofs.write && proofs.brush : false;
               return card && got ? (
                 // The speak button has to be a sibling of the tile button, not
                 // a child — a <button> inside a <button> is invalid and Safari
@@ -218,16 +218,17 @@ export function GalleryView({ bank, srs, onToggleStar, stack, onAddToStack, onRe
                 // but the slot stays outlined and says which half is missing,
                 // so the tile reads as a task rather than as a trophy.
                 <button key={ch} onClick={() => setCursor({ kind: "dex", index: dexIndex })}
-                  aria-label={`No. ${n} ${ch} — in your bank, ${
-                    proofs.read ? "recognised" : "not yet recognised"}, ${
-                    proofs.write ? "written" : "not yet written"}. Tap to view.`}
+                  aria-label={`No. ${n} ${ch} — in your bank. ${
+                    PROOF_GLYPH.map(g => (proofs[g.key] ? g.label : `not yet ${g.label}`)).join(", ")
+                  }. Tap to view.`}
                   className="flex flex-col items-center justify-center gap-0.5 rounded"
                   style={{ height: TILE_HEIGHT, border: `1px dashed ${C.line}` }}>
                   <span className="hz text-2xl leading-tight" style={{ color: C.dim }}>{ch}</span>
                   <span className="ui t-micro" style={{ color: C.faint }}>{String(n).padStart(4, "0")}</span>
-                  <span className="ui t-micro" aria-hidden="true">
-                    <span style={{ color: proofs.read ? C.paper : C.ink3 }}>认</span>
-                    <span style={{ color: proofs.write ? C.paper : C.ink3 }}>写</span>
+                  <span className="hz t-micro" aria-hidden="true">
+                    {PROOF_GLYPH.map(({ key, zh }) => (
+                      <span key={key} style={{ color: proofs[key] ? C.paper : C.ink3 }}>{zh}</span>
+                    ))}
                   </span>
                 </button>
               ) : (
