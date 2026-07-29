@@ -5,7 +5,7 @@ import { MysteryCardDetail } from "../components/MysteryCardDetail";
 import { WORD_DEX_LEVELS, WORD_INDEX, WORD_ORDER, WORD_TOTAL } from "../data/wordDex";
 import { normalizePinyin } from "../lib/pinyin";
 import { useGridWindow } from "../lib/useGridWindow";
-import { isCollected, proofsOf } from "../lib/srs";
+import { isCollected, PROOF_GLYPH, proofsOf } from "../lib/srs";
 import { C } from "../theme";
 import type { Card, SeenMap, StudyIds } from "../types";
 
@@ -203,8 +203,8 @@ export function WordDex({ bank, srs, onToggleStar, stack, onAddToStack, onRemove
             const card = byHanzi.get(word);
             const slot = WORD_INDEX.get(word);
             const n = slot?.n ?? 0;
-            const proofs = card ? proofsOf(srs[card.id]) : { read: false, write: false };
-            return card && proofs.read && proofs.write ? (
+            const proofs = proofsOf(card ? srs[card.id] : undefined);
+            return card && proofs.read && proofs.write && proofs.brush ? (
               // Speak button as a sibling, not a child — a button inside a
               // button is invalid and Safari drops the inner one's clicks.
               <div key={word} className="relative" style={{ height: TILE_HEIGHT }}>
@@ -227,17 +227,18 @@ export function WordDex({ bank, srs, onToggleStar, stack, onAddToStack, onRemove
               // not, and the two glyphs say which half is still owed. No
               // speaker — the reading is the reward for the read half.
               <button key={word} onClick={() => openWord(word)}
-                aria-label={`No. ${n} ${word} — in your bank, ${
-                  proofs.read ? "recognised" : "not yet recognised"}, ${
-                  proofs.write ? "written" : "not yet written"}. Tap to view.`}
+                aria-label={`No. ${n} ${word} — in your bank. ${
+                  PROOF_GLYPH.map(g => (proofs[g.key] ? g.label : `not yet ${g.label}`)).join(", ")
+                }. Tap to view.`}
                 className="flex flex-col items-center justify-center gap-0.5 px-1 rounded"
                 style={{ height: TILE_HEIGHT, border: `1px dashed ${C.line}` }}>
                 <span className="hz leading-tight truncate w-full text-center"
                   style={{ color: C.dim, fontSize: word.length > 3 ? 15 : 19 }}>{word}</span>
                 <span className="ui t-micro" style={{ color: C.faint }}>{String(n).padStart(5, "0")}</span>
-                <span className="ui t-micro" aria-hidden="true">
-                  <span style={{ color: proofs.read ? C.paper : C.ink3 }}>认</span>
-                  <span style={{ color: proofs.write ? C.paper : C.ink3 }}>写</span>
+                <span className="hz t-micro" aria-hidden="true">
+                  {PROOF_GLYPH.map(({ key, zh }) => (
+                    <span key={key} style={{ color: proofs[key] ? C.paper : C.ink3 }}>{zh}</span>
+                  ))}
                 </span>
               </button>
             ) : (

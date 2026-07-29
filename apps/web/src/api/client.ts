@@ -1,4 +1,5 @@
 import type { Card, Grade, Proof, SeenMap, SeenRecord, Theme } from "../types";
+import type { CharacterStrokes } from "../lib/strokes";
 
 export interface Settings {
   theme: Theme;
@@ -64,6 +65,12 @@ export const api = {
 
   aiExtract: (payload: { text?: string; image?: { mediaType: string; data: string } }) =>
     request<{ cards: unknown[] }>("/ai/extract", { method: "POST", body: JSON.stringify(payload) }),
+
+  // Stroke geometry for brush mode. Capped at 24 server-side: each row carries
+  // the SVG paths for every stroke, so this is a much heavier fetch than
+  // insights and is asked for one card at a time.
+  getStrokes: (hanzi: string[]) =>
+    request<{ strokes: Record<string, CharacterStrokes> }>("/strokes", { method: "POST", body: JSON.stringify({ hanzi }) }),
 
   getInsights: (hanzi: string[]) =>
     request<{ insights: Record<string, CharacterInsight> }>("/insights", { method: "POST", body: JSON.stringify({ hanzi }) }),

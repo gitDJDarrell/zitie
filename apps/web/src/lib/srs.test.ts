@@ -101,10 +101,15 @@ describe("previewIntervalDays", () => {
 });
 
 describe("collection", () => {
-  it("needs both directions, not one", () => {
+  it("needs all three proofs, not two", () => {
     assert.equal(isCollected({ last: 0, views: 1, readOk: true }), false);
     assert.equal(isCollected({ last: 0, views: 1, writeOk: true }), false);
-    assert.equal(isCollected({ last: 0, views: 1, readOk: true, writeOk: true }), true);
+    assert.equal(isCollected({ last: 0, views: 1, brushOk: true }), false);
+    assert.equal(isCollected({ last: 0, views: 1, readOk: true, writeOk: true }), false);
+    assert.equal(isCollected({ last: 0, views: 1, readOk: true, brushOk: true }), false);
+    assert.equal(isCollected({ last: 0, views: 1, writeOk: true, brushOk: true }), false);
+    assert.equal(
+      isCollected({ last: 0, views: 1, readOk: true, writeOk: true, brushOk: true }), true);
   });
 
   it("treats a card that has never been graded as uncollected", () => {
@@ -117,7 +122,7 @@ describe("collection", () => {
     // scheduler should say "weak" while the dex still says "collected".
     const lapsed = {
       last: 0, views: 20, ease: 1.3, intervalDays: 0, reps: 0, lapses: 5,
-      readOk: true, writeOk: true,
+      readOk: true, writeOk: true, brushOk: true,
     };
     assert.equal(masteryOf(lapsed), 0);
     assert.equal(isCollected(lapsed), true);
@@ -127,5 +132,7 @@ describe("collection", () => {
     assert.equal(proofCount(undefined), 0);
     assert.equal(proofCount({ last: 0, views: 1, readOk: true }), 1);
     assert.equal(proofCount({ last: 0, views: 1, readOk: true, writeOk: true }), 2);
+    assert.equal(
+      proofCount({ last: 0, views: 1, readOk: true, writeOk: true, brushOk: true }), 3);
   });
 });

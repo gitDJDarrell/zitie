@@ -73,6 +73,20 @@ export const seenState = pgTable("seen_state", {
   // miss; a collected character stays collected, the schedule takes the hit.
   readOk: boolean("read_ok").notNull().default(false),
   writeOk: boolean("write_ok").notNull().default(false),
+  // Written by hand with the brush, in the right stroke order. The hardest of
+  // the three and the only one that checks *how* the character is formed
+  // rather than just which one it is.
+  brushOk: boolean("brush_ok").notNull().default(false),
+});
+
+// Stroke geometry, shared across all users like character_insights — the
+// strokes of 思 are the same for everyone. `strokes` are SVG paths for drawing
+// the glyph; `medians` are each stroke's centreline in written order, which is
+// what brush mode grades against. Both in makemeahanzi's 1024x1024 space.
+export const characterStrokes = pgTable("character_strokes", {
+  hanzi: text("hanzi").primaryKey(),
+  strokes: jsonb("strokes").$type<string[]>().notNull().default([]),
+  medians: jsonb("medians").$type<number[][][]>().notNull().default([]),
 });
 
 // Deep character breakdowns — shared across ALL users (keyed by hanzi, not

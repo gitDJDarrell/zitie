@@ -229,6 +229,42 @@ they were queued:
    - Proofs are one-way. Forgetting a character later costs you the schedule,
      not the slot — `masteryOf` still moves both ways and is what the tile's
      strength bar shows.
+   - Superseded by the 2026-07-29 item below: collection now wants a third
+     proof, 描 brush.
+
+## Backlog — next (queued 2026-07-29)
+
+1. **描 brush mode, and the third proof — SHIPPED.** A brush pad where the
+   character is written by hand, and the only study mode that checks *how* a
+   character is formed rather than just which one it is. Collection now wants
+   three proofs: 认 recognise, 写 write, 描 brush.
+   - **Real grading, not a sketchpad.** makemeahanzi records each stroke's
+     centreline (`medians`), so a drawn stroke can be matched against the one it
+     was aiming at: `lib/strokes.ts` resamples both to a common length, pairs
+     them greedily one-to-one, and reports which strokes landed, which were
+     missed, which were spurious, and whether the sequence was the taught one.
+     Direction counts — a stroke drawn right-to-left scores badly, because that
+     is a real error.
+   - **Completeness earns the slot; order is coached.** Writing 思 with the box
+     built the wrong way round is still writing 思, so the proof asks for every
+     stroke and the sequence gets the "written in a different stroke order ·
+     show me" nudge, which walks the taught order stroke by stroke.
+   - **The brush.** A stroke is stored as the points and timings it was drawn
+     with, never as pixels, so the ink controls restyle writing that already
+     exists (`lib/ink.ts`): weight, wetness, speed, formality and a seed, plus
+     plain/grid/scroll paper and write/trace. Width follows speed and tapers at
+     both ends; a dry fast tail splays into bristles; a wet one bleeds instead.
+     All randomness is seeded, so dragging a slider restyles the character
+     rather than making it crawl.
+   - **Data.** `character_strokes` (migration 0008), shared across users like
+     `character_insights` — 7.6 MB for the 3,000 dex characters, so it is served
+     one character at a time and cached in memory and localStorage rather than
+     bundled. `build:strokes` generates it; the app falls back to freehand with
+     no grading for a character with no geometry (compounds, mostly).
+   - **Migration.** Anything already collected under the two-proof rule keeps
+     its slot. Only characters earned from here on have to be brushed too —
+     same reasoning as 0007: the change should be felt going forward, not
+     applied to the past.
 
 ## Sequencing
 

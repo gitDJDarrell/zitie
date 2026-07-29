@@ -15,6 +15,7 @@ hand. None of the sources are committed; the build scripts download them.
 | `insights-hsk1.json` | hand-written | reviewed breakdowns that take precedence over the generated ones |
 | `stories.json` | hand-written | etymologies for the 184 dex characters the datasets record no account of |
 | `insights-curated.json` | `build-curated.ts` | `stories.json` + readings from `hanzi.json` + compounds from `insights-hsk.json` |
+| `strokes-hsk.json` | `build-stroke-data.ts` | makemeahanzi `graphics.txt` — stroke outlines and centrelines for the 3,000 dex characters |
 
 ## Sources
 
@@ -38,8 +39,11 @@ definitions, reaching `hanzi.json` through makemeahanzi.
 Database. <https://github.com/cjkvi/cjkvi-ids>. Ideographic Description
 Sequences — the component decompositions in `hanzi.json`.
 
-**makemeahanzi** — <https://github.com/skishore/makemeahanzi>. Decompositions,
-etymologies and stroke data, itself derived from Unihan and CC-CEDICT.
+**makemeahanzi** — <https://github.com/skishore/makemeahanzi>, MIT license for
+the code and CC BY 4.0 for the data. Decompositions, etymologies and stroke
+data, itself derived from Unihan and CC-CEDICT. `strokes-hsk.json` is a direct
+derivation of its `graphics.txt` (stroke outlines and medians), so that file
+carries the same attribution requirement.
 
 **HSK 3.0 character and word lists** — © 2021 Pleco Inc., MIT license, via
 <https://github.com/elkmovie/hsk30>. The dex levels in
@@ -54,6 +58,7 @@ only to rank which compounds a character's card shows first.
 npm run build:hanzi --workspace apps/api        # hanzi.json
 npm run build:reference --workspace apps/api    # insights-hsk.json + hsk-words.json
 npm run build:curated --workspace apps/api      # insights-curated.json (from stories.json)
+npm run build:strokes --workspace apps/api      # strokes-hsk.json
 ```
 
 The first two download their sources to a scratch directory (pass a path as the
