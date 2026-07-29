@@ -4,11 +4,13 @@ import { type Filters } from "./lib/filters";
 import { initSpeech } from "./lib/speech";
 import { ApiStorage } from "./storage/apiStorage";
 import { applyTheme, C, FONT_CSS } from "./theme";
-import type { Card, Grade, SeenMap, SyncState, Theme } from "./types";
+import type { Card, Grade, Proof, SeenMap, SeenRecord, SyncState, Theme } from "./types";
 import { BrowseView } from "./views/BrowseView";
 import { GalleryView } from "./views/GalleryView";
 import { ImportView } from "./views/ImportView";
-import { StudyView } from "./views/StudyView";
+import { isCollected } from "./lib/srs";
+import { EarnedBanner } from "./components/EarnedBanner";
+import { StudyView, type StackSession } from "./views/StudyView";
 
 const DEFAULT_POS = ["noun", "verb", "pronoun", "adjective", "adverb", "measure word", "particle"];
 
@@ -29,7 +31,9 @@ export default function App({ onLogout, userEmail }: { onLogout: () => void; use
   const [difficulty, setDifficulty] = useState(2);
   // A "study this stack" request from Browse. nonce changes on every request so
   // StudyView can auto-begin exactly once per click, even if the ids are unchanged.
-  const [stackSession, setStackSession] = useState<{ ids: string[]; nonce: number } | null>(null);
+  const [stackSession, setStackSession] = useState<StackSession | null>(null);
+  // The character whose dex slot was just earned, shown as a one-off reward.
+  const [earned, setEarned] = useState<Card | null>(null);
 
   const storageRef = useRef<ApiStorage | null>(null);
   if (!storageRef.current) storageRef.current = new ApiStorage(setSyncState, setPending);
@@ -79,13 +83,38 @@ export default function App({ onLogout, userEmail }: { onLogout: () => void; use
 
   // Self-rating drives the scheduler. The server owns the real interval maths,
   // so this only bumps the view count locally and then takes the server's word.
-  const onGrade = (id: string, grade: Grade) => {
+  //
+  // `proof` rides along when the answer was right: two of them, one each
+  // direction, is what earns the character its dex slot. The optimistic state
+  // records it too, so an offline session still lights the dex up — the queued
+  // grade carries the same proof and the server agrees when it drains.
+  const onGrade = (id: string, grade: Grade, proof?: Proof) => {
     const prev = srs[id] || { views: 0, last: 0 };
-    setSrs(s => ({ ...s, [id]: { ...prev, last: Date.now(), views: (prev.views || 0) + 1 } }));
-    storage.gradeCard(id, grade).then(rec => {
-      if (rec) setSrs(s => ({ ...s, [id]: rec }));
+    const optimistic: SeenRecord = {
+      ...prev, last: Date.now(), views: (prev.views || 0) + 1,
+      readOk: prev.readOk || proof === "read",
+      writeOk: prev.writeOk || proof === "write",
+    };
+    setSrs(s => ({ ...s, [id]: optimistic }));
+    announceIfEarned(id, prev, optimistic);
+    storage.gradeCard(id, grade, proof).then(rec => {
+      if (!rec) return;
+      setSrs(s => ({ ...s, [id]: rec }));
+      announceIfEarned(id, optimistic, rec); // in case the server knew something we didn't
     }).catch(() => {});
   };
+
+  // The reward moment. Raised exactly once per character, when the second
+  // proof lands — the whole point of the change is that the dex slot arrives
+  // as an event you witness, not as a row that was always quietly there.
+  const onGradeAnnounced = useRef(new Set<string>());
+  function announceIfEarned(id: string, before: SeenRecord, after: SeenRecord) {
+    if (isCollected(before) || !isCollected(after)) return;
+    if (onGradeAnnounced.current.has(id)) return;
+    onGradeAnnounced.current.add(id);
+    const card = bank.find(c => c.id === id);
+    if (card) setEarned(card);
+  }
 
   const onToggleAutoSpeak = () => {
     const next = !autoSpeak;
@@ -154,13 +183,20 @@ export default function App({ onLogout, userEmail }: { onLogout: () => void; use
     storage.setStack([]).catch(() => {});
   };
 
-  const onStudyStack = () => {
+  // Study a specific set of cards right now, without touching the saved
+  // stack. The dex uses this for "study this level" — a one-off session, not
+  // an edit to the list the user curated in Browse. `origin` is what the study
+  // screen calls the run, so a dex selection doesn't present itself as the
+  // stack; omitted means it *is* the stack.
+  const onStudyIds = (ids: string[], origin?: StackSession["origin"]) => {
     const existing = new Set(bank.map(c => c.id));
-    const ids = stack.filter(id => existing.has(id));
-    if (!ids.length) return;
-    setStackSession({ ids, nonce: Date.now() });
+    const use = ids.filter(id => existing.has(id));
+    if (!use.length) return;
+    setStackSession({ ids: use, nonce: Date.now(), origin });
     setTab("study");
   };
+
+  const onStudyStack = () => onStudyIds(stack);
 
   const onToggleStar = (id: string) => {
     const card = bank.find(c => c.id === id);
@@ -237,12 +273,14 @@ export default function App({ onLogout, userEmail }: { onLogout: () => void; use
         ) : (
           <>
             {tab === "study" && <StudyView bank={bank} srs={srs} filters={filters} setFilters={setFilters} posList={posList} onSeen={onSeen} onGrade={onGrade} onToggleStar={onToggleStar} stackSession={stackSession} onExitStackSession={() => setStackSession(null)} stack={stack} onStudyStack={onStudyStack} difficulty={difficulty} onSetDifficulty={onSetDifficulty} autoSpeak={autoSpeak} onToggleAutoSpeak={onToggleAutoSpeak} />}
-            {tab === "gallery" && <GalleryView bank={bank} srs={srs} onToggleStar={onToggleStar} stack={stack} onAddToStack={onAddToStack} onRemoveFromStack={onRemoveFromStack} />}
+            {tab === "gallery" && <GalleryView bank={bank} srs={srs} onToggleStar={onToggleStar} stack={stack} onAddToStack={onAddToStack} onRemoveFromStack={onRemoveFromStack} onStudyIds={onStudyIds} />}
             {tab === "browse" && <BrowseView bank={bank} srs={srs} filters={filters} setFilters={setFilters} posList={posList} onDelete={onDelete} onDeleteMany={onDeleteMany} onClearAll={onClearAll} onResetSeen={onResetSeen} onToggleStar={onToggleStar} stack={stack} onAddToStack={onAddToStack} onRemoveFromStack={onRemoveFromStack} onClearStack={onClearStack} onStudyStack={onStudyStack} />}
-            {tab === "import" && <ImportView bank={bank} onImport={onImport} />}
+            {tab === "import" && <ImportView bank={bank} srs={srs} onImport={onImport} onStudyIds={onStudyIds} />}
           </>
         )}
       </div>
+
+      {earned && <EarnedBanner card={earned} onDismiss={() => setEarned(null)} />}
 
       <nav className="fixed bottom-0 left-0 right-0" style={{
         background: C.ink2,

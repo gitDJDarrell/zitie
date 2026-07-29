@@ -165,19 +165,23 @@ const LEVEL_RANK: Record<string, number> = { "1": 1, "2": 2, "3": 3, "4": 4, "5"
 /**
  * The words to show under "appears in": real vocabulary containing the
  * character, earliest-examinable first, then by how common the word is. Two-
- * and three-character words only — a four-character idiom is not what someone
- * meeting the character needs.
+ * and three-character words are preferred — a four-character idiom is not what
+ * someone meeting the character needs — but a handful of characters have no
+ * shorter word in the standard at all (六 and 七 appear only in 五颜六色 and
+ * 乱七八糟), and for those an idiom beats an empty section.
  */
 export function pickCompounds(hanzi: string, candidates: CompoundCandidate[], limit = 4): Compound[] {
   const seen = new Set<string>();
-  return candidates
-    .filter((w) => w.zh.includes(hanzi) && w.zh.length >= 2 && w.zh.length <= 3)
-    .filter((w) => (seen.has(w.zh) ? false : (seen.add(w.zh), true)))
-    .sort((a, b) => {
-      const rank = (LEVEL_RANK[a.level ?? ""] ?? 9) - (LEVEL_RANK[b.level ?? ""] ?? 9);
-      if (rank !== 0) return rank;
-      return (b.freq ?? 0) - (a.freq ?? 0);
-    })
+  const byLevelThenFreq = (a: CompoundCandidate, b: CompoundCandidate) => {
+    const rank = (LEVEL_RANK[a.level ?? ""] ?? 9) - (LEVEL_RANK[b.level ?? ""] ?? 9);
+    return rank !== 0 ? rank : (b.freq ?? 0) - (a.freq ?? 0);
+  };
+  const containing = candidates
+    .filter((w) => w.zh.includes(hanzi) && w.zh.length >= 2)
+    .filter((w) => (seen.has(w.zh) ? false : (seen.add(w.zh), true)));
+  const short = containing.filter((w) => w.zh.length <= 3);
+  return (short.length ? short : containing)
+    .sort(byLevelThenFreq)
     .slice(0, limit)
     .map(({ zh, py, en }) => ({ zh, ...(py ? { py } : {}), ...(en ? { en } : {}) }));
 }

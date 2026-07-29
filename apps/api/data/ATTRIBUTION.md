@@ -1,9 +1,9 @@
 # Reference data — sources and licenses
 
 Everything in this directory is **generated** from open datasets by the scripts
-in `../scripts/`, except `insights-hsk1.json` and `hsk-words-supplement.json`,
-which are written by hand. None of the sources are committed; the build scripts
-download them.
+in `../scripts/`, except `stories.json`, `insights-hsk1.json`,
+`hsk-words-supplement.json` and `readings-override.json`, which are written by
+hand. None of the sources are committed; the build scripts download them.
 
 | File | Built by | From |
 | --- | --- | --- |
@@ -13,6 +13,8 @@ download them.
 | `hsk-words-supplement.json` | hand-written | glosses for the 272 HSK entries CC-CEDICT doesn't list (transparent phrases like 车上, 看到) |
 | `readings-override.json` | hand-written | the everyday reading for 38 heteronyms the dictionary heuristic gets wrong (打 is dǎ, not dá) |
 | `insights-hsk1.json` | hand-written | reviewed breakdowns that take precedence over the generated ones |
+| `stories.json` | hand-written | etymologies for the 184 dex characters the datasets record no account of |
+| `insights-curated.json` | `build-curated.ts` | `stories.json` + readings from `hanzi.json` + compounds from `insights-hsk.json` |
 
 ## Sources
 
@@ -23,8 +25,9 @@ CEDICT, Copyright © 1997, 1998 Paul Andrew Denisowski. Obtained via the
 the MDBG release verbatim.
 
 Word readings and glosses in `hsk-words.json`, the compound lists in
-`insights-hsk.json`, and the character glosses reaching `hanzi.json` through
-makemeahanzi are derived from CC-CEDICT, so **those files are themselves
+`insights-hsk.json` (and, through it, `insights-curated.json`), and the
+character glosses reaching `hanzi.json` through makemeahanzi are derived from
+CC-CEDICT, so **those files are themselves
 licensed CC BY-SA 3.0** and any redistribution must keep this notice.
 
 **Unihan Database** — © Unicode, Inc., under the Unicode License.
@@ -50,7 +53,10 @@ only to rank which compounds a character's card shows first.
 ```sh
 npm run build:hanzi --workspace apps/api        # hanzi.json
 npm run build:reference --workspace apps/api    # insights-hsk.json + hsk-words.json
+npm run build:curated --workspace apps/api      # insights-curated.json (from stories.json)
 ```
 
-Both download their sources to a scratch directory (pass a path as the first
-argument to reuse one). Neither touches the hand-written files.
+The first two download their sources to a scratch directory (pass a path as the
+first argument to reuse one). None of them touch the hand-written files, and
+`build:curated` needs `insights-hsk.json` to be current — it reads the compound
+lists straight out of it.

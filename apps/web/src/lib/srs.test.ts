@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { formatInterval, isDue, isScheduled, masteryLabel, masteryOf, previewIntervalDays } from "./srs.js";
+import { formatInterval, isCollected, isDue, isScheduled, masteryLabel, masteryOf, previewIntervalDays, proofCount } from "./srs.js";
 import type { SeenRecord } from "../types.js";
 
 const NOW = Date.UTC(2026, 6, 26);
@@ -97,5 +97,35 @@ describe("previewIntervalDays", () => {
     const easy = previewIntervalDays(r, "easy");
     assert.ok(again < hard && hard < good && good < easy,
       `expected again < hard < good < easy, got ${again}/${hard}/${good}/${easy}`);
+  });
+});
+
+describe("collection", () => {
+  it("needs both directions, not one", () => {
+    assert.equal(isCollected({ last: 0, views: 1, readOk: true }), false);
+    assert.equal(isCollected({ last: 0, views: 1, writeOk: true }), false);
+    assert.equal(isCollected({ last: 0, views: 1, readOk: true, writeOk: true }), true);
+  });
+
+  it("treats a card that has never been graded as uncollected", () => {
+    assert.equal(isCollected(undefined), false);
+    assert.equal(isCollected({ last: 0, views: 3 }), false);
+  });
+
+  it("does not follow the schedule down — an earned slot stays earned", () => {
+    // Forgotten badly: ease floored, lapses piling up, interval reset. The
+    // scheduler should say "weak" while the dex still says "collected".
+    const lapsed = {
+      last: 0, views: 20, ease: 1.3, intervalDays: 0, reps: 0, lapses: 5,
+      readOk: true, writeOk: true,
+    };
+    assert.equal(masteryOf(lapsed), 0);
+    assert.equal(isCollected(lapsed), true);
+  });
+
+  it("counts how far along a card is", () => {
+    assert.equal(proofCount(undefined), 0);
+    assert.equal(proofCount({ last: 0, views: 1, readOk: true }), 1);
+    assert.equal(proofCount({ last: 0, views: 1, readOk: true, writeOk: true }), 2);
   });
 });

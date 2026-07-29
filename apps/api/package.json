@@ -11,6 +11,7 @@
     "test": "node --import tsx --test src/**/*.test.ts",
     "build:hanzi": "tsx scripts/build-hanzi-data.ts",
     "build:reference": "tsx scripts/build-reference-data.ts",
+    "build:curated": "tsx scripts/build-curated.ts",
     "db:local": "tsx scripts/dev-db.ts",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "tsx scripts/migrate.ts",

@@ -110,6 +110,40 @@ export function masteryOf(rec: SeenRecord | undefined): number {
   return level;
 }
 
+/* ————————————————— collection ————————————————— */
+
+/**
+ * The two proofs a character needs before its dex slot lights up: recognised
+ * (meaning picked from the character, read mode) and produced (character or
+ * reading given from the English, write mode).
+ *
+ * This is deliberately not `masteryOf`. Mastery is the scheduler's running
+ * estimate of how well a memory is holding, and it moves both ways; a slot you
+ * have earned should not empty because you missed a review three weeks later.
+ * Collection asks a different, one-way question — have you ever actually
+ * produced this character's answer in both directions?
+ */
+export function proofsOf(rec: SeenRecord | undefined): { read: boolean; write: boolean } {
+  return { read: !!rec?.readOk, write: !!rec?.writeOk };
+}
+
+/** Both proofs in: the character has been earned. */
+export function isCollected(rec: SeenRecord | undefined): boolean {
+  const { read, write } = proofsOf(rec);
+  return read && write;
+}
+
+/** Owned but not yet earned — the state the dex nudges you to finish. */
+export function inProgress(rec: SeenRecord | undefined): boolean {
+  return !isCollected(rec);
+}
+
+/** How many of the two proofs are in, for a progress readout. */
+export function proofCount(rec: SeenRecord | undefined): number {
+  const { read, write } = proofsOf(rec);
+  return (read ? 1 : 0) + (write ? 1 : 0);
+}
+
 /** Short label for a mastery level, for tooltips and screen readers. */
 export function masteryLabel(level: number): string {
   return ["new", "learning", "familiar", "strong", "mastered"][level] ?? "new";

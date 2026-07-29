@@ -89,6 +89,10 @@ export function AuthGate() {
     api.logout().finally(() => {
       setEmail("");
       setPassword("");
+      // Back to the login form, not whichever mode was last used — someone
+      // who signed up, logged out, and returned would otherwise be handed a
+      // signup form that rejects their own address as taken.
+      switchMode("login");
       setStatus("guest");
     });
   }

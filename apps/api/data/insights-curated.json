@@ -1,0 +1,6091 @@
+[
+  {
+    "hanzi": "答",
+    "structure": "⿱ stacked",
+    "etyType": "pictophonetic",
+    "components": [
+      {
+        "char": "⺮",
+        "reading": "zhú",
+        "gloss": "bamboo",
+        "role": "semantic",
+        "note": "Bamboo: replies and official answers were written on bamboo slips."
+      },
+      {
+        "char": "合",
+        "reading": "hé",
+        "role": "phonetic",
+        "note": "Lends the sound — the two rhymed closely in older Chinese."
+      }
+    ],
+    "story": "Bamboo over 合. Before paper, an answer was something you wrote on a bamboo slip and sent back, which is what the bamboo radical is doing here; 合 is along for the sound. Two thousand years later the meaning has not moved: 回答, 答案, 答应.",
+    "compounds": [
+      {
+        "zh": "回答",
+        "py": "huídá",
+        "en": "to reply; to answer; the answer"
+      },
+      {
+        "zh": "答应",
+        "py": "dāying",
+        "en": "to promise; to agree; to reply; to respond"
+      },
+      {
+        "zh": "答案",
+        "py": "dá'àn",
+        "en": "answer; solution"
+      },
+      {
+        "zh": "答复",
+        "py": "dáfù",
+        "en": "to answer; to reply; Reply to: (in email header)"
+      }
+    ]
+  },
+  {
+    "hanzi": "的",
+    "structure": "⿰ left–right",
+    "etyType": "pictophonetic",
+    "components": [
+      {
+        "char": "白",
+        "reading": "bái",
+        "gloss": "white; bright",
+        "role": "semantic",
+        "note": "Brightness — the original sense of the character."
+      },
+      {
+        "char": "勺",
+        "reading": "sháo",
+        "role": "phonetic",
+        "note": "Lends the sound (sháo)."
+      }
+    ],
+    "story": "白 (bright) with 勺 for the sound. The first meaning was \"bright, clear\", which narrowed to the bright spot you aim at — a bull's-eye, still alive in 目的 (mùdì, aim) and 的确 (díquè, definitely). The everyday particle de borrowed the sound and nothing else; the commonest character in Chinese is a loan.",
+    "compounds": [
+      {
+        "zh": "真的",
+        "py": "zhēnde",
+        "en": "really; truly; genuine"
+      },
+      {
+        "zh": "有的",
+        "py": "yǒude",
+        "en": "(there are) some (who are...); some (exist)"
+      },
+      {
+        "zh": "别的",
+        "py": "biéde",
+        "en": "else; other"
+      },
+      {
+        "zh": "的话",
+        "py": "dehuà",
+        "en": "if (coming after a conditional clause)"
+      }
+    ]
+  },
+  {
+    "hanzi": "弟",
+    "structure": "simple / indivisible",
+    "etyType": "pictographic",
+    "components": [],
+    "story": "A cord wound in even turns around a stake — a picture of things coming in order, one after another. That sense of sequence was borrowed for the younger brother, the next one down, and when the original meaning needed its own character it got a bamboo top: 第 (dì), the ordinal prefix.",
+    "compounds": [
+      {
+        "zh": "弟弟",
+        "py": "dìdi",
+        "en": "younger brother"
+      },
+      {
+        "zh": "兄弟",
+        "py": "xiōngdì",
+        "en": "brothers; younger brother; brotherly; fraternal"
+      },
+      {
+        "zh": "徒弟",
+        "py": "túdì",
+        "en": "apprentice; disciple"
+      },
+      {
+        "zh": "弟子",
+        "py": "dìzǐ",
+        "en": "disciple; follower"
+      }
+    ]
+  },
+  {
+    "hanzi": "方",
+    "structure": "simple / indivisible",
+    "etyType": "pictographic",
+    "components": [],
+    "story": "The oldest form is disputed — a plough with a crossbar handle by one reading, two boats lashed side by side by the Shuowen's. Either way \"square\" and \"direction\" are extensions: a ploughed field is squared off, and the way you set the plough is the way you face. Both live on in 方向, 正方形, 地方.",
+    "compounds": [
+      {
+        "zh": "地方",
+        "py": "dìfang",
+        "en": "area; place; space; room; territory"
+      },
+      {
+        "zh": "方法",
+        "py": "fāngfǎ",
+        "en": "method; way; means"
+      },
+      {
+        "zh": "东方",
+        "py": "dōngfāng",
+        "en": "the East; eastern countries; the orient; two-character surname Dongfang"
+      },
+      {
+        "zh": "方向",
+        "py": "fāngxiàng",
+        "en": "direction; orientation; path to follow"
+      }
+    ]
+  },
+  {
+    "hanzi": "风",
+    "structure": "⿵ wrapped from above",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "几",
+        "role": "form",
+        "note": "The outer sweep, all that survives of the traditional 風's frame."
+      },
+      {
+        "char": "乂",
+        "role": "form",
+        "note": "A stroke-saving filler where 虫 used to stand."
+      }
+    ],
+    "story": "The traditional 風 was a sound-and-sense compound: 凡 (fán) for the sound over 虫, from the old belief that creatures stir when the wind rises. The simplified form keeps the outer sweep and puts a plain cross inside, so the modern shape is a silhouette of the old character rather than a picture of wind.",
+    "compounds": [
+      {
+        "zh": "风险",
+        "py": "fēngxiǎn",
+        "en": "risk; hazard"
+      },
+      {
+        "zh": "风景",
+        "py": "fēngjǐng",
+        "en": "scenery; landscape"
+      },
+      {
+        "zh": "风格",
+        "py": "fēnggé",
+        "en": "style"
+      },
+      {
+        "zh": "风俗",
+        "py": "fēngsú",
+        "en": "social custom"
+      }
+    ]
+  },
+  {
+    "hanzi": "关",
+    "structure": "⿱ stacked",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "丷",
+        "role": "form",
+        "note": "What is left of the crossbar once the gate was dropped."
+      },
+      {
+        "char": "天",
+        "role": "form",
+        "note": "A borrowed shape, not the character 天."
+      }
+    ],
+    "story": "The traditional 關 is a gate (門) with the bar drawn across it inside — to bar a gate, hence to shut, and from there a frontier pass (海关, customs) and \"to have a bearing on\" (关系, 关于). The simplified 关 drops the gate and keeps a shape that pictures nothing; every modern sense still traces back to that bar.",
+    "compounds": [
+      {
+        "zh": "没关系",
+        "py": "méiguānxi",
+        "en": "it doesn't matter"
+      },
+      {
+        "zh": "关上",
+        "py": "guānshang",
+        "en": "to close (a door); to turn off (light, electrical equipment etc)"
+      },
+      {
+        "zh": "关心",
+        "py": "guānxīn",
+        "en": "to care for sth; caring; concerned"
+      },
+      {
+        "zh": "关机",
+        "py": "guānjī",
+        "en": "to turn off (a machine or device); to finish shooting a film"
+      }
+    ]
+  },
+  {
+    "hanzi": "后",
+    "structure": "⿸ upper-left wrap",
+    "etyType": "ideographic",
+    "components": [
+      {
+        "char": "口",
+        "reading": "kǒu",
+        "gloss": "mouth",
+        "role": "meaning",
+        "note": "A mouth: the figure above it is issuing commands."
+      }
+    ],
+    "story": "Two characters share this shape. 后 is the old one — a figure with a mouth beneath, a sovereign giving orders, later narrowed to the queen (皇后). In the simplification it also absorbed 後 (behind, after), which is the sense you meet first: 以后, 后面, 最后.",
+    "compounds": [
+      {
+        "zh": "最后",
+        "py": "zuìhòu",
+        "en": "final; last; finally; ultimate"
+      },
+      {
+        "zh": "后天",
+        "py": "hòutiān",
+        "en": "the day after tomorrow; post-natal; acquired (not innate); a posteriori"
+      },
+      {
+        "zh": "后边",
+        "py": "hòubian",
+        "en": "back; rear; behind"
+      },
+      {
+        "zh": "然后",
+        "py": "ránhòu",
+        "en": "after; then (afterwards); after that; afterwards"
+      }
+    ]
+  },
+  {
+    "hanzi": "欢",
+    "structure": "⿰ left–right",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "又",
+        "role": "form",
+        "note": "A hand, swapped in for the traditional 雚 purely to save strokes."
+      },
+      {
+        "char": "欠",
+        "reading": "qiàn",
+        "gloss": "a person with the mouth open",
+        "role": "meaning",
+        "note": "Marks characters about breath and voice — 吹, 歌, 叹."
+      }
+    ],
+    "story": "欠 on the right is a person with their mouth wide open; it is the mark of characters about breath and voice — 吹 (blow), 歌 (sing), 叹 (sigh). The traditional 歡 put 雚 (guàn) beside it for the sound. Joy here is not a quiet feeling: it is the kind you make a noise about.",
+    "compounds": [
+      {
+        "zh": "喜欢",
+        "py": "xǐhuan",
+        "en": "to like; to be fond of"
+      },
+      {
+        "zh": "欢迎",
+        "py": "huānyíng",
+        "en": "to welcome; welcome"
+      },
+      {
+        "zh": "欢乐",
+        "py": "huānlè",
+        "en": "gaiety; gladness; glee; merriment; pleasure; happy; joyous; gay"
+      },
+      {
+        "zh": "联欢",
+        "py": "liánhuān",
+        "en": "have a get-together"
+      }
+    ]
+  },
+  {
+    "hanzi": "六",
+    "structure": "simple / indivisible",
+    "etyType": "none",
+    "components": [],
+    "story": "An old graph whose subject is uncertain — most read it as a simple shelter or hut — borrowed early for the number six. Nothing in it counts to six. Chinese tallies stop at 三; every number above it is a borrowed sign.",
+    "compounds": [
+      {
+        "zh": "五颜六色",
+        "py": "wǔyánliùsè",
+        "en": "multi-colored; every color under the sun"
+      }
+    ]
+  },
+  {
+    "hanzi": "买",
+    "structure": "⿱ stacked",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "乛",
+        "role": "form",
+        "note": "The remains of 网, the net the goods were gathered in."
+      },
+      {
+        "char": "头",
+        "role": "form",
+        "note": "Stands in for 貝, the cowrie shell that was the money."
+      }
+    ],
+    "story": "The traditional 買 is a net (罒) over a cowrie shell (貝) — money gathered in, which is a purchase. Cowries were currency, which is why 贝 sits inside nearly every character about money: 贵, 费, 贪, 赔. The simplified form abbreviates the shell away, and 卖 (to sell) is the same character with a lid on top.",
+    "compounds": [
+      {
+        "zh": "购买",
+        "py": "gòumǎi",
+        "en": "to purchase; to buy"
+      },
+      {
+        "zh": "买卖",
+        "py": "mǎimài",
+        "en": "buying and selling; business; business transactions"
+      },
+      {
+        "zh": "收买",
+        "py": "shōumǎi",
+        "en": "to purchase; to bribe"
+      },
+      {
+        "zh": "买不起",
+        "py": "mǎibuqǐ",
+        "en": "cannot afford; can't afford buying"
+      }
+    ]
+  },
+  {
+    "hanzi": "毛",
+    "structure": "simple / indivisible",
+    "etyType": "pictographic",
+    "components": [],
+    "story": "A picture of a tuft: three curved strands and the long hook of the shaft. It still covers everything that grows in tufts — hair, fur, feather, down — and stretches to 毛病 (a fault, literally a snag in the fibre) and to the ten-cent coin.",
+    "compounds": [
+      {
+        "zh": "毛病",
+        "py": "máobìng",
+        "en": "fault; defect; shortcomings; ailment"
+      },
+      {
+        "zh": "毛衣",
+        "py": "máoyī",
+        "en": "(wool) sweater"
+      },
+      {
+        "zh": "毛巾",
+        "py": "máojīn",
+        "en": "towel"
+      },
+      {
+        "zh": "羽毛球",
+        "py": "yǔmáoqiú",
+        "en": "shuttlecock; badminton"
+      }
+    ]
+  },
+  {
+    "hanzi": "么",
+    "structure": "simple / indivisible",
+    "etyType": "none",
+    "components": [],
+    "story": "The simplified form of 麼, and a pure syllable: it ends 什么, 怎么, 那么, 多么 and means nothing on its own. Learn it as a sound rather than as a picture — there is no story inside it to remember.",
+    "compounds": [
+      {
+        "zh": "什么",
+        "py": "shénme",
+        "en": "what?; who?; something; anything"
+      },
+      {
+        "zh": "怎么",
+        "py": "zěnme",
+        "en": "how?; what?; why?"
+      },
+      {
+        "zh": "干什么",
+        "py": "gànshénme",
+        "en": "what are you doing?; what's he up to?"
+      },
+      {
+        "zh": "没什么",
+        "py": "méishénme",
+        "en": "it doesn't matter; it's nothing; never mind; nothing"
+      }
+    ]
+  },
+  {
+    "hanzi": "那",
+    "structure": "⿰ left–right",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "阝",
+        "reading": "yì",
+        "gloss": "city, settlement",
+        "role": "meaning",
+        "note": "邑 squeezed into a bar — the mark of place names: 都, 郊, 邻, 邮."
+      }
+    ],
+    "story": "The 阝 on the right is 邑 (a walled settlement) flattened into a bar; on the right-hand side of a character it means the character is about places. 那 started as one such place name and was borrowed for the demonstrative \"that\". The left side is what fast writing left of 冄.",
+    "compounds": [
+      {
+        "zh": "那些",
+        "py": "nàxiē",
+        "en": "those"
+      },
+      {
+        "zh": "那里",
+        "py": "nàli",
+        "en": "there; that place; also written 那裡|那里"
+      },
+      {
+        "zh": "那边",
+        "py": "nàbian",
+        "en": "over there; yonder"
+      },
+      {
+        "zh": "那儿",
+        "py": "nàr",
+        "en": "there"
+      }
+    ]
+  },
+  {
+    "hanzi": "七",
+    "structure": "simple / indivisible",
+    "etyType": "none",
+    "components": [],
+    "story": "Originally a cut: a stroke crossed by another, marking where something is severed — the ancestor of 切 (qiē, to cut). The borrowing for \"seven\" took the character over so completely that the cutting sense had to be rewritten with a knife added beside it.",
+    "compounds": [
+      {
+        "zh": "乱七八糟",
+        "py": "luànqībāzāo",
+        "en": "everything in disorder (idiom); in a hideous mess; at sixes and sevens"
+      },
+      {
+        "zh": "七嘴八舌",
+        "py": "qīzuǐbāshé",
+        "en": "(saying) a discussion with everybody talking at once"
+      },
+      {
+        "zh": "横七竖八",
+        "py": "héngqīshùbā",
+        "en": "in disorder; at sixes and sevens (idiom)"
+      }
+    ]
+  },
+  {
+    "hanzi": "前",
+    "structure": "⿱ stacked",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "月",
+        "role": "form",
+        "note": "Not the moon — the boat 舟 of the original graph, worn down to this shape."
+      },
+      {
+        "char": "刂",
+        "role": "form",
+        "note": "A knife added late; it does no work in the meaning."
+      }
+    ],
+    "story": "The oldest form is a foot (止) above a boat — going forward, which is where both \"front\" and \"before\" come from. The foot has flattened into the two dots and the bar at the top, the boat into what looks like 月, and the knife on the right joined later for reasons that have nothing to do with the sense.",
+    "compounds": [
+      {
+        "zh": "前天",
+        "py": "qiántiān",
+        "en": "the day before yesterday"
+      },
+      {
+        "zh": "前边",
+        "py": "qiánbian",
+        "en": "front; the front side; in front of"
+      },
+      {
+        "zh": "以前",
+        "py": "yǐqián",
+        "en": "before; formerly; previous; ago"
+      },
+      {
+        "zh": "面前",
+        "py": "miànqián",
+        "en": "in front of; facing; presence"
+      }
+    ]
+  },
+  {
+    "hanzi": "去",
+    "structure": "⿱ stacked",
+    "etyType": "ideographic",
+    "components": [
+      {
+        "char": "土",
+        "gloss": "a person, seen from the front",
+        "role": "meaning",
+        "note": "What is left of 大 — the one doing the leaving."
+      },
+      {
+        "char": "厶",
+        "gloss": "an opening",
+        "role": "meaning",
+        "note": "The pit or doorway being stepped away from."
+      }
+    ],
+    "story": "A person above, an opening below: someone stepping away from where they were. That is still precisely what 去 does — motion away from the speaker, the exact opposite of 来. 出去, 去年, 过去 all point away.",
+    "compounds": [
+      {
+        "zh": "出去",
+        "py": "chūqù",
+        "en": "to go out"
+      },
+      {
+        "zh": "回去",
+        "py": "huíqu",
+        "en": "to return; to go back"
+      },
+      {
+        "zh": "去年",
+        "py": "qùnián",
+        "en": "last year"
+      },
+      {
+        "zh": "进去",
+        "py": "jìnqù",
+        "en": "to go in"
+      }
+    ]
+  },
+  {
+    "hanzi": "十",
+    "structure": "simple / indivisible",
+    "etyType": "none",
+    "components": [],
+    "story": "In the oldest bone script a single vertical stroke was \"ten\"; the crossbar was added to keep it from being read as 一 stood on end. A tally mark, not a picture — which is why it also means \"complete\": 十分 is \"very\", literally ten parts out of ten.",
+    "compounds": [
+      {
+        "zh": "十分",
+        "py": "shífēn",
+        "en": "to divide into ten equal parts; very; hundred percent; completely; extremely; utterly"
+      },
+      {
+        "zh": "十足",
+        "py": "shízú",
+        "en": "ample; complete; hundred percent; a pure shade (of some color)"
+      }
+    ]
+  },
+  {
+    "hanzi": "事",
+    "structure": "⿻ overlapping",
+    "etyType": "ideographic",
+    "components": [
+      {
+        "char": "彐",
+        "gloss": "a hand",
+        "role": "meaning",
+        "note": "The hand doing the holding, flattened by centuries of quick writing."
+      },
+      {
+        "char": "口",
+        "reading": "kǒu",
+        "gloss": "mouth",
+        "role": "meaning",
+        "note": "The head of the implement of office being held."
+      }
+    ],
+    "story": "史 (to record), 吏 (an official) and 事 are one old graph that split three ways: a hand holding the implement of an office. 事 kept the broadest share — the business being handled — and is now the ordinary word for a matter, a job, or anything that happens: 事情, 故事, 没事.",
+    "compounds": [
+      {
+        "zh": "没事儿",
+        "py": "méishìr",
+        "en": "to have spare time; free from work; it's not important; it's nothing; never mind"
+      },
+      {
+        "zh": "事情",
+        "py": "shìqing",
+        "en": "affair; matter; thing; business"
+      },
+      {
+        "zh": "故事",
+        "py": "gùshi",
+        "en": "narrative; story; tale"
+      },
+      {
+        "zh": "同事",
+        "py": "tóngshì",
+        "en": "colleague; co-worker"
+      }
+    ]
+  },
+  {
+    "hanzi": "岁",
+    "structure": "⿱ stacked",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "山",
+        "role": "form",
+        "note": "A stroke-saving shape, not a mountain."
+      },
+      {
+        "char": "夕",
+        "role": "form",
+        "note": "Evening — readable as a mnemonic, but not the character's origin."
+      }
+    ],
+    "story": "The traditional 歲 is about a year walking on: 步 (steps) with 戌 lending the sound. The simplified 岁 is a shorthand shape — a mountain over an evening — that works as a memory hook but is not where the character came from. It counts years of age: 三岁, 岁数.",
+    "compounds": [
+      {
+        "zh": "岁月",
+        "py": "suìyuè",
+        "en": "years; passing of time"
+      },
+      {
+        "zh": "岁数",
+        "py": "suìshu",
+        "en": "age (number of years old)"
+      }
+    ]
+  },
+  {
+    "hanzi": "体",
+    "structure": "⿰ left–right",
+    "etyType": "ideographic",
+    "components": [
+      {
+        "char": "亻",
+        "reading": "rén",
+        "gloss": "person",
+        "role": "meaning",
+        "note": "Whose body it is."
+      },
+      {
+        "char": "本",
+        "reading": "běn",
+        "gloss": "root, trunk",
+        "role": "meaning",
+        "note": "The trunk — the body as the main part of a person."
+      }
+    ],
+    "story": "The traditional 體 is built on 骨 (bone), the body as a frame. The simplified form takes a different, much simpler character for the job: a person beside 本 (root, trunk), which reads as the trunk of a person. Close enough to the sense that it stuck — 身体, 体育, 具体.",
+    "compounds": [
+      {
+        "zh": "身体",
+        "py": "shēntǐ",
+        "en": "(human) body; health"
+      },
+      {
+        "zh": "体育",
+        "py": "tǐyù",
+        "en": "sports; physical education"
+      },
+      {
+        "zh": "全体",
+        "py": "quántǐ",
+        "en": "all; entire"
+      },
+      {
+        "zh": "体育馆",
+        "py": "tǐyùguǎn",
+        "en": "gym; gymnasium; stadium"
+      }
+    ]
+  },
+  {
+    "hanzi": "条",
+    "structure": "⿱ stacked",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "夂",
+        "role": "form",
+        "note": "What the phonetic 攸 collapsed into."
+      },
+      {
+        "char": "木",
+        "reading": "mù",
+        "gloss": "tree, wood",
+        "role": "meaning",
+        "note": "The branch the character started as."
+      }
+    ],
+    "story": "The tree at the base is the meaning: 条 was a slender branch, and from a branch came any long thin thing — a road, a river, a rope, a strip of news. That is exactly what it measures: 一条路, 一条鱼, 一条消息.",
+    "compounds": [
+      {
+        "zh": "面条儿",
+        "py": "miàntiáor",
+        "en": "erhua variant of 麵條|面条, noodles"
+      },
+      {
+        "zh": "条件",
+        "py": "tiáojiàn",
+        "en": "condition; circumstances; term; factor; requirement; prerequisite; qualification"
+      },
+      {
+        "zh": "便条",
+        "py": "biàntiáo",
+        "en": "(informal) note"
+      },
+      {
+        "zh": "薯条",
+        "py": "shǔtiáo",
+        "en": "french fries; french fried potatoes; chips"
+      }
+    ]
+  },
+  {
+    "hanzi": "午",
+    "structure": "simple / indivisible",
+    "etyType": "none",
+    "components": [],
+    "story": "A picture of a pestle — the ancestor of 杵 (chǔ) — borrowed for the seventh of the twelve earthly branches, which named the double hour around midday. Nothing in the shape points at the sun: 午 means noon by the calendar, not by the picture. 上午, 中午, 下午 all count from it.",
+    "compounds": [
+      {
+        "zh": "下午",
+        "py": "xiàwǔ",
+        "en": "afternoon; p.m."
+      },
+      {
+        "zh": "中午",
+        "py": "zhōngwǔ",
+        "en": "noon; midday"
+      },
+      {
+        "zh": "上午",
+        "py": "shàngwǔ",
+        "en": "morning"
+      },
+      {
+        "zh": "午饭",
+        "py": "wǔfàn",
+        "en": "lunch"
+      }
+    ]
+  },
+  {
+    "hanzi": "习",
+    "structure": "⿹ upper-right wrap",
+    "etyType": "none",
+    "components": [],
+    "story": "The traditional 習 is feathers (羽) over a sun — a fledgling beating its wings again and again in the light. Practice as repetition, taken from the bird. The simplified form keeps one of those two wings and drops everything else: 学习, 练习, 习惯.",
+    "compounds": [
+      {
+        "zh": "学习",
+        "py": "xuéxí",
+        "en": "to learn; to study"
+      },
+      {
+        "zh": "习惯",
+        "py": "xíguàn",
+        "en": "habit; custom; usual practice; to be used to"
+      },
+      {
+        "zh": "复习",
+        "py": "fùxí",
+        "en": "to revise; to review; revision"
+      },
+      {
+        "zh": "练习",
+        "py": "liànxí",
+        "en": "exercise; drill; practice"
+      }
+    ]
+  },
+  {
+    "hanzi": "写",
+    "structure": "⿱ stacked",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "冖",
+        "role": "form",
+        "note": "The roof 宀 of the traditional 寫, shortened."
+      },
+      {
+        "char": "与",
+        "role": "form",
+        "note": "A stroke-saving stand-in for 舄, which lent the sound."
+      }
+    ],
+    "story": "The traditional 寫 is a roof over 舄 (xì, for the sound). Its old sense was to set something down, to transfer it from one place to another — and copying words onto a page is a kind of transferring. The simplified form keeps the roof and replaces everything under it.",
+    "compounds": [
+      {
+        "zh": "听写",
+        "py": "tīngxiě",
+        "en": "dictate; dictation"
+      },
+      {
+        "zh": "写作",
+        "py": "xiězuò",
+        "en": "writing; written works"
+      },
+      {
+        "zh": "描写",
+        "py": "miáoxiě",
+        "en": "to describe; to depict; to portray; description"
+      },
+      {
+        "zh": "抄写",
+        "py": "chāoxiě",
+        "en": "to copy; to transcribe"
+      }
+    ]
+  },
+  {
+    "hanzi": "兴",
+    "structure": "⿳ three stacked",
+    "etyType": "ideographic",
+    "components": [
+      {
+        "char": "八",
+        "gloss": "two hands",
+        "role": "meaning",
+        "note": "All that is left of the four hands doing the lifting."
+      },
+      {
+        "char": "⺍",
+        "role": "form",
+        "note": "The thing being raised."
+      }
+    ],
+    "story": "The traditional 興 shows four hands lifting something together — to raise, to get something started. That is the level tone: 兴起, 复兴. The falling tone is the mood that comes with it — 高兴, 兴趣 — the same character read as the feeling of being lifted.",
+    "compounds": [
+      {
+        "zh": "高兴",
+        "py": "gāoxìng",
+        "en": "happy; glad; willing (to do sth); in a cheerful mood"
+      },
+      {
+        "zh": "兴奋",
+        "py": "xīngfèn",
+        "en": "excited; excitement"
+      },
+      {
+        "zh": "兴趣",
+        "py": "xìngqù",
+        "en": "interest (desire to know about sth); interest (thing in which one is interested); hobby"
+      },
+      {
+        "zh": "感兴趣",
+        "py": "gǎnxìngqù",
+        "en": "to be interested"
+      }
+    ]
+  },
+  {
+    "hanzi": "用",
+    "structure": "⿵ wrapped from above",
+    "etyType": "none",
+    "components": [],
+    "story": "Most often read as a picture of a bucket or a pail — a thing kept in order to be used — though the account is not settled and the modern shape shows none of it. What is settled is the range: using a tool, using time, and \"no need\" in 不用.",
+    "compounds": [
+      {
+        "zh": "有用",
+        "py": "yǒuyòng",
+        "en": "useful"
+      },
+      {
+        "zh": "不用",
+        "py": "bùyòng",
+        "en": "need not"
+      },
+      {
+        "zh": "使用",
+        "py": "shǐyòng",
+        "en": "to use; to employ; to apply; to make use of"
+      },
+      {
+        "zh": "作用",
+        "py": "zuòyòng",
+        "en": "to act on; to affect; action; function; activity; impact; result; effect; purpose; intent"
+      }
+    ]
+  },
+  {
+    "hanzi": "右",
+    "structure": "⿸ upper-left wrap",
+    "etyType": "ideographic",
+    "components": [
+      {
+        "char": "𠂇",
+        "gloss": "the right hand",
+        "role": "meaning",
+        "note": "又, the hand, flattened across the top."
+      },
+      {
+        "char": "口",
+        "reading": "kǒu",
+        "gloss": "mouth",
+        "role": "meaning",
+        "note": "A mouth added to keep the 'right side' sense apart from 又."
+      }
+    ],
+    "story": "又 was originally the right hand — the one you eat with. When it was taken over for \"again\", a mouth was added underneath to hold on to the old meaning. 左 was rebuilt the same way in the same period, with a workman's 工 instead of the mouth.",
+    "compounds": [
+      {
+        "zh": "右边",
+        "py": "yòubian",
+        "en": "right side; right, to the right"
+      },
+      {
+        "zh": "左右",
+        "py": "zuǒyòu",
+        "en": "left and right; approximately; attendant; to control; to influence"
+      },
+      {
+        "zh": "座右铭",
+        "py": "zuòyòumíng",
+        "en": "motto; maxim"
+      }
+    ]
+  },
+  {
+    "hanzi": "这",
+    "structure": "⿺ lower-left wrap",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "辶",
+        "reading": "chuò",
+        "gloss": "to walk, to go",
+        "role": "meaning",
+        "note": "The mark of characters about movement: 进, 过, 送, 还."
+      },
+      {
+        "char": "文",
+        "role": "form",
+        "note": "A simplification of 言 — there for the shape, not the sense."
+      }
+    ],
+    "story": "The walking radical says this was once a verb of movement; it was borrowed for the demonstrative \"this\" and never gave the sense back. The 文 inside is what the simplification left of 言, so it carries neither the meaning nor, by now, the sound.",
+    "compounds": [
+      {
+        "zh": "这里",
+        "py": "zhèlǐ",
+        "en": "here"
+      },
+      {
+        "zh": "这些",
+        "py": "zhèxiē",
+        "en": "these"
+      },
+      {
+        "zh": "这儿",
+        "py": "zhèr",
+        "en": "here"
+      },
+      {
+        "zh": "这边",
+        "py": "zhèbiān",
+        "en": "this side; here"
+      }
+    ]
+  },
+  {
+    "hanzi": "着",
+    "structure": "⿸ upper-left wrap",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "羊",
+        "role": "form",
+        "note": "What the grass top and 者 of the original 著 collapsed into."
+      },
+      {
+        "char": "目",
+        "role": "form",
+        "note": "The 日 at the foot of 者, now written as an eye."
+      }
+    ],
+    "story": "着 is a late variant of 著 — 艹 over 者 (zhě, for the sound) — meaning to attach, to make contact. Every modern reading comes off that one idea: zhuó to wear or apply, zháo to catch (着火, to catch fire), and the toneless zhe that marks something going on — 坐着, 拿着 — contact continuing.",
+    "compounds": [
+      {
+        "zh": "接着",
+        "py": "jiēzhe",
+        "en": "to catch and hold on; to continue; to go on to do sth; to follow; to carry on; then"
+      },
+      {
+        "zh": "睡着",
+        "py": "shuìzháo",
+        "en": "to fall asleep"
+      },
+      {
+        "zh": "着急",
+        "py": "zháojí",
+        "en": "to worry; to feel anxious; Taiwan pron."
+      },
+      {
+        "zh": "着火",
+        "py": "zháohuǒ",
+        "en": "to ignite; to burn"
+      }
+    ]
+  },
+  {
+    "hanzi": "桌",
+    "structure": "⿱ stacked",
+    "etyType": "pictophonetic",
+    "components": [
+      {
+        "char": "卓",
+        "reading": "zhuō",
+        "role": "phonetic",
+        "note": "Lends the sound (zhuó) — and, unusually, reads well as sense too: tall, standing out."
+      },
+      {
+        "char": "木",
+        "reading": "mù",
+        "gloss": "tree, wood",
+        "role": "semantic",
+        "note": "What a table is made of."
+      }
+    ],
+    "story": "Wood at the base with 卓 (zhuó, tall, standing out) above it for the sound. One of the rare characters where the sound part also happens to fit the meaning: a table is the wooden thing that stands up high. 桌子, 书桌, 饭桌.",
+    "compounds": [
+      {
+        "zh": "桌子",
+        "py": "zhuōzi",
+        "en": "table; desk"
+      },
+      {
+        "zh": "书桌",
+        "py": "shūzhuō",
+        "en": "desk"
+      },
+      {
+        "zh": "餐桌",
+        "py": "cānzhuō",
+        "en": "dining table; dinner table"
+      }
+    ]
+  },
+  {
+    "hanzi": "必",
+    "structure": "⿻ overlapping",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "心",
+        "role": "form",
+        "note": "The heart shape is an accident of later writing, not the origin."
+      }
+    ],
+    "story": "It looks like 心 with a stroke driven through it, and that is worth keeping as a memory hook — but the origin is a handle: a shaft with a marker on it, the ancestor of 柲. The character was borrowed for its sound to write \"must, certainly\": 必须, 必要, 未必.",
+    "compounds": [
+      {
+        "zh": "必须",
+        "py": "bìxū",
+        "en": "to have to; must; compulsory; necessarily"
+      },
+      {
+        "zh": "必要",
+        "py": "bìyào",
+        "en": "necessary; essential; indispensable; required"
+      },
+      {
+        "zh": "必然",
+        "py": "bìrán",
+        "en": "inevitable; certain; necessity"
+      },
+      {
+        "zh": "不必",
+        "py": "bùbì",
+        "en": "need not; does not have to; not necessarily"
+      }
+    ]
+  },
+  {
+    "hanzi": "变",
+    "structure": "⿱ stacked",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "亦",
+        "role": "form",
+        "note": "An abbreviation of 䜌, which lent the traditional form its sound."
+      },
+      {
+        "char": "又",
+        "reading": "yòu",
+        "gloss": "a hand",
+        "role": "meaning",
+        "note": "All that is left of 攴, a hand holding a stick."
+      }
+    ],
+    "story": "The traditional 變 has 攴 underneath — a hand with a stick, the mark of characters about doing something to something (放, 政, 教) — with 䜌 above for the sound. Change here is something done rather than something that merely happens: 改变, 变化.",
+    "compounds": [
+      {
+        "zh": "改变",
+        "py": "gǎibiàn",
+        "en": "to change; to alter; to transform"
+      },
+      {
+        "zh": "变成",
+        "py": "biànchéng",
+        "en": "to change into; to turn into; to become"
+      },
+      {
+        "zh": "变化",
+        "py": "biànhuà",
+        "en": "change; variation; to change; to vary"
+      },
+      {
+        "zh": "转变",
+        "py": "zhuǎnbiàn",
+        "en": "to change; to transform; shift; transformation"
+      }
+    ]
+  },
+  {
+    "hanzi": "便",
+    "structure": "⿰ left–right",
+    "etyType": "pictophonetic",
+    "components": [
+      {
+        "char": "亻",
+        "reading": "rén",
+        "gloss": "person",
+        "role": "semantic",
+        "note": "The one being suited."
+      },
+      {
+        "char": "更",
+        "reading": "gèng",
+        "role": "phonetic",
+        "note": "Lends the sound."
+      }
+    ],
+    "story": "A person beside 更. The old sense is to set something right for the person using it — hence convenient, 方便, 随便. The second reading, pián, keeps the same idea of fitting: 便宜 is a price that suits the occasion.",
+    "compounds": [
+      {
+        "zh": "随便",
+        "py": "suíbiàn",
+        "en": "as one wishes; as one pleases; at random; negligent; casual; wanton"
+      },
+      {
+        "zh": "方便",
+        "py": "fāngbiàn",
+        "en": "convenient; to help out; to make things easy for people; convenience; suitable"
+      },
+      {
+        "zh": "便宜",
+        "py": "piányi",
+        "en": "small advantages; to let sb off lightly; cheap; inexpensive"
+      },
+      {
+        "zh": "方便面",
+        "py": "fāngbiànmiàn",
+        "en": "instant noodles"
+      }
+    ]
+  },
+  {
+    "hanzi": "查",
+    "structure": "⿱ stacked",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "木",
+        "role": "form",
+        "note": "A tree, from the raft of logs the character once named."
+      },
+      {
+        "char": "旦",
+        "role": "form",
+        "note": "Sun over the horizon — a shape here, not a meaning."
+      }
+    ],
+    "story": "Originally a raft of logs, a variant of 槎. It was borrowed for \"to look into\" and the raft went its own way. Everything modern is investigation: 检查, 调查, 查找.",
+    "compounds": [
+      {
+        "zh": "检查",
+        "py": "jiǎnchá",
+        "en": "inspection; to examine; to inspect"
+      },
+      {
+        "zh": "调查",
+        "py": "diàochá",
+        "en": "investigation; inquiry; to investigate; to survey; survey; (opinion) poll"
+      },
+      {
+        "zh": "查询",
+        "py": "cháxún",
+        "en": "to inquire; inquiry"
+      },
+      {
+        "zh": "查看",
+        "py": "chákàn",
+        "en": "to look over; to examine; to check up; to ferret out"
+      }
+    ]
+  },
+  {
+    "hanzi": "称",
+    "structure": "⿰ left–right",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "禾",
+        "reading": "hé",
+        "gloss": "grain",
+        "role": "meaning",
+        "note": "What was being weighed out."
+      },
+      {
+        "char": "尔",
+        "role": "form",
+        "note": "The abbreviated 爯 — once a hand lifting a load onto the scale."
+      }
+    ],
+    "story": "Grain with a hand lifting it: weighing out a measure. From weighing came stating the weight, and from stating came simply naming — 称呼, 名称. The fourth-tone reading keeps the balance: 称心 is something that balances the heart.",
+    "compounds": [
+      {
+        "zh": "名称",
+        "py": "míngchēng",
+        "en": "name (of a thing); name (of an organization)"
+      },
+      {
+        "zh": "称为",
+        "py": "chēngwéi",
+        "en": "called; to call sth (by a name); to name"
+      },
+      {
+        "zh": "称赞",
+        "py": "chēngzàn",
+        "en": "to praise; to acclaim; to commend; to compliment"
+      },
+      {
+        "zh": "称号",
+        "py": "chēnghào",
+        "en": "name; term of address; title"
+      }
+    ]
+  },
+  {
+    "hanzi": "成",
+    "structure": "⿰ left–right",
+    "etyType": "pictophonetic",
+    "components": [
+      {
+        "char": "戈",
+        "reading": "gē",
+        "gloss": "halberd",
+        "role": "semantic",
+        "note": "Matters settled by force of arms."
+      },
+      {
+        "char": "丁",
+        "reading": "dīng",
+        "role": "phonetic",
+        "note": "Lends the sound."
+      }
+    ],
+    "story": "A halberd with a mark for the sound. The old sense is a matter settled by arms, and from settling came completing — which is all 成 does now: 成功, 完成, 成为, 成绩.",
+    "compounds": [
+      {
+        "zh": "完成",
+        "py": "wánchéng",
+        "en": "to complete; to accomplish"
+      },
+      {
+        "zh": "成为",
+        "py": "chéngwéi",
+        "en": "to become; to turn into"
+      },
+      {
+        "zh": "变成",
+        "py": "biànchéng",
+        "en": "to change into; to turn into; to become"
+      },
+      {
+        "zh": "成绩",
+        "py": "chéngjì",
+        "en": "achievement; performance records; grades"
+      }
+    ]
+  },
+  {
+    "hanzi": "楚",
+    "structure": "⿱ stacked",
+    "etyType": "pictophonetic",
+    "components": [
+      {
+        "char": "林",
+        "reading": "lín",
+        "gloss": "woods",
+        "role": "semantic",
+        "note": "It first named a thorny shrub."
+      },
+      {
+        "char": "疋",
+        "reading": "pǐ",
+        "role": "phonetic",
+        "note": "Lends the sound."
+      }
+    ],
+    "story": "Woods over 疋 for the sound. It named a thorn bush, then the southern state of Chu, and separately came to mean \"distinct, clear\" — the sense in 清楚. Three meanings sharing nothing but a shape.",
+    "compounds": [
+      {
+        "zh": "清楚",
+        "py": "qīngchu",
+        "en": "clear; distinct; to understand thoroughly; to be clear about"
+      }
+    ]
+  },
+  {
+    "hanzi": "单",
+    "structure": "⿱ stacked",
+    "etyType": "none",
+    "components": [],
+    "story": "The traditional 單 is usually read as a forked hunting weapon or a sling seen head on; \"single\" is a borrowing, and the simplified form keeps only the outline. What matters now is the spread: single (单人), a list or form (菜单, 名单), and simple (简单).",
+    "compounds": [
+      {
+        "zh": "名单",
+        "py": "míngdān",
+        "en": "list (of names)"
+      },
+      {
+        "zh": "单位",
+        "py": "dānwèi",
+        "en": "a unit; unit (of measure); work unit (one's workplace)"
+      },
+      {
+        "zh": "菜单",
+        "py": "càidān",
+        "en": "menu"
+      },
+      {
+        "zh": "简单",
+        "py": "jiǎndān",
+        "en": "simple; not complicated"
+      }
+    ]
+  },
+  {
+    "hanzi": "当",
+    "structure": "⿱ stacked",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "⺌",
+        "role": "form",
+        "note": "What is left of 尚, which lent the sound."
+      },
+      {
+        "char": "彐",
+        "role": "form",
+        "note": "What is left of 田, the field being valued."
+      }
+    ],
+    "story": "The traditional 當 is 田 (a field) under 尚 for the sound, and its old sense is matching one field against another in value — being equivalent. Everything modern follows: to serve as (当老师), to be fitting (适当), and the fourth tone for pawning a thing at its worth (当铺).",
+    "compounds": [
+      {
+        "zh": "当时",
+        "py": "dāngshí",
+        "en": "then; at that time; while"
+      },
+      {
+        "zh": "当然",
+        "py": "dāngrán",
+        "en": "only natural; as it should be; certainly; of course; without doubt"
+      },
+      {
+        "zh": "当初",
+        "py": "dāngchū",
+        "en": "at that time; originally"
+      },
+      {
+        "zh": "相当",
+        "py": "xiāngdāng",
+        "en": "equivalent to; appropriate; considerably; to a certain extent; fairly; quite"
+      }
+    ]
+  },
+  {
+    "hanzi": "而",
+    "structure": "simple / indivisible",
+    "etyType": "pictographic",
+    "components": [],
+    "story": "A picture of whiskers hanging from a chin — the strands are still there in the four verticals. The beard sense was lost early and the character became a pure connective: 而且, 然而, 反而. 耐 keeps the old picture, being a beard and a hand.",
+    "compounds": [
+      {
+        "zh": "而且",
+        "py": "érqiě",
+        "en": "(not only ...) but also; moreover; in addition; furthermore"
+      },
+      {
+        "zh": "反而",
+        "py": "fǎn'ér",
+        "en": "instead; on the contrary; contrary (to expectations)"
+      },
+      {
+        "zh": "然而",
+        "py": "rán'ér",
+        "en": "however; yet; but"
+      },
+      {
+        "zh": "而是",
+        "py": "érshì",
+        "en": "rather"
+      }
+    ]
+  },
+  {
+    "hanzi": "更",
+    "structure": "⿱ stacked",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "乂",
+        "role": "form",
+        "note": "The hand-and-stick of the original 攴, worn flat."
+      }
+    ],
+    "story": "The old form is 攴 — a hand holding a stick — over a phonetic: to make a change by acting on something. That is the level tone, 更改, 更新. The fourth tone, \"even more\", is the same character doing comparative work: one more change in the same direction.",
+    "compounds": [
+      {
+        "zh": "更加",
+        "py": "gèngjiā",
+        "en": "more (than sth else); even more"
+      },
+      {
+        "zh": "更新",
+        "py": "gēngxīn",
+        "en": "to replace the old with new; to renew; to renovate; to upgrade; to update; to regenerate"
+      },
+      {
+        "zh": "更换",
+        "py": "gēnghuàn",
+        "en": "to replace (a worn-out tire etc); to change (one's address etc)"
+      },
+      {
+        "zh": "变更",
+        "py": "biàngēng",
+        "en": "to change; to alter; to modify"
+      }
+    ]
+  },
+  {
+    "hanzi": "合",
+    "structure": "⿱ stacked",
+    "etyType": "ideographic",
+    "components": [
+      {
+        "char": "亼",
+        "reading": "jí",
+        "gloss": "a cover",
+        "role": "meaning",
+        "note": "The lid coming down."
+      },
+      {
+        "char": "口",
+        "reading": "kǒu",
+        "gloss": "mouth",
+        "role": "meaning",
+        "note": "The mouth of the vessel it closes."
+      }
+    ],
+    "story": "A lid over an opening: the two halves of a container meeting. From a lid fitting its jar came joining, matching, agreeing — 合作, 适合, 结合. It is also the sound inside 答, 给 and 拿.",
+    "compounds": [
+      {
+        "zh": "合适",
+        "py": "héshì",
+        "en": "suitable; fitting; decent; to fit"
+      },
+      {
+        "zh": "适合",
+        "py": "shìhé",
+        "en": "to fit; to suit"
+      },
+      {
+        "zh": "组合",
+        "py": "zǔhé",
+        "en": "to assemble; combination; combinatorial"
+      },
+      {
+        "zh": "合作",
+        "py": "hézuò",
+        "en": "to cooperate; to collaborate; to work together; cooperation"
+      }
+    ]
+  },
+  {
+    "hanzi": "划",
+    "structure": "⿰ left–right",
+    "etyType": "ideographic",
+    "components": [
+      {
+        "char": "戈",
+        "reading": "gē",
+        "gloss": "halberd",
+        "role": "meaning"
+      },
+      {
+        "char": "刂",
+        "reading": "dāo",
+        "gloss": "knife",
+        "role": "meaning"
+      }
+    ],
+    "story": "Two blades side by side. The huá reading is what blades do — to scratch, and to scull a boat (划船). The huà reading is what a line cut with a blade does — to mark out, to plan: 计划, 划分.",
+    "compounds": [
+      {
+        "zh": "计划",
+        "py": "jìhuà",
+        "en": "plan; project; program; to plan; to map out"
+      },
+      {
+        "zh": "划船",
+        "py": "huáchuán",
+        "en": "to row a boat; rowing boat; rowing (sport)"
+      },
+      {
+        "zh": "规划",
+        "py": "guīhuà",
+        "en": "to plan (how to do sth); planning; plan; program"
+      },
+      {
+        "zh": "划分",
+        "py": "huàfēn",
+        "en": "to divide"
+      }
+    ]
+  },
+  {
+    "hanzi": "斤",
+    "structure": "simple / indivisible",
+    "etyType": "pictographic",
+    "components": [],
+    "story": "An axe head on its haft. The weight unit — a catty, now half a kilo — is a borrowing that took the character over completely, but the axe is still at work inside 斧, 折, 断 and 新 (new, from freshly cut wood).",
+    "compounds": [
+      {
+        "zh": "公斤",
+        "py": "gōngjīn",
+        "en": "kilogram (kg)"
+      }
+    ]
+  },
+  {
+    "hanzi": "留",
+    "structure": "⿱ stacked",
+    "etyType": "pictophonetic",
+    "components": [
+      {
+        "char": "卯",
+        "reading": "mǎo",
+        "role": "phonetic",
+        "note": "Lends the sound."
+      },
+      {
+        "char": "田",
+        "reading": "tián",
+        "gloss": "field",
+        "role": "semantic",
+        "note": "The land you stay on."
+      }
+    ],
+    "story": "A field under 卯 for the sound: to stay on the land. From staying came keeping back and leaving behind — 留下, 保留, 留学, 留言.",
+    "compounds": [
+      {
+        "zh": "留下",
+        "py": "liúxià",
+        "en": "to leave behind; to stay behind; to remain; to keep; not to let (sb) go"
+      },
+      {
+        "zh": "留学生",
+        "py": "liúxuéshēng",
+        "en": "student studying abroad; (foreign) exchange student"
+      },
+      {
+        "zh": "保留",
+        "py": "bǎoliú",
+        "en": "to retain; to continue to have; to preserve; to maintain; to reserve; reservations"
+      },
+      {
+        "zh": "留学",
+        "py": "liúxué",
+        "en": "to study abroad"
+      }
+    ]
+  },
+  {
+    "hanzi": "其",
+    "structure": "simple / indivisible",
+    "etyType": "pictographic",
+    "components": [],
+    "story": "A winnowing basket seen from the front, standing on its frame — the ancestor of 箕 (jī). The borrowing for \"his, her, its, their\" was so complete that the basket needed a bamboo top to get itself back. 其他, 其实, 尤其.",
+    "compounds": [
+      {
+        "zh": "其他",
+        "py": "qítā",
+        "en": "other; (smth or sb) else; the rest"
+      },
+      {
+        "zh": "其中",
+        "py": "qízhōng",
+        "en": "among; in; included among these"
+      },
+      {
+        "zh": "其实",
+        "py": "qíshí",
+        "en": "actually; in fact; really"
+      },
+      {
+        "zh": "其次",
+        "py": "qícì",
+        "en": "next; secondly"
+      }
+    ]
+  },
+  {
+    "hanzi": "千",
+    "structure": "simple / indivisible",
+    "etyType": "none",
+    "components": [],
+    "story": "The character 人 with one stroke drawn across it — a person marked once to stand for a thousand. A tally sign built on a borrowed shape, the same trick as 十 and 百. Nothing in it to picture.",
+    "compounds": [
+      {
+        "zh": "千克",
+        "py": "qiānkè",
+        "en": "kilogram"
+      },
+      {
+        "zh": "千万",
+        "py": "qiānwàn",
+        "en": "ten million; countless; many; one must by all means"
+      }
+    ]
+  },
+  {
+    "hanzi": "青",
+    "structure": "⿱ stacked",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "龶",
+        "role": "form",
+        "note": "What 生, a plant coming up, flattened into."
+      },
+      {
+        "char": "月",
+        "role": "form",
+        "note": "Not the moon — 丹, the well the pigment was dug from."
+      }
+    ],
+    "story": "A plant coming up over cinnabar, the mineral you ground for pigment: the colour of growing things, named after the stuff you painted it with. 青 covers a band English splits in two — the green of grass and the blue of sky — and stretches to the black of 青丝.",
+    "compounds": [
+      {
+        "zh": "青年",
+        "py": "qīngnián",
+        "en": "youth; youthful years; young person; the young"
+      },
+      {
+        "zh": "青少年",
+        "py": "qīngshàonián",
+        "en": "adolescent; youth; teenager"
+      },
+      {
+        "zh": "青春",
+        "py": "qīngchūn",
+        "en": "youth; youthfulness"
+      },
+      {
+        "zh": "青春期",
+        "py": "qīngchūnqī",
+        "en": "puberty; adolescence"
+      }
+    ]
+  },
+  {
+    "hanzi": "求",
+    "structure": "simple / indivisible",
+    "etyType": "pictographic",
+    "components": [],
+    "story": "A fur coat with the pelts hanging off it — the ancestor of 裘 (qiú, a fur robe). Borrowed for \"to seek, to request\" and never returned, so the coat had to be rewritten with 衣 added. 要求, 请求, 需求.",
+    "compounds": [
+      {
+        "zh": "要求",
+        "py": "yāoqiú",
+        "en": "to request; to require; to stake a claim; to ask; to demand"
+      },
+      {
+        "zh": "请求",
+        "py": "qǐngqiú",
+        "en": "request"
+      },
+      {
+        "zh": "需求",
+        "py": "xūqiú",
+        "en": "requirement; demand (economics)"
+      },
+      {
+        "zh": "追求",
+        "py": "zhuīqiú",
+        "en": "to pursue (a goal etc) stubbornly; to seek after; to woo"
+      }
+    ]
+  },
+  {
+    "hanzi": "实",
+    "structure": "⿱ stacked",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "宀",
+        "reading": "gài",
+        "gloss": "roof",
+        "role": "meaning",
+        "note": "The house the wealth is in."
+      },
+      {
+        "char": "头",
+        "role": "form",
+        "note": "Stands in for 貫, strings of cowries — the wealth itself."
+      }
+    ],
+    "story": "The traditional 實 is a roof over strings of cowrie shells: a house with something in it, hence full, solid, real. The simplified form keeps the roof and abbreviates the money. 实在, 现实, 其实, 老实.",
+    "compounds": [
+      {
+        "zh": "实在",
+        "py": "shízài",
+        "en": "really; actually; indeed; true; real; honest; dependable; (philosophy) reality"
+      },
+      {
+        "zh": "实现",
+        "py": "shíxiàn",
+        "en": "to achieve; to implement; to realize; to bring about"
+      },
+      {
+        "zh": "实际",
+        "py": "shíjì",
+        "en": "actual; reality; practice"
+      },
+      {
+        "zh": "实习",
+        "py": "shíxí",
+        "en": "to practice; field work; to intern; internship"
+      }
+    ]
+  },
+  {
+    "hanzi": "市",
+    "structure": "⿱ stacked",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "亠",
+        "role": "form",
+        "note": "What the old marker at the top wore down to."
+      },
+      {
+        "char": "巾",
+        "role": "form",
+        "note": "Not a cloth — the remains of the older lower half."
+      }
+    ],
+    "story": "The old form has a foot going somewhere above a marker: the place people go to trade. From the market came the city that grew round it — 城市, 市场, 超市, 市民.",
+    "compounds": [
+      {
+        "zh": "超市",
+        "py": "chāoshì",
+        "en": "supermarket (abbr.)"
+      },
+      {
+        "zh": "市长",
+        "py": "shìzhǎng",
+        "en": "mayor"
+      },
+      {
+        "zh": "城市",
+        "py": "chéngshì",
+        "en": "city; town"
+      },
+      {
+        "zh": "市场",
+        "py": "shìchǎng",
+        "en": "marketplace; market (also in abstract)"
+      }
+    ]
+  },
+  {
+    "hanzi": "虽",
+    "structure": "⿱ stacked",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "口",
+        "role": "form"
+      },
+      {
+        "char": "虫",
+        "role": "form",
+        "note": "The creature radical — the character first named a kind of lizard."
+      }
+    ],
+    "story": "The traditional 雖 is 虫 with 唯 (wéi) for the sound, and it named a lizard. \"Although\" is a borrowing of the sound and nothing else; the simplified form keeps the mouth and the creature. 虽然, 虽说.",
+    "compounds": [
+      {
+        "zh": "虽然",
+        "py": "suīrán",
+        "en": "although; even though; even if"
+      },
+      {
+        "zh": "虽说",
+        "py": "suīshuō",
+        "en": "though; although"
+      }
+    ]
+  },
+  {
+    "hanzi": "它",
+    "structure": "⿱ stacked",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "宀",
+        "role": "form",
+        "note": "The snake's head, now written as a roof."
+      },
+      {
+        "char": "匕",
+        "role": "form",
+        "note": "Its coiled body."
+      }
+    ],
+    "story": "The oldest form is a snake — head above, body coiled below — and it is the ancestor of 蛇. Borrowed for the pronoun, it left the snake to be rewritten with 虫 added. Today it is the \"it\" for everything that is not a person.",
+    "compounds": [
+      {
+        "zh": "它们",
+        "py": "tāmen",
+        "en": "they (for inanimate objects)"
+      }
+    ]
+  },
+  {
+    "hanzi": "万",
+    "structure": "simple / indivisible",
+    "etyType": "none",
+    "components": [],
+    "story": "The traditional 萬 is a scorpion, pincers and tail, borrowed for the number and never handed back; the simplified form is a shorthand with no picture in it at all. Like \"a thousand\" in English it also just means a great many: 万一, 千万, 万岁.",
+    "compounds": [
+      {
+        "zh": "千万",
+        "py": "qiānwàn",
+        "en": "ten million; countless; many; one must by all means"
+      },
+      {
+        "zh": "万一",
+        "py": "wànyī",
+        "en": "just in case; if by any chance; contingency"
+      },
+      {
+        "zh": "万分",
+        "py": "wànfēn",
+        "en": "very much; extremely; one ten thousandth part"
+      },
+      {
+        "zh": "万万",
+        "py": "wànwàn",
+        "en": "absolutely; wholly"
+      }
+    ]
+  },
+  {
+    "hanzi": "为",
+    "structure": "⿻ overlapping",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "力",
+        "role": "form",
+        "note": "Not strength — what the elephant's body reduced to."
+      }
+    ],
+    "story": "The traditional 為 is a hand above an elephant: putting a great beast to work, hence to do, to act, to be. The simplified form keeps little more than the hand's sweep. The two tones split the sense — wéi is to do or to be (成为), wèi is whose sake it is done for (为了, 因为).",
+    "compounds": [
+      {
+        "zh": "因为",
+        "py": "yīnwèi",
+        "en": "because; owing to; on account of"
+      },
+      {
+        "zh": "为什么",
+        "py": "wèishénme",
+        "en": "why?; for what reason?"
+      },
+      {
+        "zh": "成为",
+        "py": "chéngwéi",
+        "en": "to become; to turn into"
+      },
+      {
+        "zh": "以为",
+        "py": "yǐwéi",
+        "en": "to believe; to think; to consider; to be under the impression"
+      }
+    ]
+  },
+  {
+    "hanzi": "务",
+    "structure": "⿱ stacked",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "夂",
+        "role": "form",
+        "note": "What the top of the traditional 務 reduced to."
+      },
+      {
+        "char": "力",
+        "reading": "lì",
+        "gloss": "strength",
+        "role": "meaning",
+        "note": "The effort being put in."
+      }
+    ],
+    "story": "Strength (力) at the base with the remains of the traditional 務 above it: effort put into something that has to be done. That is what a 务 is — 服务, 任务, 义务 — and 务必 turns the same idea into an adverb, \"be sure to\".",
+    "compounds": [
+      {
+        "zh": "服务",
+        "py": "fúwù",
+        "en": "to serve; service"
+      },
+      {
+        "zh": "任务",
+        "py": "rènwu",
+        "en": "mission; assignment; task; duty; role"
+      },
+      {
+        "zh": "公务员",
+        "py": "gōngwùyuán",
+        "en": "functionary; office-bearer"
+      },
+      {
+        "zh": "商务",
+        "py": "shāngwù",
+        "en": "commercial affairs; commercial; commerce; business"
+      }
+    ]
+  },
+  {
+    "hanzi": "夏",
+    "structure": "⿳ three stacked",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "自",
+        "role": "form",
+        "note": "The head of the figure the character draws."
+      },
+      {
+        "char": "夂",
+        "reading": "zhǐ",
+        "gloss": "a foot",
+        "role": "meaning",
+        "note": "The foot it stands on — still a foot after three thousand years."
+      }
+    ],
+    "story": "The old graph is a person drawn large and formally, head to feet. It stood for the Xia, who called themselves that, and so for China itself — 华夏. The season is a separate borrowing of the same shape.",
+    "compounds": [
+      {
+        "zh": "夏天",
+        "py": "xiàtiān",
+        "en": "summer"
+      },
+      {
+        "zh": "夏季",
+        "py": "xiàjì",
+        "en": "summer"
+      },
+      {
+        "zh": "夏令营",
+        "py": "xiàlìngyíng",
+        "en": "summer camp"
+      }
+    ]
+  },
+  {
+    "hanzi": "向",
+    "structure": "⿵ wrapped from above",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "冂",
+        "role": "form",
+        "note": "The wall the window is cut into."
+      },
+      {
+        "char": "口",
+        "gloss": "the window opening",
+        "role": "meaning"
+      }
+    ],
+    "story": "A window under the eaves — the old sense was a north-facing window. From a window came facing, and from facing came direction: 方向, 面向, 向来.",
+    "compounds": [
+      {
+        "zh": "方向",
+        "py": "fāngxiàng",
+        "en": "direction; orientation; path to follow"
+      },
+      {
+        "zh": "向前",
+        "py": "xiàngqián",
+        "en": "forward; onward"
+      },
+      {
+        "zh": "向上",
+        "py": "xiàngshàng",
+        "en": "upward; up; to advance; to try to improve oneself; to make progress"
+      },
+      {
+        "zh": "一向",
+        "py": "yīxiàng",
+        "en": "always (previously); a period of time in the recent past"
+      }
+    ]
+  },
+  {
+    "hanzi": "信",
+    "structure": "⿰ left–right",
+    "etyType": "ideographic",
+    "components": [
+      {
+        "char": "亻",
+        "reading": "rén",
+        "gloss": "person",
+        "role": "meaning"
+      },
+      {
+        "char": "言",
+        "reading": "yán",
+        "gloss": "speech, words",
+        "role": "meaning"
+      }
+    ],
+    "story": "A person and their words. When the two match, that is trust — the first meaning, and still the main one: 相信, 信任, 信心. A letter is the later sense: words sent to stand in for you.",
+    "compounds": [
+      {
+        "zh": "短信",
+        "py": "duǎnxìn",
+        "en": "text message; SMS"
+      },
+      {
+        "zh": "相信",
+        "py": "xiāngxìn",
+        "en": "to be convinced (that sth is true); to believe; to accept sth as true"
+      },
+      {
+        "zh": "信息",
+        "py": "xìnxī",
+        "en": "information; news; message"
+      },
+      {
+        "zh": "信心",
+        "py": "xìnxīn",
+        "en": "confidence; faith (in sb or sth)"
+      }
+    ]
+  },
+  {
+    "hanzi": "业",
+    "structure": "simple / indivisible",
+    "etyType": "none",
+    "components": [],
+    "story": "The traditional 業 is the toothed board a set of ritual bells hung from. A specialised piece of equipment drifted to the trade that used it, and from there to any line of work or course of study: 工业, 职业, 毕业, 作业.",
+    "compounds": [
+      {
+        "zh": "作业",
+        "py": "zuòyè",
+        "en": "school assignment; homework; work; task; operation; to operate"
+      },
+      {
+        "zh": "事业",
+        "py": "shìyè",
+        "en": "undertaking; project; activity; (charitable, political or revolutionary) cause"
+      },
+      {
+        "zh": "专业",
+        "py": "zhuānyè",
+        "en": "specialty; specialized field; main field of study (at university); major; professional"
+      },
+      {
+        "zh": "职业",
+        "py": "zhíyè",
+        "en": "occupation; profession; vocation; professional"
+      }
+    ]
+  },
+  {
+    "hanzi": "因",
+    "structure": "⿴ enclosed",
+    "etyType": "ideographic",
+    "components": [
+      {
+        "char": "囗",
+        "gloss": "the mat, seen from above",
+        "role": "meaning"
+      },
+      {
+        "char": "大",
+        "reading": "dà",
+        "gloss": "a person lying on it",
+        "role": "meaning"
+      }
+    ],
+    "story": "A person lying on a mat, the mat drawn as the box around them — the ancestor of 茵. What you lie on is what holds you up, and from support came cause: 因为, 原因, 因此.",
+    "compounds": [
+      {
+        "zh": "因为",
+        "py": "yīnwèi",
+        "en": "because; owing to; on account of"
+      },
+      {
+        "zh": "原因",
+        "py": "yuányīn",
+        "en": "cause; origin; root cause; reason"
+      },
+      {
+        "zh": "因此",
+        "py": "yīncǐ",
+        "en": "thus; consequently; as a result"
+      },
+      {
+        "zh": "因而",
+        "py": "yīn'ér",
+        "en": "therefore; as a result; thus; and as a result, ..."
+      }
+    ]
+  },
+  {
+    "hanzi": "应",
+    "structure": "⿸ upper-left wrap",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "广",
+        "role": "form",
+        "note": "The top of the traditional 應, kept as shorthand once 心 was dropped."
+      }
+    ],
+    "story": "The traditional 應 has 心 under a phonetic top: what the heart says it ought to do. The level tone is that obligation — 应该. The falling tone is the answering that follows — 答应, 反应, 应付.",
+    "compounds": [
+      {
+        "zh": "应该",
+        "py": "yīnggāi",
+        "en": "ought to; should; must"
+      },
+      {
+        "zh": "答应",
+        "py": "dāying",
+        "en": "to promise; to agree; to reply; to respond"
+      },
+      {
+        "zh": "反应",
+        "py": "fǎnyìng",
+        "en": "to react; to respond; reaction; response; reply; chemical reaction"
+      },
+      {
+        "zh": "应用",
+        "py": "yìngyòng",
+        "en": "to use; to apply; application; applicable"
+      }
+    ]
+  },
+  {
+    "hanzi": "于",
+    "structure": "simple / indivisible",
+    "etyType": "none",
+    "components": [],
+    "story": "An old graph, most read as a breath or a note bending as it leaves the mouth. It was a grammatical particle from the start rather than a picture of anything, and it still marks where, when, or with respect to what: 关于, 由于, 属于, 终于.",
+    "compounds": [
+      {
+        "zh": "等于",
+        "py": "děngyú",
+        "en": "to equal; to be tantamount to"
+      },
+      {
+        "zh": "终于",
+        "py": "zhōngyú",
+        "en": "at last; in the end; finally; eventually"
+      },
+      {
+        "zh": "属于",
+        "py": "shǔyú",
+        "en": "to be classified as; to belong to; to be part of"
+      },
+      {
+        "zh": "由于",
+        "py": "yóuyú",
+        "en": "due to; as a result of; thanks to; owing to; since; because"
+      }
+    ]
+  },
+  {
+    "hanzi": "者",
+    "structure": "⿸ upper-left wrap",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "耂",
+        "role": "form",
+        "note": "Not 老 — the top of the original graph, read as firewood or a plant."
+      },
+      {
+        "char": "日",
+        "role": "form",
+        "note": "Once a mouth or a vessel; the ancestor of 煮, to boil."
+      }
+    ],
+    "story": "The old form is most read as the ancestor of 煮 (to boil) — something over a fire. What survived is grammatical rather than culinary: 者 turns whatever comes before it into \"the one who does that\". 作者, 记者, 读者, 或者.",
+    "compounds": [
+      {
+        "zh": "或者",
+        "py": "huòzhě",
+        "en": "or; possibly; maybe; perhaps"
+      },
+      {
+        "zh": "记者",
+        "py": "jìzhě",
+        "en": "reporter; journalist"
+      },
+      {
+        "zh": "作者",
+        "py": "zuòzhě",
+        "en": "author; writer"
+      },
+      {
+        "zh": "读者",
+        "py": "dúzhě",
+        "en": "reader"
+      }
+    ]
+  },
+  {
+    "hanzi": "充",
+    "structure": "⿱ stacked",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "允",
+        "role": "form",
+        "note": "The person below, from the growing-child graph."
+      }
+    ],
+    "story": "The old form is a newborn above a person — the same element as in 育 (to raise) — a child growing into a full one. From growing to full came filling, supplying, and standing in for: 充满, 充电, 充分, 充当.",
+    "compounds": [
+      {
+        "zh": "充满",
+        "py": "chōngmǎn",
+        "en": "full of; brimming with; very full; permeated"
+      },
+      {
+        "zh": "补充",
+        "py": "bǔchōng",
+        "en": "to replenish; to supplement; to complement; additional; supplementary"
+      },
+      {
+        "zh": "充分",
+        "py": "chōngfèn",
+        "en": "ample; sufficient; adequate; full; fully; to the full"
+      },
+      {
+        "zh": "充电",
+        "py": "chōngdiàn",
+        "en": "to recharge batteries; fig. to rest and recuperate"
+      }
+    ]
+  },
+  {
+    "hanzi": "刀",
+    "structure": "simple / indivisible",
+    "etyType": "pictographic",
+    "components": [],
+    "story": "A knife from the side: the blade curving down, the handle above. Squeezed against the right of a character it becomes 刂 — 切, 别, 到, 剪 — and that bar is one of the most reliable clues in the writing system: the character is about cutting.",
+    "compounds": [
+      {
+        "zh": "剪刀",
+        "py": "jiǎndāo",
+        "en": "scissors"
+      }
+    ]
+  },
+  {
+    "hanzi": "怪",
+    "structure": "⿰ left–right",
+    "etyType": "pictophonetic",
+    "components": [
+      {
+        "char": "忄",
+        "reading": "xīn",
+        "gloss": "heart, feeling",
+        "role": "semantic",
+        "note": "The strangeness is in the reaction, not the thing."
+      },
+      {
+        "char": "圣",
+        "reading": "shèng",
+        "role": "phonetic",
+        "note": "Lends the sound."
+      }
+    ],
+    "story": "The heart radical says this is a feeling, and 圣 lends the sound. That is why 怪 works as a verb as well as an adjective: 怪他 is to hold the strangeness against him — to blame.",
+    "compounds": [
+      {
+        "zh": "奇怪",
+        "py": "qíguài",
+        "en": "strange; odd; to marvel; to be baffled"
+      },
+      {
+        "zh": "难怪",
+        "py": "nánguài",
+        "en": "(it's) no wonder (that...); (it's) not surprising (that)"
+      },
+      {
+        "zh": "怪物",
+        "py": "guàiwu",
+        "en": "monster; freak; eccentric person"
+      },
+      {
+        "zh": "怪不得",
+        "py": "guàibude",
+        "en": "no wonder!; so that's why!"
+      }
+    ]
+  },
+  {
+    "hanzi": "害",
+    "structure": "⿱ stacked",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "宀",
+        "role": "form",
+        "note": "A roof — the harm happens under it."
+      },
+      {
+        "char": "口",
+        "reading": "kǒu",
+        "gloss": "mouth",
+        "role": "meaning",
+        "note": "Read either as words that wound or as the thing cut."
+      }
+    ],
+    "story": "A roof over a mouth with a stroke cut through it. Readings differ — words that wound, or a cut made at home — but the sense is old and steady: to injure, and then the injury itself. 厉害, 害怕, 有害.",
+    "compounds": [
+      {
+        "zh": "害怕",
+        "py": "hàipà",
+        "en": "to be afraid; to be scared"
+      },
+      {
+        "zh": "危害",
+        "py": "wēihài",
+        "en": "to jeopardize; to harm; to endanger"
+      },
+      {
+        "zh": "伤害",
+        "py": "shānghài",
+        "en": "to injure; to harm"
+      },
+      {
+        "zh": "厉害",
+        "py": "lìhai",
+        "en": "difficult to deal with; difficult to endure; ferocious; radical; serious; terrible"
+      }
+    ]
+  },
+  {
+    "hanzi": "何",
+    "structure": "⿰ left–right",
+    "etyType": "pictophonetic",
+    "components": [
+      {
+        "char": "亻",
+        "reading": "rén",
+        "gloss": "person",
+        "role": "semantic",
+        "note": "The old picture is someone carrying a load — the ancestor of 荷."
+      },
+      {
+        "char": "可",
+        "reading": "kě",
+        "role": "phonetic",
+        "note": "Lends the sound."
+      }
+    ],
+    "story": "A person with 可 for the sound, originally someone bearing a load on the shoulder. It was borrowed for the question word and the carrying passed to 荷. Now literary rather than everyday: 如何, 任何, 为何.",
+    "compounds": [
+      {
+        "zh": "如何",
+        "py": "rúhé",
+        "en": "how; what way; what"
+      },
+      {
+        "zh": "任何",
+        "py": "rènhé",
+        "en": "any; whatever; whichever; whatsoever"
+      },
+      {
+        "zh": "为何",
+        "py": "wèihé",
+        "en": "why"
+      },
+      {
+        "zh": "何必",
+        "py": "hébì",
+        "en": "there is no need; why should"
+      }
+    ]
+  },
+  {
+    "hanzi": "化",
+    "structure": "⿰ left–right",
+    "etyType": "ideographic",
+    "components": [
+      {
+        "char": "亻",
+        "reading": "rén",
+        "gloss": "a person standing",
+        "role": "meaning"
+      },
+      {
+        "char": "匕",
+        "gloss": "the same person inverted",
+        "role": "meaning"
+      }
+    ],
+    "story": "One person upright, one turned over: change at its plainest. 变化, 文化, 化学 — and as a suffix it does the work of English -ise: 现代化, 简化, 美化.",
+    "compounds": [
+      {
+        "zh": "变化",
+        "py": "biànhuà",
+        "en": "change; variation; to change; to vary"
+      },
+      {
+        "zh": "文化",
+        "py": "wénhuà",
+        "en": "culture; civilization; cultural"
+      },
+      {
+        "zh": "消化",
+        "py": "xiāohuà",
+        "en": "to digest; digestion; digestive"
+      },
+      {
+        "zh": "转化",
+        "py": "zhuǎnhuà",
+        "en": "to change; to transform; isomerization (chemistry)"
+      }
+    ]
+  },
+  {
+    "hanzi": "坚",
+    "structure": "⿱ stacked",
+    "etyType": "ideographic",
+    "components": [
+      {
+        "char": "又",
+        "reading": "yòu",
+        "gloss": "a hand",
+        "role": "meaning",
+        "note": "The hand pressing it down."
+      },
+      {
+        "char": "土",
+        "reading": "tǔ",
+        "gloss": "earth",
+        "role": "meaning",
+        "note": "Ground packed hard."
+      }
+    ],
+    "story": "A hand over earth: ground tamped until it holds. From hard ground came firm, solid, and then resolute — 坚持, 坚强, 坚决, 坚定.",
+    "compounds": [
+      {
+        "zh": "坚持",
+        "py": "jiānchí",
+        "en": "to persevere with; to persist in; to insist on"
+      },
+      {
+        "zh": "坚强",
+        "py": "jiānqiáng",
+        "en": "staunch; strong"
+      },
+      {
+        "zh": "坚决",
+        "py": "jiānjué",
+        "en": "firm; resolute; determined"
+      },
+      {
+        "zh": "坚固",
+        "py": "jiāngù",
+        "en": "firm; firmly; hard; stable"
+      }
+    ]
+  },
+  {
+    "hanzi": "尽",
+    "structure": "⿵ wrapped from above",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "尺",
+        "role": "form",
+        "note": "A shorthand of the hand and brush in the traditional 盡."
+      },
+      {
+        "char": "⺀",
+        "role": "form",
+        "note": "What is left of the dish being scraped out."
+      }
+    ],
+    "story": "The traditional 盡 is a hand brushing out a dish — scraping the last of it, hence to use up, to the utmost. The simplified form keeps only the outline of that. 尽力, 尽量, 尽管.",
+    "compounds": [
+      {
+        "zh": "尽量",
+        "py": "jǐnliàng",
+        "en": "as much as possible; to the greatest extent"
+      },
+      {
+        "zh": "尽快",
+        "py": "jǐnkuài",
+        "en": "as quickly as possible; as soon as possible; with all speed; also written 盡快|尽快"
+      },
+      {
+        "zh": "尽力",
+        "py": "jìnlì",
+        "en": "to strive one's hardest; to spare no effort"
+      },
+      {
+        "zh": "尽管",
+        "py": "jǐnguǎn",
+        "en": "despite; although; even though; in spite of; unhesitatingly"
+      }
+    ]
+  },
+  {
+    "hanzi": "决",
+    "structure": "⿰ left–right",
+    "etyType": "pictophonetic",
+    "components": [
+      {
+        "char": "冫",
+        "gloss": "water",
+        "role": "semantic",
+        "note": "Two strokes of 水, not ice — the dyke gives and the water goes through."
+      },
+      {
+        "char": "夬",
+        "reading": "guài",
+        "role": "phonetic",
+        "note": "Lends the sound."
+      }
+    ],
+    "story": "Water with 夬 for the sound: to breach a dyke. From the moment the bank gives way came the moment a matter is settled — 决定, 解决, 决心, 坚决.",
+    "compounds": [
+      {
+        "zh": "决定",
+        "py": "juédìng",
+        "en": "to decide (to do something); to resolve; decision; certainly"
+      },
+      {
+        "zh": "解决",
+        "py": "jiějué",
+        "en": "to settle (a dispute); to resolve; to solve; to dispose of; to dispatch"
+      },
+      {
+        "zh": "决心",
+        "py": "juéxīn",
+        "en": "determination; resolution; determined; firm and resolute; to make up one's mind"
+      },
+      {
+        "zh": "决赛",
+        "py": "juésài",
+        "en": "finals (of a competition)"
+      }
+    ]
+  },
+  {
+    "hanzi": "况",
+    "structure": "⿰ left–right",
+    "etyType": "pictophonetic",
+    "components": [
+      {
+        "char": "冫",
+        "gloss": "water",
+        "role": "semantic",
+        "note": "Cold water, the character's first sense."
+      },
+      {
+        "char": "兄",
+        "reading": "xiōng",
+        "role": "phonetic",
+        "note": "Lends the sound."
+      }
+    ],
+    "story": "Water with 兄 for the sound. Cold water first, then comparison — setting one thing beside another — and from comparing came \"the state of things\": 情况, 何况, 况且.",
+    "compounds": [
+      {
+        "zh": "情况",
+        "py": "qíngkuàng",
+        "en": "circumstances; state of affairs; situation"
+      },
+      {
+        "zh": "状况",
+        "py": "zhuàngkuàng",
+        "en": "condition; state; situation"
+      },
+      {
+        "zh": "路况",
+        "py": "lùkuàng",
+        "en": "road condition(s) (e.g. surface, traffic flow etc)"
+      },
+      {
+        "zh": "何况",
+        "py": "hékuàng",
+        "en": "let alone; to say nothing of; besides; what's more"
+      }
+    ]
+  },
+  {
+    "hanzi": "类",
+    "structure": "⿱ stacked",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "米",
+        "role": "form",
+        "note": "Grain — from the traditional form's top."
+      },
+      {
+        "char": "大",
+        "role": "form",
+        "note": "What is left of 犬, the dog."
+      }
+    ],
+    "story": "The traditional 類 has a dog in it, and that is the point: dogs of a litter look alike, which is where \"of a kind\" comes from. The simplified form drops most of it. Sorting is the modern job: 种类, 类型, 人类, 分类.",
+    "compounds": [
+      {
+        "zh": "人类",
+        "py": "rénlèi",
+        "en": "humanity; human race; mankind"
+      },
+      {
+        "zh": "类似",
+        "py": "lèisì",
+        "en": "similar; analogous"
+      },
+      {
+        "zh": "类型",
+        "py": "lèixíng",
+        "en": "type; category; genre; form; style"
+      },
+      {
+        "zh": "种类",
+        "py": "zhǒnglèi",
+        "en": "kind; genus; type; category; variety; species; sort; class"
+      }
+    ]
+  },
+  {
+    "hanzi": "另",
+    "structure": "⿱ stacked",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "口",
+        "role": "form"
+      },
+      {
+        "char": "力",
+        "role": "form"
+      }
+    ],
+    "story": "A late character split off from 别 (to separate) and used only for \"the other one, separately\" — 另外, 另一个. The mouth and the strength in it are shapes, not an argument; this one is genuinely just a spelling.",
+    "compounds": [
+      {
+        "zh": "另外",
+        "py": "lìngwài",
+        "en": "additional; in addition; besides; separate; other; moreover; furthermore"
+      }
+    ]
+  },
+  {
+    "hanzi": "乱",
+    "structure": "⿰ left–right",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "舌",
+        "role": "form",
+        "note": "Not the tongue — a shorthand of the tangled silk and the hands above it."
+      },
+      {
+        "char": "乚",
+        "role": "form",
+        "note": "The frame the threads were wound on."
+      }
+    ],
+    "story": "The traditional 亂 shows hands working at tangled silk on a frame, and the character means both the tangle and the untangling. The mess is the sense that stuck: 混乱, 捣乱, 乱七八糟.",
+    "compounds": [
+      {
+        "zh": "混乱",
+        "py": "hùnluàn",
+        "en": "confusion; chaos; disorder"
+      },
+      {
+        "zh": "慌乱",
+        "py": "huāngluàn",
+        "en": "frenetic; hurried"
+      },
+      {
+        "zh": "捣乱",
+        "py": "dǎoluàn",
+        "en": "to disturb; to look for trouble; to stir up a row; to bother sb intentionally"
+      },
+      {
+        "zh": "紊乱",
+        "py": "wěnluàn",
+        "en": "disorder; chaos"
+      }
+    ]
+  },
+  {
+    "hanzi": "派",
+    "structure": "⿰ left–right",
+    "etyType": "ideographic",
+    "components": [
+      {
+        "char": "氵",
+        "reading": "shuǐ",
+        "gloss": "water",
+        "role": "meaning"
+      },
+      {
+        "char": "𠂢",
+        "gloss": "a branching stream",
+        "role": "meaning"
+      }
+    ],
+    "story": "A tributary: water on the left, a stream dividing on the right. A branch of a river became a branch of anything — a school, a faction (学派, 党派) — and as a verb it is sending someone off down one of those branches: 派人, 派出所.",
+    "compounds": [
+      {
+        "zh": "派出",
+        "py": "pàichū",
+        "en": "to send; to dispatch"
+      },
+      {
+        "zh": "气派",
+        "py": "qìpài",
+        "en": "imposing manner or style"
+      },
+      {
+        "zh": "派遣",
+        "py": "pàiqiǎn",
+        "en": "to send (on a mission); to dispatch"
+      },
+      {
+        "zh": "派别",
+        "py": "pàibié",
+        "en": "denomination; group; school; faction; school of thought"
+      }
+    ]
+  },
+  {
+    "hanzi": "齐",
+    "structure": "simple / indivisible",
+    "etyType": "pictographic",
+    "components": [],
+    "story": "The traditional 齊 draws three ears of grain standing at exactly the same height — evenness as a picture. The simplified form keeps one of them. Level, uniform, all at once: 整齐, 一齐, 齐全.",
+    "compounds": [
+      {
+        "zh": "整齐",
+        "py": "zhěngqí",
+        "en": "orderly; neat; even; tidy"
+      },
+      {
+        "zh": "齐全",
+        "py": "qíquán",
+        "en": "complete"
+      },
+      {
+        "zh": "一齐",
+        "py": "yīqí",
+        "en": "at the same time; simultaneously"
+      }
+    ]
+  },
+  {
+    "hanzi": "伤",
+    "structure": "⿰ left–right",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "亻",
+        "reading": "rén",
+        "gloss": "person",
+        "role": "meaning",
+        "note": "The one who is hurt."
+      },
+      {
+        "char": "力",
+        "role": "form",
+        "note": "Part of the shorthand that replaced the traditional phonetic."
+      }
+    ],
+    "story": "A person beside what the traditional 傷's phonetic was reduced to. It covers the wound and the feeling alike: 受伤, 伤害, 伤心, 悲伤.",
+    "compounds": [
+      {
+        "zh": "伤心",
+        "py": "shāngxīn",
+        "en": "to grieve; to be broken-hearted; to feel deeply hurt"
+      },
+      {
+        "zh": "受伤",
+        "py": "shòushāng",
+        "en": "to sustain injuries; wounded (in an accident etc); harmed"
+      },
+      {
+        "zh": "伤害",
+        "py": "shānghài",
+        "en": "to injure; to harm"
+      },
+      {
+        "zh": "悲伤",
+        "py": "bēishāng",
+        "en": "sad; sorrowful"
+      }
+    ]
+  },
+  {
+    "hanzi": "升",
+    "structure": "⿱ stacked",
+    "etyType": "none",
+    "components": [],
+    "story": "A ladle tipped up with something in it. The character was a dry measure first — a sheng, about a litre, still used for grain and oil — and pouring from the ladle gave \"to raise, to rise\": 上升, 升级, 升学.",
+    "compounds": [
+      {
+        "zh": "上升",
+        "py": "shàngshēng",
+        "en": "to rise; to go up; to ascend"
+      },
+      {
+        "zh": "毫升",
+        "py": "háoshēng",
+        "en": "milliliter"
+      },
+      {
+        "zh": "升高",
+        "py": "shēnggāo",
+        "en": "to raise; to ascend"
+      },
+      {
+        "zh": "升级",
+        "py": "shēngjí",
+        "en": "to escalate (in intensity); to go up by one grade; to be promoted; to upgrade (computing)"
+      }
+    ]
+  },
+  {
+    "hanzi": "术",
+    "structure": "⿺ lower-left wrap",
+    "etyType": "none",
+    "components": [],
+    "story": "The traditional 術 puts a phonetic inside 行, a crossroads — a way through, hence a method. The simplified form keeps only the inner part, so the road is gone but the sense is not: 技术, 艺术, 手术, 美术.",
+    "compounds": [
+      {
+        "zh": "武术",
+        "py": "wǔshù",
+        "en": "military skill or technique (in former times)"
+      },
+      {
+        "zh": "技术",
+        "py": "jìshù",
+        "en": "technology; technique; skill"
+      },
+      {
+        "zh": "艺术",
+        "py": "yìshù",
+        "en": "art"
+      },
+      {
+        "zh": "美术",
+        "py": "měishù",
+        "en": "art; fine arts; painting"
+      }
+    ]
+  },
+  {
+    "hanzi": "台",
+    "structure": "⿱ stacked",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "厶",
+        "role": "form"
+      },
+      {
+        "char": "口",
+        "role": "form"
+      }
+    ],
+    "story": "Three characters collapsed into one shape: 臺 (a raised terrace), 檯 (a table) and 颱 (a typhoon). 台 itself was a fourth, older character with a different sound. The senses divide accordingly — 台阶, 舞台, 台风 — plus the measure word for machines.",
+    "compounds": [
+      {
+        "zh": "舞台",
+        "py": "wǔtái",
+        "en": "stage; arena; fig. in the limelight"
+      },
+      {
+        "zh": "电视台",
+        "py": "diànshìtái",
+        "en": "television station"
+      },
+      {
+        "zh": "电台",
+        "py": "diàntái",
+        "en": "transmitter-receiver; broadcasting station; radio station"
+      },
+      {
+        "zh": "阳台",
+        "py": "yángtái",
+        "en": "balcony; porch"
+      }
+    ]
+  },
+  {
+    "hanzi": "卫",
+    "structure": "simple / indivisible",
+    "etyType": "none",
+    "components": [],
+    "story": "The traditional 衛 shows feet circling a walled place inside a crossroads: patrolling, standing guard. The simplified form is a shorthand with none of that left in it, but the meaning held — 保卫, 门卫, 卫生 (hygiene, literally guarding life).",
+    "compounds": [
+      {
+        "zh": "卫生",
+        "py": "wèishēng",
+        "en": "health; hygiene; sanitation"
+      },
+      {
+        "zh": "卫生间",
+        "py": "wèishēngjiān",
+        "en": "bathroom; toilet; WC"
+      },
+      {
+        "zh": "保卫",
+        "py": "bǎowèi",
+        "en": "to defend; to safeguard"
+      },
+      {
+        "zh": "卫星",
+        "py": "wèixīng",
+        "en": "(space) satellite"
+      }
+    ]
+  },
+  {
+    "hanzi": "希",
+    "structure": "⿱ stacked",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "乂",
+        "role": "form",
+        "note": "The cross-hatch of the weave."
+      },
+      {
+        "char": "布",
+        "reading": "bù",
+        "gloss": "cloth",
+        "role": "meaning"
+      }
+    ],
+    "story": "A loosely woven cloth — threads crossing over 巾. From a loose weave came \"sparse, rare\", and hoping is what you do about something rare. The original sense moved to 稀; 希 kept 希望.",
+    "compounds": [
+      {
+        "zh": "希望",
+        "py": "xīwàng",
+        "en": "to wish for; to desire; hope"
+      }
+    ]
+  },
+  {
+    "hanzi": "易",
+    "structure": "⿱ stacked",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "日",
+        "role": "form"
+      },
+      {
+        "char": "勿",
+        "role": "form"
+      }
+    ],
+    "story": "Two old accounts: a lizard that changes colour (the ancestor of 蜥), or one vessel pouring into another. Either way the first meaning is exchange — 交易, 贸易 — and \"easy\" is a second sense of the same character: 容易, 轻易.",
+    "compounds": [
+      {
+        "zh": "容易",
+        "py": "róngyì",
+        "en": "easy; likely; liable (to)"
+      },
+      {
+        "zh": "交易",
+        "py": "jiāoyì",
+        "en": "(business) transaction; business deal"
+      },
+      {
+        "zh": "轻易",
+        "py": "qīngyì",
+        "en": "easily; lightly; rashly"
+      },
+      {
+        "zh": "贸易",
+        "py": "màoyì",
+        "en": "(commercial) trade"
+      }
+    ]
+  },
+  {
+    "hanzi": "营",
+    "structure": "⿱ stacked",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "艹",
+        "role": "form",
+        "note": "Stands in for the two fires of the traditional form."
+      },
+      {
+        "char": "吕",
+        "role": "form",
+        "note": "The walled enclosure, drawn as two spaces."
+      }
+    ],
+    "story": "The traditional 營 has fires burning over a walled enclosure — a camp lit at night. From the camp came running the camp, and from that came running anything at all: 经营, 营业, 营养, 营销.",
+    "compounds": [
+      {
+        "zh": "营养",
+        "py": "yíngyǎng",
+        "en": "nutrition; nourishment"
+      },
+      {
+        "zh": "经营",
+        "py": "jīngyíng",
+        "en": "to engage in (business etc); to run; to operate"
+      },
+      {
+        "zh": "营业",
+        "py": "yíngyè",
+        "en": "to do business; to trade"
+      },
+      {
+        "zh": "营造",
+        "py": "yíngzào",
+        "en": "to build (housing); to construct; to make"
+      }
+    ]
+  },
+  {
+    "hanzi": "杂",
+    "structure": "⿱ stacked",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "九",
+        "role": "form"
+      },
+      {
+        "char": "木",
+        "reading": "mù",
+        "gloss": "tree",
+        "role": "meaning",
+        "note": "The tree the birds gathered in, kept from the traditional form."
+      }
+    ],
+    "story": "The traditional 雜 is cloth with birds gathered on a tree — colours mixed together. The simplified form keeps the tree. Mixed, assorted, miscellaneous: 复杂, 杂志, 杂技.",
+    "compounds": [
+      {
+        "zh": "复杂",
+        "py": "fùzá",
+        "en": "complicated; complex"
+      },
+      {
+        "zh": "杂志",
+        "py": "zázhì",
+        "en": "magazine"
+      },
+      {
+        "zh": "杂技",
+        "py": "zájì",
+        "en": "acrobatics"
+      },
+      {
+        "zh": "杂交",
+        "py": "zájiāo",
+        "en": "a hybrid"
+      }
+    ]
+  },
+  {
+    "hanzi": "倍",
+    "structure": "⿰ left–right",
+    "etyType": "pictophonetic",
+    "components": [
+      {
+        "char": "亻",
+        "reading": "rén",
+        "gloss": "person",
+        "role": "semantic",
+        "note": "Originally turning one's back — doubling back."
+      },
+      {
+        "char": "咅",
+        "reading": "pǒu",
+        "role": "phonetic",
+        "note": "Lends the sound."
+      }
+    ],
+    "story": "A person with 咅 for the sound. The old sense is turning the back, doubling back — and doubling is what survived: 三倍 is threefold, 加倍 is to double.",
+    "compounds": [
+      {
+        "zh": "加倍",
+        "py": "jiābèi",
+        "en": "to double (output); to redouble (efforts)"
+      },
+      {
+        "zh": "倍感",
+        "py": "bèigǎn",
+        "en": "to feel even more; to be extremely (sad, lonely, delighted etc)"
+      },
+      {
+        "zh": "倍儿",
+        "py": "bèir",
+        "en": "very; much (Beijing dialect)"
+      },
+      {
+        "zh": "倍增",
+        "py": "bèizēng",
+        "en": "to double; to redouble; to increase many times over; to multiply by a factor"
+      }
+    ]
+  },
+  {
+    "hanzi": "戴",
+    "structure": "⿻ overlapping",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "異",
+        "reading": "yì",
+        "gloss": "a person raising something overhead",
+        "role": "meaning"
+      },
+      {
+        "char": "戈",
+        "role": "form",
+        "note": "Part of the phonetic 𢦏, not a halberd here."
+      }
+    ],
+    "story": "A person holding something up over their head, with a phonetic wrapped around it. That is exactly the modern meaning: 戴 is for what goes on the head or face — a hat, glasses, a watch — as against 穿 for what you step into.",
+    "compounds": [
+      {
+        "zh": "戴上",
+        "py": "dàishang",
+        "en": "to put on (hat etc)"
+      },
+      {
+        "zh": "佩戴",
+        "py": "pèidài",
+        "en": "to wear (as accessories)"
+      },
+      {
+        "zh": "戴尔",
+        "py": "dài'ěr",
+        "en": "Dell"
+      },
+      {
+        "zh": "北戴河",
+        "py": "běidàihé",
+        "en": "Beidaihe district of Qinhuangdao city 秦皇島市|秦皇岛市, Hebei"
+      }
+    ]
+  },
+  {
+    "hanzi": "官",
+    "structure": "⿱ stacked",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "宀",
+        "reading": "gài",
+        "gloss": "roof",
+        "role": "meaning",
+        "note": "The building where state business is done."
+      },
+      {
+        "char": "㠯",
+        "role": "form"
+      }
+    ],
+    "story": "A roof over what was once a mound or a seal: the building state business is done in. From the building came the person in it, and from the official came any organ with a job to do — 器官, 五官, 感官.",
+    "compounds": [
+      {
+        "zh": "官方",
+        "py": "guānfāng",
+        "en": "official; (by the) government"
+      },
+      {
+        "zh": "法官",
+        "py": "fǎguān",
+        "en": "a judge; to judge"
+      },
+      {
+        "zh": "器官",
+        "py": "qìguān",
+        "en": "organ (part of body tissue); apparatus"
+      },
+      {
+        "zh": "外交官",
+        "py": "wàijiāoguān",
+        "en": "diplomat"
+      }
+    ]
+  },
+  {
+    "hanzi": "寒",
+    "structure": "⿱ stacked",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "宀",
+        "reading": "gài",
+        "gloss": "roof",
+        "role": "meaning",
+        "note": "The house being packed against the frost."
+      },
+      {
+        "char": "⺀",
+        "gloss": "ice",
+        "role": "meaning",
+        "note": "The same two strokes as in 冷, 冰, 冻."
+      }
+    ],
+    "story": "A house with a person inside packed round with straw, and two strokes of ice at the foot. It is the most literal cold in the writing system — someone stuffing dry grass into the walls against the frost. 寒冷, 寒假, 寒风.",
+    "compounds": [
+      {
+        "zh": "寒假",
+        "py": "hánjià",
+        "en": "winter vacation"
+      },
+      {
+        "zh": "寒冷",
+        "py": "hánlěng",
+        "en": "cold (climate); frigid; very cold"
+      }
+    ]
+  },
+  {
+    "hanzi": "获",
+    "structure": "⿱ stacked",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "艹",
+        "role": "form",
+        "note": "Grass — from 穫, bringing in the grain."
+      },
+      {
+        "char": "犾",
+        "role": "form",
+        "note": "Dogs — from 獲, taking game with a hound."
+      }
+    ],
+    "story": "Two characters in one: 獲, catching game with a dog, and 穫, harvesting grain. The simplified form keeps grass over dog and covers both kinds of taking: 获得, 收获, 获奖.",
+    "compounds": [
+      {
+        "zh": "获得",
+        "py": "huòdé",
+        "en": "to obtain; to receive; to get"
+      },
+      {
+        "zh": "获取",
+        "py": "huòqǔ",
+        "en": "to gain; to get; to acquire"
+      },
+      {
+        "zh": "收获",
+        "py": "shōuhuò",
+        "en": "to harvest; to reap; to gain; crop; harvest; profit; gain; bonus; reward"
+      },
+      {
+        "zh": "获奖",
+        "py": "huòjiǎng",
+        "en": "prize-winning"
+      }
+    ]
+  },
+  {
+    "hanzi": "良",
+    "structure": "⿱ stacked",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "丶",
+        "role": "form",
+        "note": "The last of the chute at the top."
+      }
+    ],
+    "story": "Most read as a granary with a chute, grain running out clean — hence fine, of good quality. That is the sense throughout: 良好, 优良, 善良, 改良.",
+    "compounds": [
+      {
+        "zh": "善良",
+        "py": "shànliáng",
+        "en": "good and honest; kind-hearted"
+      },
+      {
+        "zh": "良好",
+        "py": "liánghǎo",
+        "en": "good; favorable; well; fine"
+      },
+      {
+        "zh": "优良",
+        "py": "yōuliáng",
+        "en": "fine; good; first-rate"
+      },
+      {
+        "zh": "不良",
+        "py": "bùliáng",
+        "en": "bad; harmful; unhealthy"
+      }
+    ]
+  },
+  {
+    "hanzi": "临",
+    "structure": "⿰ left–right",
+    "etyType": "none",
+    "components": [],
+    "story": "The traditional 臨 shows a person with a large eye bending over a pile of goods — looking down on something from above. From looking down came drawing near and arriving: 面临, 临时, 光临, 来临.",
+    "compounds": [
+      {
+        "zh": "光临",
+        "py": "guānglín",
+        "en": "(honorific) Welcome!; You honor us with your presence.; It is an honor to have you."
+      },
+      {
+        "zh": "临时",
+        "py": "línshí",
+        "en": "at the instant sth happens; temporary; interim; ad hoc"
+      },
+      {
+        "zh": "面临",
+        "py": "miànlín",
+        "en": "to face sth; to be confronted with"
+      },
+      {
+        "zh": "降临",
+        "py": "jiànglín",
+        "en": "to descend to"
+      }
+    ]
+  },
+  {
+    "hanzi": "免",
+    "structure": "⿱ stacked",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "⺈",
+        "role": "form",
+        "note": "The headgear being taken off."
+      },
+      {
+        "char": "儿",
+        "reading": "ér",
+        "gloss": "a person",
+        "role": "meaning",
+        "note": "The two legs at the foot — the one being let off."
+      }
+    ],
+    "story": "A person with something coming off their head. Borrowed for \"to be let off\", and from being let off came exempting and avoiding: 免费, 避免, 难免, 以免.",
+    "compounds": [
+      {
+        "zh": "免费",
+        "py": "miǎnfèi",
+        "en": "free (of charge)"
+      },
+      {
+        "zh": "避免",
+        "py": "bìmiǎn",
+        "en": "to avert; to prevent; to avoid; to refrain from"
+      },
+      {
+        "zh": "难免",
+        "py": "nánmiǎn",
+        "en": "hard to avoid; difficult to escape from"
+      },
+      {
+        "zh": "不免",
+        "py": "bùmiǎn",
+        "en": "inevitably"
+      }
+    ]
+  },
+  {
+    "hanzi": "穷",
+    "structure": "⿱ stacked",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "穴",
+        "reading": "xué",
+        "gloss": "cave",
+        "role": "meaning",
+        "note": "The far end you cannot go past."
+      },
+      {
+        "char": "力",
+        "role": "form",
+        "note": "Replaces 躬, the bent body of the traditional form."
+      }
+    ],
+    "story": "The traditional 窮 is a body bent double at the back of a cave — as far as you can go and no further. The first sense is \"to the end, exhausted\" (无穷, endless), and poverty is that idea applied to means.",
+    "compounds": [
+      {
+        "zh": "穷人",
+        "py": "qióngrén",
+        "en": "poor people; the poor"
+      },
+      {
+        "zh": "贫穷",
+        "py": "pínqióng",
+        "en": "poor; impoverished"
+      },
+      {
+        "zh": "无穷",
+        "py": "wúqióng",
+        "en": "endless; boundless; inexhaustible"
+      }
+    ]
+  },
+  {
+    "hanzi": "尚",
+    "structure": "⿵ wrapped from above",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "⺌",
+        "role": "form",
+        "note": "Marks of air escaping upward."
+      },
+      {
+        "char": "口",
+        "gloss": "the opening",
+        "role": "meaning"
+      }
+    ],
+    "story": "A vent above a building with the air going up through it — the root of the \"high, above\" sense in 高尚 and 崇尚. You will meet it most often as the sound part inside 堂, 常, 掌, 当 and 赏.",
+    "compounds": [
+      {
+        "zh": "高尚",
+        "py": "gāoshàng",
+        "en": "noble; lofty; refined; exquisite"
+      },
+      {
+        "zh": "时尚",
+        "py": "shíshàng",
+        "en": "fashion; fad; fashionable"
+      },
+      {
+        "zh": "和尚",
+        "py": "héshang",
+        "en": "Buddhist monk"
+      },
+      {
+        "zh": "风尚",
+        "py": "fēngshàng",
+        "en": "current custom; current way of doing things"
+      }
+    ]
+  },
+  {
+    "hanzi": "甚",
+    "structure": "⿱ stacked",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "甘",
+        "reading": "gān",
+        "gloss": "sweet",
+        "role": "meaning",
+        "note": "Something sweet held in the mouth."
+      },
+      {
+        "char": "匹",
+        "role": "form"
+      }
+    ],
+    "story": "Sweetness over a phonetic. The old sense is excess — too much of a good thing — which is what the modern word still does: 甚至 (to the point of), 过甚, 甚于.",
+    "compounds": [
+      {
+        "zh": "甚至",
+        "py": "shènzhì",
+        "en": "even; so much so that"
+      },
+      {
+        "zh": "甚至于",
+        "py": "shènzhìyú",
+        "en": "so much (that); even (to the extent that)"
+      }
+    ]
+  },
+  {
+    "hanzi": "施",
+    "structure": "⿰ left–right",
+    "etyType": "pictophonetic",
+    "components": [
+      {
+        "char": "方",
+        "gloss": "a banner pole",
+        "role": "semantic",
+        "note": "Not \"square\" here — the flag element in 旗, 旅, 族, 旋."
+      },
+      {
+        "char": "㐌",
+        "reading": "yí",
+        "role": "phonetic",
+        "note": "Lends the sound."
+      }
+    ],
+    "story": "The left side is a banner on its pole, not the 方 of 方向. 施 was a flag flying loose, and from a banner unfurled came putting something into effect: 实施, 施加, 措施, 设施.",
+    "compounds": [
+      {
+        "zh": "实施",
+        "py": "shíshī",
+        "en": "to implement; to carry out"
+      },
+      {
+        "zh": "措施",
+        "py": "cuòshī",
+        "en": "measure; step"
+      },
+      {
+        "zh": "设施",
+        "py": "shèshī",
+        "en": "facilities; installation"
+      },
+      {
+        "zh": "施工",
+        "py": "shīgōng",
+        "en": "construction; to carry out construction or large-scale repairs"
+      }
+    ]
+  },
+  {
+    "hanzi": "士",
+    "structure": "simple / indivisible",
+    "etyType": "pictographic",
+    "components": [],
+    "story": "Most read as an axe head stood on its edge — the emblem of a man of rank who bore arms. From there the gentleman-scholar of the classics, and the modern 士兵, 博士, 女士. The top stroke is the long one; that is what tells it from 土.",
+    "compounds": [
+      {
+        "zh": "男士",
+        "py": "nánshì",
+        "en": "man; gentleman"
+      },
+      {
+        "zh": "女士",
+        "py": "nǚshì",
+        "en": "lady; madam; Miss; Ms"
+      },
+      {
+        "zh": "护士",
+        "py": "hùshi",
+        "en": "nurse"
+      },
+      {
+        "zh": "士兵",
+        "py": "shìbīng",
+        "en": "soldier"
+      }
+    ]
+  },
+  {
+    "hanzi": "微",
+    "structure": "⿲ three across",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "彳",
+        "reading": "chì",
+        "gloss": "a step",
+        "role": "meaning",
+        "note": "The going element, as in 行, 往, 得, 很."
+      },
+      {
+        "char": "攵",
+        "role": "form",
+        "note": "A hand with a stick."
+      }
+    ],
+    "story": "A step on the left and, once, a person being struck on the right. The old sense is to go in secret, and from moving unseen came \"slight, minute\": 微笑 is the faint smile, 稍微 the small degree.",
+    "compounds": [
+      {
+        "zh": "微笑",
+        "py": "wēixiào",
+        "en": "smile; to smile"
+      },
+      {
+        "zh": "微信",
+        "py": "wēixìn",
+        "en": "WeChat (messaging app)"
+      },
+      {
+        "zh": "微博",
+        "py": "wēibó",
+        "en": "micro-blogging; microblog"
+      },
+      {
+        "zh": "稍微",
+        "py": "shāowēi",
+        "en": "a little bit"
+      }
+    ]
+  },
+  {
+    "hanzi": "无",
+    "structure": "⿱ stacked",
+    "etyType": "none",
+    "components": [],
+    "story": "The traditional 無 draws a dancer holding plumes in both hands; borrowed for \"to not have\", it left the dancing to 舞, which added feet underneath. 无 is an older shorthand the simplification brought back. 无论, 无法, 毫无.",
+    "compounds": [
+      {
+        "zh": "无聊",
+        "py": "wúliáo",
+        "en": "bored; boring; senseless"
+      },
+      {
+        "zh": "无法",
+        "py": "wúfǎ",
+        "en": "unable; incapable"
+      },
+      {
+        "zh": "无论",
+        "py": "wúlùn",
+        "en": "no matter what or how; regardless of whether..."
+      },
+      {
+        "zh": "无限",
+        "py": "wúxiàn",
+        "en": "unlimited; unbounded"
+      }
+    ]
+  },
+  {
+    "hanzi": "县",
+    "structure": "⿱ stacked",
+    "etyType": "none",
+    "components": [],
+    "story": "The traditional 縣 is a head hung by a cord — the ancestor of 悬 (xuán, to suspend). A district \"hung\" from the capital is one that depends on it administratively, and that is the county of today: 县城, 县长.",
+    "compounds": [
+      {
+        "zh": "县城",
+        "py": "xiànchéng",
+        "en": "county seat; county town"
+      },
+      {
+        "zh": "自治县",
+        "py": "zìzhìxiàn",
+        "en": "autonomous county"
+      },
+      {
+        "zh": "沙县",
+        "py": "shāxiàn",
+        "en": "Sha county in Sanming 三明, Fujian"
+      },
+      {
+        "zh": "知县",
+        "py": "zhīxiàn",
+        "en": "county head magistrate (old)"
+      }
+    ]
+  },
+  {
+    "hanzi": "严",
+    "structure": "⿻ overlapping",
+    "etyType": "none",
+    "components": [],
+    "story": "The traditional 嚴 has two mouths shouting above a phonetic. The sense is severity — strict, stern — and by extension tight or airtight: 严格, 严重, 严肃, 严密.",
+    "compounds": [
+      {
+        "zh": "严重",
+        "py": "yánzhòng",
+        "en": "grave; serious; severe; critical"
+      },
+      {
+        "zh": "严格",
+        "py": "yángé",
+        "en": "strict; stringent; tight; rigorous"
+      },
+      {
+        "zh": "严肃",
+        "py": "yánsù",
+        "en": "solemn; grave; serious; earnest; severe"
+      },
+      {
+        "zh": "严厉",
+        "py": "yánlì",
+        "en": "severe; strict"
+      }
+    ]
+  },
+  {
+    "hanzi": "盐",
+    "structure": "⿱ stacked",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "皿",
+        "reading": "mǐn",
+        "gloss": "a dish",
+        "role": "meaning",
+        "note": "The pan the brine was boiled down in."
+      }
+    ],
+    "story": "The traditional 鹽 has 鹵 — salt crystals drawn in a pan — under a supervisor's eye, because salt was a state monopoly and someone watched it being made. The simplified form keeps the pan at the base.",
+    "compounds": [
+      {
+        "zh": "食盐",
+        "py": "shíyán",
+        "en": "edible salt"
+      },
+      {
+        "zh": "盐水",
+        "py": "yánshuǐ",
+        "en": "Yanshui town in Tainan county 台南縣|台南县, Taiwan"
+      },
+      {
+        "zh": "盐城",
+        "py": "yánchéng",
+        "en": "Yancheng prefecture level city in Jiangsu"
+      },
+      {
+        "zh": "无机盐",
+        "py": "wújīyán",
+        "en": "inorganic salt"
+      }
+    ]
+  },
+  {
+    "hanzi": "叶",
+    "structure": "⿰ left–right",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "口",
+        "role": "form"
+      },
+      {
+        "char": "十",
+        "role": "form"
+      }
+    ],
+    "story": "The traditional 葉 is grass over a tree with a flat thin thing between them — a leaf. The simplified form borrows an unrelated character, 叶 (xié, in harmony), purely for its shape, so the mouth and the ten in it mean nothing here.",
+    "compounds": [
+      {
+        "zh": "茶叶",
+        "py": "cháyè",
+        "en": "tea; tea-leaves"
+      },
+      {
+        "zh": "叶子",
+        "py": "yèzi",
+        "en": "foliage; leaf"
+      },
+      {
+        "zh": "树叶",
+        "py": "shùyè",
+        "en": "tree leaves"
+      }
+    ]
+  },
+  {
+    "hanzi": "移",
+    "structure": "⿰ left–right",
+    "etyType": "pictophonetic",
+    "components": [
+      {
+        "char": "禾",
+        "reading": "hé",
+        "gloss": "grain",
+        "role": "semantic",
+        "note": "Seedlings lifted from the bed to the field."
+      },
+      {
+        "char": "多",
+        "reading": "duō",
+        "role": "phonetic",
+        "note": "Lends the sound."
+      }
+    ],
+    "story": "Grain with 多 for the sound. The first sense is transplanting seedlings, and from moving a plant came moving anything: 移动, 转移, 移民, 推移.",
+    "compounds": [
+      {
+        "zh": "移动",
+        "py": "yídòng",
+        "en": "to move; movement; migration; mobile; portable"
+      },
+      {
+        "zh": "转移",
+        "py": "zhuǎnyí",
+        "en": "to shift; to divert or distract (attention etc); to change; to transform"
+      },
+      {
+        "zh": "移民",
+        "py": "yímín",
+        "en": "to immigrate; to migrate; emigrant; immigrant"
+      },
+      {
+        "zh": "移植",
+        "py": "yízhí",
+        "en": "to transplant"
+      }
+    ]
+  },
+  {
+    "hanzi": "余",
+    "structure": "⿱ stacked",
+    "etyType": "none",
+    "components": [],
+    "story": "Two characters sharing a shape. 余 alone is an old word for \"I\", and it is the sound part in 除, 途, 涂, 斜. The simplification gave it the work of 餘 — food left over, hence surplus — which is the everyday sense: 其余, 剩余, 业余.",
+    "compounds": [
+      {
+        "zh": "其余",
+        "py": "qíyú",
+        "en": "the rest; the others; remaining; remainder; apart from them"
+      },
+      {
+        "zh": "业余",
+        "py": "yèyú",
+        "en": "spare time; amateur; extra-curricular"
+      },
+      {
+        "zh": "多余",
+        "py": "duōyú",
+        "en": "superfluous; unnecessary; surplus"
+      },
+      {
+        "zh": "剩余",
+        "py": "shèngyú",
+        "en": "remainder; surplus"
+      }
+    ]
+  },
+  {
+    "hanzi": "与",
+    "structure": "simple / indivisible",
+    "etyType": "none",
+    "components": [],
+    "story": "The traditional 與 shows hands on both sides passing something across — giving and taking, hence \"with\" and \"and\". The simplified form keeps a shorthand of the thing being passed: 与其, 参与, 给与.",
+    "compounds": [
+      {
+        "zh": "参与",
+        "py": "cānyù",
+        "en": "to participate (in sth)"
+      },
+      {
+        "zh": "与否",
+        "py": "yǔfǒu",
+        "en": "whether or not (at the end of a phrase)"
+      },
+      {
+        "zh": "与其",
+        "py": "yǔqí",
+        "en": "rather than...; 與其|与其 A 不如 B (rather than A, better to B)"
+      }
+    ]
+  },
+  {
+    "hanzi": "阅",
+    "structure": "⿵ wrapped from above",
+    "etyType": "pictophonetic",
+    "components": [
+      {
+        "char": "门",
+        "reading": "mén",
+        "gloss": "gate",
+        "role": "semantic",
+        "note": "Troops counted as they filed through."
+      },
+      {
+        "char": "兑",
+        "reading": "duì",
+        "role": "phonetic",
+        "note": "Lends the sound."
+      }
+    ],
+    "story": "A gate with 兑 inside for the sound. The old sense is inspecting troops as they file past — counting them through. From reviewing a column came reviewing a text: 阅读, 阅览, 检阅.",
+    "compounds": [
+      {
+        "zh": "阅读",
+        "py": "yuèdú",
+        "en": "to read; reading"
+      },
+      {
+        "zh": "阅览室",
+        "py": "yuèlǎnshì",
+        "en": "reading room"
+      },
+      {
+        "zh": "阅历",
+        "py": "yuèlì",
+        "en": "to experience; experience"
+      }
+    ]
+  },
+  {
+    "hanzi": "择",
+    "structure": "⿰ left–right",
+    "etyType": "pictophonetic",
+    "components": [
+      {
+        "char": "扌",
+        "reading": "shǒu",
+        "gloss": "hand",
+        "role": "semantic",
+        "note": "Picking something out by hand."
+      },
+      {
+        "char": "𠬤",
+        "role": "phonetic",
+        "note": "The simplified 睪 — lends the sound, as it does in 泽, 译, 释."
+      }
+    ],
+    "story": "A hand with 睪 for the sound: picking one thing out of many. That is still the sense — 选择, 择优 — and the same phonetic sits inside 泽, 译 and 释.",
+    "compounds": [
+      {
+        "zh": "选择",
+        "py": "xuǎnzé",
+        "en": "to select; to pick; choice; option; alternative"
+      }
+    ]
+  },
+  {
+    "hanzi": "丈",
+    "structure": "⿻ overlapping",
+    "etyType": "ideographic",
+    "components": [
+      {
+        "char": "一",
+        "gloss": "the measuring stick",
+        "role": "meaning"
+      },
+      {
+        "char": "又",
+        "reading": "yòu",
+        "gloss": "a hand",
+        "role": "meaning",
+        "note": "The hand holding it."
+      }
+    ],
+    "story": "A hand holding a measuring rod. A 丈 was ten 尺, a little over three metres, and from the man who held the measure came 丈夫 (husband) and 老丈 (sir). 丈量 still means to survey land.",
+    "compounds": [
+      {
+        "zh": "丈夫",
+        "py": "zhàngfu",
+        "en": "husband"
+      }
+    ]
+  },
+  {
+    "hanzi": "丑",
+    "structure": "⿻ overlapping",
+    "etyType": "none",
+    "components": [],
+    "story": "Two characters in one shape. 丑 alone is the second of the twelve earthly branches, drawn as a hand with the fingers bent to grip. The simplification also handed it the work of 醜 (ugly), which was a wine jar beside a ghost — hence 丑陋 and the clown, 小丑.",
+    "compounds": [
+      {
+        "zh": "小丑",
+        "py": "xiǎochǒu",
+        "en": "clown"
+      },
+      {
+        "zh": "丑闻",
+        "py": "chǒuwén",
+        "en": "scandal"
+      },
+      {
+        "zh": "丑陋",
+        "py": "chǒulòu",
+        "en": "ugly"
+      },
+      {
+        "zh": "丑恶",
+        "py": "chǒu'è",
+        "en": "ugly; repulsive"
+      }
+    ]
+  },
+  {
+    "hanzi": "尔",
+    "structure": "⿱ stacked",
+    "etyType": "none",
+    "components": [],
+    "story": "The traditional 爾 is a decorated frame or a spindle full of thread, and 尔 is its shorthand. Borrowed early for \"you\" — which is where 你 comes from, 亻 added to 尔 — it now mostly carries foreign sounds: 偶尔, 尼泊尔.",
+    "compounds": [
+      {
+        "zh": "偶尔",
+        "py": "ǒu'ěr",
+        "en": "occasionally; once in a while; sometimes"
+      }
+    ]
+  },
+  {
+    "hanzi": "届",
+    "structure": "⿸ upper-left wrap",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "尸",
+        "gloss": "a body bent over",
+        "role": "meaning",
+        "note": "The element in 屋, 局, 层 — not a corpse."
+      },
+      {
+        "char": "由",
+        "role": "form"
+      }
+    ],
+    "story": "Arriving at the end of a term. It now counts occasions of a thing that comes round again: 本届, 上届, 应届毕业生.",
+    "compounds": [
+      {
+        "zh": "届时",
+        "py": "jièshí",
+        "en": "when the time comes; at the scheduled time"
+      },
+      {
+        "zh": "历届",
+        "py": "lìjiè",
+        "en": "all previous sessions"
+      }
+    ]
+  },
+  {
+    "hanzi": "敬",
+    "structure": "⿰ left–right",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "攵",
+        "reading": "pū",
+        "gloss": "a hand with a stick",
+        "role": "meaning",
+        "note": "The element of making something happen: 改, 政, 教."
+      },
+      {
+        "char": "苟",
+        "role": "form",
+        "note": "A figure kneeling, with a mouth above."
+      }
+    ],
+    "story": "A kneeling figure on the left and a hand with a stick on the right. Respect here is something enacted rather than merely felt: 尊敬, 敬礼, 敬爱.",
+    "compounds": [
+      {
+        "zh": "尊敬",
+        "py": "zūnjìng",
+        "en": "respect; to revere"
+      },
+      {
+        "zh": "敬酒",
+        "py": "jìngjiǔ",
+        "en": "to toast; to propose a toast"
+      },
+      {
+        "zh": "致敬",
+        "py": "zhìjìng",
+        "en": "to greet; to pay respects to"
+      },
+      {
+        "zh": "敬请",
+        "py": "jìngqǐng",
+        "en": "please (do sth) (deferential form)"
+      }
+    ]
+  },
+  {
+    "hanzi": "亏",
+    "structure": "⿱ stacked",
+    "etyType": "none",
+    "components": [],
+    "story": "The traditional 虧 has a tiger's head over 于 for the sound. The sense is a shortfall — something missing that ought to be there: 吃亏 (to lose out), 亏损 (a deficit), and the wry 幸亏, luckily.",
+    "compounds": [
+      {
+        "zh": "吃亏",
+        "py": "chīkuī",
+        "en": "to suffer losses; to come to grief; to lose out; to get the worst of it"
+      },
+      {
+        "zh": "幸亏",
+        "py": "xìngkuī",
+        "en": "fortunately; luckily"
+      },
+      {
+        "zh": "亏损",
+        "py": "kuīsǔn",
+        "en": "deficit; (financial) loss"
+      },
+      {
+        "zh": "多亏",
+        "py": "duōkuī",
+        "en": "thanks to; luckily"
+      }
+    ]
+  },
+  {
+    "hanzi": "厉",
+    "structure": "⿸ upper-left wrap",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "厂",
+        "reading": "chǎng",
+        "gloss": "cliff, rock",
+        "role": "meaning",
+        "note": "The whetstone the character first named."
+      },
+      {
+        "char": "万",
+        "role": "form",
+        "note": "The simplified 萬, which lent the traditional form its sound."
+      }
+    ],
+    "story": "A rough stone under a cliff — a whetstone. From rough stone came harsh, stern, severe: 厉害 in speech, 严厉 in writing.",
+    "compounds": [
+      {
+        "zh": "厉害",
+        "py": "lìhai",
+        "en": "difficult to deal with; difficult to endure; ferocious; radical; serious; terrible"
+      },
+      {
+        "zh": "严厉",
+        "py": "yánlì",
+        "en": "severe; strict"
+      }
+    ]
+  },
+  {
+    "hanzi": "耐",
+    "structure": "⿰ left–right",
+    "etyType": "ideographic",
+    "components": [
+      {
+        "char": "而",
+        "reading": "ér",
+        "gloss": "a beard",
+        "role": "meaning",
+        "note": "而 still drawing what it originally drew."
+      },
+      {
+        "char": "寸",
+        "reading": "cùn",
+        "gloss": "a hand",
+        "role": "meaning"
+      }
+    ],
+    "story": "A hand at a beard: shaving it off was a light punishment, one a man could bear. From a punishment endured came endurance itself — 耐心, 忍耐, 耐用.",
+    "compounds": [
+      {
+        "zh": "耐心",
+        "py": "nàixīn",
+        "en": "to be patient; patience"
+      },
+      {
+        "zh": "不耐烦",
+        "py": "bùnàifán",
+        "en": "impatience; impatient"
+      },
+      {
+        "zh": "忍耐",
+        "py": "rěnnài",
+        "en": "to show restraint; to repress (anger etc); to exercise patience"
+      },
+      {
+        "zh": "耐性",
+        "py": "nàixìng",
+        "en": "patience; endurance"
+      }
+    ]
+  },
+  {
+    "hanzi": "频",
+    "structure": "⿰ left–right",
+    "etyType": "ideographic",
+    "components": [
+      {
+        "char": "步",
+        "reading": "bù",
+        "gloss": "steps",
+        "role": "meaning"
+      },
+      {
+        "char": "页",
+        "reading": "yè",
+        "gloss": "a head",
+        "role": "meaning"
+      }
+    ],
+    "story": "Someone pacing at a river bank, unable to cross — steps beside a head. From the pacing came repetition: 频繁, 频率, 视频.",
+    "compounds": [
+      {
+        "zh": "视频",
+        "py": "shìpín",
+        "en": "video"
+      },
+      {
+        "zh": "频道",
+        "py": "píndào",
+        "en": "frequency; (television) channel"
+      },
+      {
+        "zh": "频繁",
+        "py": "pínfán",
+        "en": "frequently; often"
+      },
+      {
+        "zh": "频率",
+        "py": "pínlǜ",
+        "en": "frequency"
+      }
+    ]
+  },
+  {
+    "hanzi": "唯",
+    "structure": "⿰ left–right",
+    "etyType": "pictophonetic",
+    "components": [
+      {
+        "char": "口",
+        "reading": "kǒu",
+        "gloss": "mouth",
+        "role": "semantic",
+        "note": "It was an answering word first — \"yes\"."
+      },
+      {
+        "char": "隹",
+        "reading": "zhuī",
+        "role": "phonetic",
+        "note": "Lends the sound."
+      }
+    ],
+    "story": "A mouth with 隹 (a short-tailed bird) for the sound. It was the particle for assent, and narrowed to \"only, alone\": 唯一, 唯有, 唯物主义.",
+    "compounds": [
+      {
+        "zh": "唯一",
+        "py": "wéiyī",
+        "en": "only; sole"
+      },
+      {
+        "zh": "唯独",
+        "py": "wéidú",
+        "en": "only; just (i.e. it is only that...); all except; unique"
+      }
+    ]
+  },
+  {
+    "hanzi": "委",
+    "structure": "⿱ stacked",
+    "etyType": "ideographic",
+    "components": [
+      {
+        "char": "禾",
+        "reading": "hé",
+        "gloss": "grain",
+        "role": "meaning",
+        "note": "A heavy ear bending over."
+      },
+      {
+        "char": "女",
+        "reading": "nǚ",
+        "gloss": "a woman",
+        "role": "meaning",
+        "note": "Bending in the same way."
+      }
+    ],
+    "story": "Grain bent under its own weight. From bending came yielding, and from yielding came handing a matter over to someone else: 委托, 委员, 委屈.",
+    "compounds": [
+      {
+        "zh": "委托",
+        "py": "wěituō",
+        "en": "to entrust; to trust; to commission"
+      },
+      {
+        "zh": "委屈",
+        "py": "wěiqu",
+        "en": "to feel wronged; to cause sb to feel wronged; grievance"
+      },
+      {
+        "zh": "委员",
+        "py": "wěiyuán",
+        "en": "committee member; committee; council"
+      },
+      {
+        "zh": "委员会",
+        "py": "wěiyuánhuì",
+        "en": "committee"
+      }
+    ]
+  },
+  {
+    "hanzi": "央",
+    "structure": "⿻ overlapping",
+    "etyType": "ideographic",
+    "components": [
+      {
+        "char": "大",
+        "reading": "dà",
+        "gloss": "a person",
+        "role": "meaning"
+      },
+      {
+        "char": "冂",
+        "role": "form",
+        "note": "The yoke across their shoulders."
+      }
+    ],
+    "story": "A person carrying a yoke, the load balanced on either side — the middle is where they stand. 中央, 央行, 中央电视台.",
+    "compounds": [
+      {
+        "zh": "中央",
+        "py": "zhōngyāng",
+        "en": "central; middle; center; central authorities (of a state)"
+      }
+    ]
+  },
+  {
+    "hanzi": "扁",
+    "structure": "⿸ upper-left wrap",
+    "etyType": "ideographic",
+    "components": [
+      {
+        "char": "户",
+        "reading": "hù",
+        "gloss": "a door",
+        "role": "meaning"
+      },
+      {
+        "char": "𠕁",
+        "gloss": "writing tablets",
+        "role": "meaning",
+        "note": "A board hung above the door — flat by nature."
+      }
+    ],
+    "story": "A signboard over a doorway. Flatness is what survived — 扁平, 压扁 — and read piān it means small: 扁舟, a little boat.",
+    "compounds": [
+      {
+        "zh": "扁豆",
+        "py": "biǎndòu",
+        "en": "hyacinth bean; haricot"
+      },
+      {
+        "zh": "压扁",
+        "py": "yābiǎn",
+        "en": "squash; squeeze"
+      },
+      {
+        "zh": "扁桃体",
+        "py": "biǎntáotǐ",
+        "en": "tonsil"
+      },
+      {
+        "zh": "欠扁",
+        "py": "qiànbiǎn",
+        "en": "annoying; infuriating; deserving of a good spanking"
+      }
+    ]
+  },
+  {
+    "hanzi": "撤",
+    "structure": "⿲ three across",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "扌",
+        "reading": "shǒu",
+        "gloss": "hand",
+        "role": "meaning",
+        "note": "The hand doing the clearing."
+      },
+      {
+        "char": "攵",
+        "role": "form"
+      }
+    ],
+    "story": "A hand with an abbreviated 徹 (to go right through) beside it: to clear something away entirely. Take down the table, pull the troops back — 撤退, 撤销, 撤离.",
+    "compounds": [
+      {
+        "zh": "撤销",
+        "py": "chèxiāo",
+        "en": "to repeal; to revoke; to undo (computing)"
+      },
+      {
+        "zh": "撤离",
+        "py": "chèlí",
+        "en": "to withdraw from; to evacuate"
+      },
+      {
+        "zh": "撤换",
+        "py": "chèhuàn",
+        "en": "recall; dismiss and replace"
+      }
+    ]
+  },
+  {
+    "hanzi": "盗",
+    "structure": "⿱ stacked",
+    "etyType": "ideographic",
+    "components": [
+      {
+        "char": "次",
+        "gloss": "a person drooling",
+        "role": "meaning",
+        "note": "Mouth open over what is not theirs."
+      },
+      {
+        "char": "皿",
+        "reading": "mǐn",
+        "gloss": "a dish",
+        "role": "meaning"
+      }
+    ],
+    "story": "Someone drooling over another's bowl — coveting first, then taking. 强盗, 盗窃, 海盗.",
+    "compounds": [
+      {
+        "zh": "强盗",
+        "py": "qiángdào",
+        "en": "to rob (with force); bandit; robber"
+      },
+      {
+        "zh": "盗版",
+        "py": "dàobǎn",
+        "en": "pirated; illegal"
+      },
+      {
+        "zh": "海盗",
+        "py": "hǎidào",
+        "en": "pirate"
+      },
+      {
+        "zh": "防盗",
+        "py": "fángdào",
+        "en": "to guard against theft; anti-theft"
+      }
+    ]
+  },
+  {
+    "hanzi": "吊",
+    "structure": "⿱ stacked",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "巾",
+        "role": "form"
+      },
+      {
+        "char": "口",
+        "role": "form"
+      }
+    ],
+    "story": "The old graph is a person wound about with a bowstring — mourning dress, hence to condole (吊唁). The physical sense took over: to hang, to suspend, to hoist. 吊灯, 吊车, 上吊.",
+    "compounds": [
+      {
+        "zh": "吊销",
+        "py": "diàoxiāo",
+        "en": "to suspend (an agreement); to revoke"
+      }
+    ]
+  },
+  {
+    "hanzi": "奉",
+    "structure": "⿱ stacked",
+    "etyType": "none",
+    "components": [],
+    "story": "Two hands raised at the foot of the character, holding something up: an offering presented. From offering came serving and receiving orders — 奉献, 奉命, 供奉.",
+    "compounds": [
+      {
+        "zh": "奉献",
+        "py": "fèngxiàn",
+        "en": "to consecrate; to dedicate; to devote"
+      },
+      {
+        "zh": "供奉",
+        "py": "gòngfèng",
+        "en": "to consecrate; to enshrine and worship; an offering (to one's ancestors)"
+      }
+    ]
+  },
+  {
+    "hanzi": "监",
+    "structure": "⿱ stacked",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "皿",
+        "reading": "mǐn",
+        "gloss": "a basin",
+        "role": "meaning",
+        "note": "The water someone bends over to look into."
+      }
+    ],
+    "story": "A person bending over a basin of water with the eye drawn large — looking at their own reflection, which is the ancestor of 鉴 (a mirror). From looking closely came watching over: 监督, 监视, 监狱.",
+    "compounds": [
+      {
+        "zh": "监督",
+        "py": "jiāndū",
+        "en": "to control; to supervise; to inspect"
+      },
+      {
+        "zh": "监测",
+        "py": "jiāncè",
+        "en": "to monitor"
+      },
+      {
+        "zh": "总监",
+        "py": "zǒngjiān",
+        "en": "commissioner (police); inspector-general"
+      },
+      {
+        "zh": "监狱",
+        "py": "jiānyù",
+        "en": "prison"
+      }
+    ]
+  },
+  {
+    "hanzi": "杰",
+    "structure": "⿱ stacked",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "木",
+        "role": "form"
+      },
+      {
+        "char": "灬",
+        "role": "form",
+        "note": "Not fire here — part of what the traditional 傑 collapsed into."
+      }
+    ],
+    "story": "杰 is the everyday form of 傑, a person beside 桀 — someone standing above the rest. The tree and four dots are what that shrank to; the meaning did not move: 杰出, 杰作, 英杰.",
+    "compounds": [
+      {
+        "zh": "杰出",
+        "py": "jiéchū",
+        "en": "outstanding; distinguished; remarkable; prominent; illustrious"
+      }
+    ]
+  },
+  {
+    "hanzi": "侵",
+    "structure": "⿰ left–right",
+    "etyType": "ideographic",
+    "components": [
+      {
+        "char": "亻",
+        "reading": "rén",
+        "gloss": "person",
+        "role": "meaning"
+      },
+      {
+        "char": "彐",
+        "gloss": "a broom",
+        "role": "meaning",
+        "note": "Pushed forward a little at a time."
+      },
+      {
+        "char": "又",
+        "reading": "yòu",
+        "gloss": "a hand",
+        "role": "meaning"
+      }
+    ],
+    "story": "A person sweeping forward step by step. The character is about gradual encroachment rather than a single blow — which is why it covers both 侵略 (invasion) and 侵蚀 (erosion).",
+    "compounds": [
+      {
+        "zh": "侵犯",
+        "py": "qīnfàn",
+        "en": "to infringe on; to encroach on; to violate"
+      },
+      {
+        "zh": "入侵",
+        "py": "rùqīn",
+        "en": "to invade"
+      },
+      {
+        "zh": "侵权",
+        "py": "qīnquán",
+        "en": "to infringe the rights of; to violate; infringement"
+      },
+      {
+        "zh": "侵略",
+        "py": "qīnlüè",
+        "en": "invasion; encroachment"
+      }
+    ]
+  },
+  {
+    "hanzi": "若",
+    "structure": "⿱ stacked",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "艹",
+        "role": "form"
+      },
+      {
+        "char": "右",
+        "role": "form"
+      }
+    ],
+    "story": "The oldest form is a kneeling figure combing out their hair with both hands — a gesture of assent, which is where \"to agree, to be like\" comes from. The grass and mouth are later. 如若, 若干, 倘若.",
+    "compounds": [
+      {
+        "zh": "若干",
+        "py": "ruògān",
+        "en": "a certain number or amount; how many?; how much?"
+      },
+      {
+        "zh": "倘若",
+        "py": "tǎngruò",
+        "en": "provided that; supposing that; if"
+      }
+    ]
+  },
+  {
+    "hanzi": "予",
+    "structure": "⿱ stacked",
+    "etyType": "none",
+    "components": [],
+    "story": "Two hands passing a shuttle between them — one giving, one taking. It is the literary word for giving (给予, 授予), and read yú it is an old word for \"I\".",
+    "compounds": [
+      {
+        "zh": "给予",
+        "py": "jǐyǔ",
+        "en": "to accord; to give; to show (respect)"
+      },
+      {
+        "zh": "授予",
+        "py": "shòuyǔ",
+        "en": "to award; to confer"
+      },
+      {
+        "zh": "赋予",
+        "py": "fùyǔ",
+        "en": "to assign; to entrust (a task); to give; to bestow"
+      },
+      {
+        "zh": "予以",
+        "py": "yǔyǐ",
+        "en": "to give; to impose; to apply"
+      }
+    ]
+  },
+  {
+    "hanzi": "允",
+    "structure": "⿱ stacked",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "儿",
+        "reading": "ér",
+        "gloss": "a person",
+        "role": "meaning",
+        "note": "The two legs at the foot."
+      },
+      {
+        "char": "厶",
+        "role": "form",
+        "note": "The head, nodding."
+      }
+    ],
+    "story": "A figure nodding assent. To allow, to consent, and by extension to be fair: 允许, 允诺, 公允.",
+    "compounds": [
+      {
+        "zh": "允许",
+        "py": "yǔnxǔ",
+        "en": "to permit; to allow"
+      }
+    ]
+  },
+  {
+    "hanzi": "丙",
+    "structure": "⿱ stacked",
+    "etyType": "none",
+    "components": [],
+    "story": "The third of the ten heavenly stems, used for ordering things the way English uses A, B, C — 甲乙丙丁. The graph is read as a fish's tail or the base of a stand; whatever it drew, it has been a pure ordinal for three thousand years.",
+    "compounds": [
+      {
+        "zh": "丙醇",
+        "py": "bǐngchún",
+        "en": "propanol; propyl alcohol C3H7OH"
+      },
+      {
+        "zh": "聚丙烯",
+        "py": "jùbǐngxī",
+        "en": "polypropylene"
+      },
+      {
+        "zh": "丙烯",
+        "py": "bǐngxī",
+        "en": "propylene C3H6"
+      },
+      {
+        "zh": "丙戌",
+        "py": "bǐngxū",
+        "en": "twenty third year C11 of the 60 year cycle, e.g. 2006 or 2066"
+      }
+    ]
+  },
+  {
+    "hanzi": "曹",
+    "structure": "⿱ stacked",
+    "etyType": "none",
+    "components": [],
+    "story": "The old graph shows two bundles over a vessel — litigants setting their cases side by side, hence a group or a class of people (吾曹, \"we lot\"). Today it is the surname, and the Cao of the Three Kingdoms.",
+    "compounds": [
+      {
+        "zh": "曹植",
+        "py": "cáozhí",
+        "en": "Cao Zhi (192-232), son of Cao Cao 曹操, noted poet and calligrapher"
+      },
+      {
+        "zh": "曹操",
+        "py": "cáocāo",
+        "en": "the main villain of novel the Romance of Three Kingdoms 三國演義|三国演义"
+      },
+      {
+        "zh": "曹雪芹",
+        "py": "cáoxuěqín",
+        "en": "Cao Xueqin (c. 1715-c. 1764), accepted author of Dream of Red Mansions 紅樓夢|红楼梦"
+      },
+      {
+        "zh": "曹丕",
+        "py": "cáopī",
+        "en": "Cao Pi (187-226), second son of Cao Cao 曹操, king then emperor of Cao Wei 曹魏 from 220, rul…"
+      }
+    ]
+  },
+  {
+    "hanzi": "辰",
+    "structure": "⿸ upper-left wrap",
+    "etyType": "none",
+    "components": [],
+    "story": "Most read as a hoe made from a clam shell — which is why 农 (agriculture) is built on it. As the fifth earthly branch it names a double hour and a season, and by extension any moment in time: 时辰, 诞辰.",
+    "compounds": [
+      {
+        "zh": "诞辰",
+        "py": "dànchén",
+        "en": "birthday"
+      }
+    ]
+  },
+  {
+    "hanzi": "匆",
+    "structure": "⿻ overlapping",
+    "etyType": "none",
+    "components": [],
+    "story": "A shorthand character for haste, almost always doubled: 匆匆 (in a rush), 匆忙, 来去匆匆. The strokes are a pattern rather than a picture — there is nothing inside it to take apart.",
+    "compounds": [
+      {
+        "zh": "匆匆",
+        "py": "cōngcōng",
+        "en": "hurriedly"
+      },
+      {
+        "zh": "匆忙",
+        "py": "cōngmáng",
+        "en": "hasty; hurried"
+      }
+    ]
+  },
+  {
+    "hanzi": "殿",
+    "structure": "⿰ left–right",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "殳",
+        "reading": "shū",
+        "gloss": "a hand with a mallet",
+        "role": "meaning",
+        "note": "The striking element, as in 段 and 毁."
+      },
+      {
+        "char": "尸",
+        "role": "form"
+      }
+    ],
+    "story": "A great hall raised by hand — a palace building. 宫殿, 大殿, 殿堂. Used as a verb it is bringing up the rear: 殿后.",
+    "compounds": [
+      {
+        "zh": "殿堂",
+        "py": "diàntáng",
+        "en": "palace; hall; temple buildings"
+      },
+      {
+        "zh": "宫殿",
+        "py": "gōngdiàn",
+        "en": "palace"
+      }
+    ]
+  },
+  {
+    "hanzi": "刁",
+    "structure": "⿹ upper-right wrap",
+    "etyType": "none",
+    "components": [],
+    "story": "A late, deliberately odd shape — 刀 with the stroke turned — used for \"artful, tricky, unreasonable\": 刁难, to make things difficult on purpose. Also a surname. There is no older picture behind it.",
+    "compounds": [
+      {
+        "zh": "刁难",
+        "py": "diāonàn",
+        "en": "to be hard on sb; to deliberately make things difficult"
+      }
+    ]
+  },
+  {
+    "hanzi": "勾",
+    "structure": "⿹ upper-right wrap",
+    "etyType": "ideographic",
+    "components": [
+      {
+        "char": "勹",
+        "reading": "bāo",
+        "gloss": "to wrap",
+        "role": "meaning",
+        "note": "The stroke curling round."
+      },
+      {
+        "char": "厶",
+        "role": "form",
+        "note": "What is caught inside it."
+      }
+    ],
+    "story": "Something caught and held in a curl. To hook, to tick, to cross out — 勾选, 勾画 — and figuratively to draw a person in: 勾引.",
+    "compounds": [
+      {
+        "zh": "勾结",
+        "py": "gōujié",
+        "en": "to collude with; to collaborate with; to gang up with"
+      },
+      {
+        "zh": "勾画",
+        "py": "gōuhuà",
+        "en": "blueprinted"
+      }
+    ]
+  },
+  {
+    "hanzi": "寡",
+    "structure": "⿱ stacked",
+    "etyType": "ideographic",
+    "components": [
+      {
+        "char": "宀",
+        "reading": "gài",
+        "gloss": "roof",
+        "role": "meaning"
+      },
+      {
+        "char": "頁",
+        "reading": "yè",
+        "gloss": "a head",
+        "role": "meaning",
+        "note": "One person left under it."
+      },
+      {
+        "char": "刀",
+        "reading": "dāo",
+        "gloss": "a knife",
+        "role": "meaning",
+        "note": "The share cut away."
+      }
+    ],
+    "story": "One head under a roof with a knife dividing: what is left after a share is taken. Hence few — 寡言, 沉默寡言 — and hence the widow, 寡妇. A ruler called himself 寡人, \"the one with little virtue\".",
+    "compounds": [
+      {
+        "zh": "寡妇",
+        "py": "guǎfu",
+        "en": "widow"
+      }
+    ]
+  },
+  {
+    "hanzi": "乖",
+    "structure": "⿻ overlapping",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "北",
+        "gloss": "two people back to back",
+        "role": "meaning",
+        "note": "Turned away from each other."
+      },
+      {
+        "char": "千",
+        "role": "form"
+      }
+    ],
+    "story": "The old sense is at odds, going different ways — 乖张 still means perverse. Colloquial Chinese then reversed it completely: said to a child, 乖 means well-behaved.",
+    "compounds": [
+      {
+        "zh": "乖巧",
+        "py": "guāiqiǎo",
+        "en": "clever (child); smart; lovable; cute"
+      }
+    ]
+  },
+  {
+    "hanzi": "韩",
+    "structure": "⿰ left–right",
+    "etyType": "pictophonetic",
+    "components": [
+      {
+        "char": "龺",
+        "role": "form"
+      },
+      {
+        "char": "韦",
+        "reading": "wéi",
+        "role": "phonetic",
+        "note": "Lends the sound."
+      }
+    ],
+    "story": "A phonetic compound that named an ancient state and one of its great families. It now names Korea: 韩国, 韩语, 韩剧.",
+    "compounds": [
+      {
+        "zh": "韩国",
+        "py": "hánguó",
+        "en": "South Korea (Republic of Korea)"
+      },
+      {
+        "zh": "韩城",
+        "py": "hánchéng",
+        "en": "Hancheng city and county in Shaanxi"
+      },
+      {
+        "zh": "韩语",
+        "py": "hányǔ",
+        "en": "Korean language (esp. in context of South Korea)"
+      },
+      {
+        "zh": "韩国人",
+        "py": "hánguórén",
+        "en": "Korean (person)"
+      }
+    ]
+  },
+  {
+    "hanzi": "弘",
+    "structure": "⿰ left–right",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "弓",
+        "reading": "gōng",
+        "gloss": "a bow",
+        "role": "meaning"
+      },
+      {
+        "char": "厶",
+        "role": "form",
+        "note": "A mark for the note the string makes."
+      }
+    ],
+    "story": "A bow with a mark for the twang of the string. From a sound that carries came \"great, wide\": 弘扬 (to carry forward), 恢弘.",
+    "compounds": [
+      {
+        "zh": "弘扬",
+        "py": "hóngyáng",
+        "en": "to enhance; to promote; to enrich"
+      }
+    ]
+  },
+  {
+    "hanzi": "徽",
+    "structure": "⿲ three across",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "彳",
+        "role": "form",
+        "note": "A step, the same frame as 微."
+      },
+      {
+        "char": "系",
+        "reading": "xì",
+        "gloss": "silk threads",
+        "role": "meaning",
+        "note": "The cord or banner that marks who someone is."
+      },
+      {
+        "char": "攵",
+        "role": "form"
+      }
+    ],
+    "story": "Built on the same frame as 微, with silk threads inside: a cord or banner marking who someone is. Hence a badge — 徽章, 国徽 — and the old name of the Huizhou region, which gave Anhui half its name.",
+    "compounds": [
+      {
+        "zh": "国徽",
+        "py": "guóhuī",
+        "en": "national emblem; coat of arms"
+      }
+    ]
+  },
+  {
+    "hanzi": "匠",
+    "structure": "⿷ wrapped from the left",
+    "etyType": "ideographic",
+    "components": [
+      {
+        "char": "匚",
+        "reading": "fāng",
+        "gloss": "an open box",
+        "role": "meaning"
+      },
+      {
+        "char": "斤",
+        "reading": "jīn",
+        "gloss": "an axe",
+        "role": "meaning"
+      }
+    ],
+    "story": "An axe in a toolbox. The craftsman is the one whose tools these are: 木匠 (carpenter), 工匠, and 匠心, the care a maker puts into the work.",
+    "compounds": [
+      {
+        "zh": "木匠",
+        "py": "mùjiàng",
+        "en": "carpenter"
+      }
+    ]
+  },
+  {
+    "hanzi": "皆",
+    "structure": "⿱ stacked",
+    "etyType": "ideographic",
+    "components": [
+      {
+        "char": "比",
+        "reading": "bǐ",
+        "gloss": "two people side by side",
+        "role": "meaning"
+      },
+      {
+        "char": "白",
+        "role": "form"
+      }
+    ],
+    "story": "People standing together, saying the same thing. It is the written word for \"all\" — 人人皆知, 皆大欢喜 — where speech uses 都.",
+    "compounds": [
+      {
+        "zh": "比比皆是",
+        "py": "bǐbǐjiēshì",
+        "en": "can be found everywhere"
+      }
+    ]
+  },
+  {
+    "hanzi": "兢",
+    "structure": "⿰ left–right",
+    "etyType": "none",
+    "components": [],
+    "story": "A doubled figure, standing very carefully. It survives almost only in pairs: 兢兢业业 (conscientious and painstaking) and 战战兢兢 (trembling with caution).",
+    "compounds": [
+      {
+        "zh": "兢兢业业",
+        "py": "jīngjīngyèyè",
+        "en": "cautious and conscientious"
+      }
+    ]
+  },
+  {
+    "hanzi": "凯",
+    "structure": "⿰ left–right",
+    "etyType": "pictophonetic",
+    "components": [
+      {
+        "char": "岂",
+        "reading": "qǐ",
+        "role": "phonetic",
+        "note": "Lends the sound."
+      },
+      {
+        "char": "几",
+        "role": "form"
+      }
+    ],
+    "story": "The music played when an army comes home victorious — 凯歌, 凯旋. Triumph is the whole of its modern range, plus a great many transliterated names.",
+    "compounds": [
+      {
+        "zh": "凯歌",
+        "py": "kǎigē",
+        "en": "triumphal hymn; victory song; paean"
+      }
+    ]
+  },
+  {
+    "hanzi": "黎",
+    "structure": "⿱ stacked",
+    "etyType": "none",
+    "components": [],
+    "story": "Grain over water with a phonetic — a sticky paste made from grain. It came to mean black, and that is how you meet it: 黎明, the dark just before dawn, and 黎民, the common people, \"the black-haired ones\".",
+    "compounds": [
+      {
+        "zh": "黎明",
+        "py": "límíng",
+        "en": "dawn; daybreak"
+      }
+    ]
+  },
+  {
+    "hanzi": "吏",
+    "structure": "⿻ overlapping",
+    "etyType": "none",
+    "components": [],
+    "story": "The same old graph as 史 and 事 — a hand holding the implement of an office. 吏 took the person rather than the work: the petty official, the clerk. Formal and historical now: 官吏, 酷吏.",
+    "compounds": [
+      {
+        "zh": "官吏",
+        "py": "guānlì",
+        "en": "a functionary; an office holder"
+      }
+    ]
+  },
+  {
+    "hanzi": "廉",
+    "structure": "⿸ upper-left wrap",
+    "etyType": "pictophonetic",
+    "components": [
+      {
+        "char": "广",
+        "reading": "guǎng",
+        "gloss": "a building open at the front",
+        "role": "semantic",
+        "note": "The hall whose edge the character named."
+      },
+      {
+        "char": "兼",
+        "reading": "jiān",
+        "role": "phonetic",
+        "note": "Lends the sound."
+      }
+    ],
+    "story": "The edge or corner of a hall. From a clean straight edge came \"upright, incorruptible\" — 廉洁, 清廉 — and, by a separate road, \"cheap\": 廉价, 物美价廉.",
+    "compounds": [
+      {
+        "zh": "廉价",
+        "py": "liánjià",
+        "en": "cheaply-priced"
+      },
+      {
+        "zh": "廉洁",
+        "py": "liánjié",
+        "en": "honest; not coercive; honesty; integrity; incorruptible"
+      },
+      {
+        "zh": "廉政",
+        "py": "liánzhèng",
+        "en": "honest or clean politics"
+      },
+      {
+        "zh": "廉正",
+        "py": "liánzhèng",
+        "en": "honest and upright; incorruptible"
+      }
+    ]
+  },
+  {
+    "hanzi": "隆",
+    "structure": "⿰ left–right",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "阝",
+        "gloss": "a mound of earth",
+        "role": "meaning",
+        "note": "High ground — the element in 阳, 阶, 陆."
+      },
+      {
+        "char": "生",
+        "role": "form"
+      }
+    ],
+    "story": "Something raised up on high ground: grand, prosperous, swelling. 隆重 (ceremonious), 兴隆 (thriving), and the rumble of 轰隆.",
+    "compounds": [
+      {
+        "zh": "隆重",
+        "py": "lóngzhòng",
+        "en": "grand; prosperous; ceremonious; solemn"
+      },
+      {
+        "zh": "克隆",
+        "py": "kèlóng",
+        "en": "clone"
+      }
+    ]
+  },
+  {
+    "hanzi": "赂",
+    "structure": "⿰ left–right",
+    "etyType": "pictophonetic",
+    "components": [
+      {
+        "char": "贝",
+        "reading": "bèi",
+        "gloss": "a cowrie shell — money",
+        "role": "semantic",
+        "note": "The property changing hands."
+      },
+      {
+        "char": "各",
+        "reading": "gè",
+        "role": "phonetic",
+        "note": "Lends the sound."
+      }
+    ],
+    "story": "Money with a phonetic beside it, and the money is the point: property given to buy influence. It rarely stands alone — 贿赂 is the word.",
+    "compounds": [
+      {
+        "zh": "贿赂",
+        "py": "huìlù",
+        "en": "to bribe; a bribe"
+      }
+    ]
+  },
+  {
+    "hanzi": "蔑",
+    "structure": "⿱ stacked",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "罒",
+        "gloss": "an eye",
+        "role": "meaning",
+        "note": "Marked or worn out in the old graph."
+      },
+      {
+        "char": "戍",
+        "role": "form"
+      }
+    ],
+    "story": "A figure with a marked eye and a weapon below — exhausted, or blinded. What survived is contempt: to look down on, to belittle. 蔑视, 轻蔑.",
+    "compounds": [
+      {
+        "zh": "轻蔑",
+        "py": "qīngmiè",
+        "en": "to contempt; to disdain; pejorative"
+      }
+    ]
+  },
+  {
+    "hanzi": "莫",
+    "structure": "⿱ stacked",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "艹",
+        "reading": "cǎo",
+        "gloss": "grass",
+        "role": "meaning"
+      },
+      {
+        "char": "旲",
+        "role": "form",
+        "note": "The sun sinking into it."
+      }
+    ],
+    "story": "The sun going down into the grass — this is the original 暮 (dusk). Borrowed for the negative \"none, do not\", it left the sunset to be rewritten with a second 日 underneath. 莫非, 莫名其妙.",
+    "compounds": [
+      {
+        "zh": "莫过于",
+        "py": "mòguòyú",
+        "en": "nothing can surpass"
+      },
+      {
+        "zh": "莫非",
+        "py": "mòfēi",
+        "en": "can it be possible that; could it be"
+      }
+    ]
+  },
+  {
+    "hanzi": "尼",
+    "structure": "⿸ upper-left wrap",
+    "etyType": "ideographic",
+    "components": [
+      {
+        "char": "尸",
+        "gloss": "a person",
+        "role": "meaning"
+      },
+      {
+        "char": "匕",
+        "gloss": "another, leaning close",
+        "role": "meaning"
+      }
+    ],
+    "story": "One figure leaning on another; the old sense is closeness. It now does two unrelated jobs: 尼姑, a Buddhist nun, from Sanskrit bhikṣuṇī — and the 尼 of transliterated names, 尼泊尔, 印度尼西亚.",
+    "compounds": [
+      {
+        "zh": "尼龙",
+        "py": "nílóng",
+        "en": "nylon"
+      }
+    ]
+  },
+  {
+    "hanzi": "欧",
+    "structure": "⿰ left–right",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "区",
+        "role": "form",
+        "note": "Lends the sound."
+      },
+      {
+        "char": "欠",
+        "reading": "qiàn",
+        "gloss": "a person with the mouth open",
+        "role": "meaning",
+        "note": "The breath element, as in 歌, 吹, 欢."
+      }
+    ],
+    "story": "A person with their mouth open beside a phonetic — the old sense is retching. It is now used almost entirely for its sound: 欧洲, 欧元, and the surname 欧阳.",
+    "compounds": [
+      {
+        "zh": "欧洲",
+        "py": "ōuzhōu",
+        "en": "Europe; European"
+      },
+      {
+        "zh": "欧元",
+        "py": "ōuyuán",
+        "en": "Euro (currency)"
+      },
+      {
+        "zh": "欧盟",
+        "py": "ōuméng",
+        "en": "European Union; EU"
+      },
+      {
+        "zh": "欧元区",
+        "py": "ōuyuánqū",
+        "en": "Eurozone"
+      }
+    ]
+  },
+  {
+    "hanzi": "乞",
+    "structure": "simple / indivisible",
+    "etyType": "none",
+    "components": [],
+    "story": "Three lines of vapour rising — the same picture as 气 with the middle stroke dropped. Borrowed for \"to beg, to request\", which is all it does now: 乞求, 乞丐. It is also the sound inside 吃.",
+    "compounds": [
+      {
+        "zh": "乞丐",
+        "py": "qǐgài",
+        "en": "beggar"
+      },
+      {
+        "zh": "乞讨",
+        "py": "qǐtǎo",
+        "en": "to beg; to go begging"
+      },
+      {
+        "zh": "乞求",
+        "py": "qǐqiú",
+        "en": "to beg"
+      }
+    ]
+  },
+  {
+    "hanzi": "虔",
+    "structure": "⿸ upper-left wrap",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "虍",
+        "reading": "hū",
+        "gloss": "a tiger's head",
+        "role": "meaning",
+        "note": "The tiger's step, taken carefully."
+      },
+      {
+        "char": "文",
+        "role": "form"
+      }
+    ],
+    "story": "A tiger placing its feet with care. The sense is reverent, devout — and it barely leaves its one word: 虔诚.",
+    "compounds": [
+      {
+        "zh": "虔诚",
+        "py": "qiánchéng",
+        "en": "pious; devout; sincere"
+      }
+    ]
+  },
+  {
+    "hanzi": "秦",
+    "structure": "⿱ stacked",
+    "etyType": "ideographic",
+    "components": [
+      {
+        "char": "𡗗",
+        "gloss": "two hands with a pestle",
+        "role": "meaning"
+      },
+      {
+        "char": "禾",
+        "reading": "hé",
+        "gloss": "grain",
+        "role": "meaning",
+        "note": "What is being pounded."
+      }
+    ],
+    "story": "Two hands bringing a pestle down on grain. It named the state that made the first empire — and, travelling out through Persian and Sanskrit, gave the world the name \"China\".",
+    "compounds": [
+      {
+        "zh": "秦皇岛",
+        "py": "qínhuángdǎo",
+        "en": "Qinhuangdao prefecture level city in Hebei"
+      },
+      {
+        "zh": "秦始皇",
+        "py": "qínshǐhuáng",
+        "en": "Qin Shihuang (259-210 BC), the first emperor"
+      },
+      {
+        "zh": "秦淮",
+        "py": "qínhuái",
+        "en": "Qinhuai district of Nanjing City 南京市 in Jiangsu 江蘇|江苏"
+      },
+      {
+        "zh": "秦岭",
+        "py": "qínlǐng",
+        "en": "Qinling mountain range in Shaanxi forming natural barrier between Guanzhong plain 關中平原|关中…"
+      }
+    ]
+  },
+  {
+    "hanzi": "顷",
+    "structure": "⿰ left–right",
+    "etyType": "ideographic",
+    "components": [
+      {
+        "char": "匕",
+        "gloss": "a person bending",
+        "role": "meaning"
+      },
+      {
+        "char": "页",
+        "reading": "yè",
+        "gloss": "a head",
+        "role": "meaning"
+      }
+    ],
+    "story": "A head tilted to one side — the ancestor of 倾 (to lean). From a tilt of the head came \"a moment\": 顷刻, 少顷. It is also a land measure, a hundred 亩.",
+    "compounds": [
+      {
+        "zh": "公顷",
+        "py": "gōngqǐng",
+        "en": "hectare"
+      }
+    ]
+  },
+  {
+    "hanzi": "辱",
+    "structure": "⿸ upper-left wrap",
+    "etyType": "ideographic",
+    "components": [
+      {
+        "char": "辰",
+        "reading": "chén",
+        "gloss": "a shell hoe",
+        "role": "meaning"
+      },
+      {
+        "char": "寸",
+        "reading": "cùn",
+        "gloss": "a hand",
+        "role": "meaning",
+        "note": "The hand made to hold it."
+      }
+    ],
+    "story": "A hand put to the hoe under someone's orders. From forced labour came disgrace: 侮辱, 耻辱, 羞辱.",
+    "compounds": [
+      {
+        "zh": "侮辱",
+        "py": "wǔrǔ",
+        "en": "to insult; to humiliate; dishonor"
+      },
+      {
+        "zh": "耻辱",
+        "py": "chǐrǔ",
+        "en": "disgrace; shame; humiliation"
+      }
+    ]
+  },
+  {
+    "hanzi": "萨",
+    "structure": "⿱ stacked",
+    "etyType": "none",
+    "components": [],
+    "story": "A character kept almost entirely for its sound: 菩萨 (a bodhisattva, from Sanskrit), 萨克斯 (saxophone), 拉萨 (Lhasa). There is no meaning inside it to take apart.",
+    "compounds": [
+      {
+        "zh": "菩萨",
+        "py": "púsà",
+        "en": "Bodhisattva (Buddhism)"
+      }
+    ]
+  },
+  {
+    "hanzi": "蜀",
+    "structure": "⿱ stacked",
+    "etyType": "ideographic",
+    "components": [
+      {
+        "char": "罒",
+        "gloss": "an eye",
+        "role": "meaning",
+        "note": "Drawn large on the creature's head."
+      },
+      {
+        "char": "虫",
+        "reading": "chóng",
+        "gloss": "a creature",
+        "role": "meaning"
+      }
+    ],
+    "story": "A caterpillar with a big eye. The name attached to the Sichuan basin and to the Shu kingdom of the Three Kingdoms; Sichuan number plates still start with 蜀.",
+    "compounds": [
+      {
+        "zh": "蜀国",
+        "py": "shǔguó",
+        "en": "the state of Shu in Sichuan at different periods; Sichuan"
+      },
+      {
+        "zh": "蜀汉",
+        "py": "shǔhàn",
+        "en": "Shu Han (c. 200-263), Liu Bei's kingdom in Sichuan during the Three Kingdoms, claiming le…"
+      },
+      {
+        "zh": "蜀山",
+        "py": "shǔshān",
+        "en": "Shushan district of Hefei city 合肥市, Anhui"
+      },
+      {
+        "zh": "巴蜀",
+        "py": "bāshǔ",
+        "en": "originally two provinces of Qin and Han; Sichuan"
+      }
+    ]
+  },
+  {
+    "hanzi": "斯",
+    "structure": "⿰ left–right",
+    "etyType": "pictophonetic",
+    "components": [
+      {
+        "char": "其",
+        "reading": "qí",
+        "role": "phonetic",
+        "note": "Lends the sound."
+      },
+      {
+        "char": "斤",
+        "reading": "jīn",
+        "gloss": "an axe",
+        "role": "semantic",
+        "note": "The old sense is to split."
+      }
+    ],
+    "story": "An axe with 其 for the sound: to split. Borrowed for the literary \"this\" (斯人), and now doing most of its work inside transliterations — 俄罗斯, 斯里兰卡 — plus 斯文, cultured.",
+    "compounds": [
+      {
+        "zh": "穆斯林",
+        "py": "mùsīlín",
+        "en": "Muslim"
+      }
+    ]
+  },
+  {
+    "hanzi": "屉",
+    "structure": "⿸ upper-left wrap",
+    "etyType": "pictophonetic",
+    "components": [
+      {
+        "char": "尸",
+        "gloss": "the frame of a thing",
+        "role": "semantic",
+        "note": "The same element as in 屋, 层, 届."
+      },
+      {
+        "char": "世",
+        "reading": "shì",
+        "role": "phonetic",
+        "note": "Lends the sound."
+      }
+    ],
+    "story": "A tray or drawer that slides in and out of its frame. It lives in one word: 抽屉.",
+    "compounds": [
+      {
+        "zh": "抽屉",
+        "py": "chōuti",
+        "en": "drawer"
+      }
+    ]
+  },
+  {
+    "hanzi": "屯",
+    "structure": "⿻ overlapping",
+    "etyType": "ideographic",
+    "components": [
+      {
+        "char": "屮",
+        "reading": "chè",
+        "gloss": "a sprout",
+        "role": "meaning"
+      },
+      {
+        "char": "一",
+        "gloss": "the ground it pushes against",
+        "role": "meaning"
+      }
+    ],
+    "story": "A shoot straining up against the soil — strength gathering in one place. From that came troops stationed, grain stored, and the hamlet where both sit: 屯兵, 屯粮.",
+    "compounds": [
+      {
+        "zh": "三里屯",
+        "py": "sānlǐtún",
+        "en": "Sanlitun (Beijing street name)"
+      },
+      {
+        "zh": "屯溪",
+        "py": "túnxī",
+        "en": "Tunxi district of Huangshan city 黃山市|黄山市, Anhui"
+      },
+      {
+        "zh": "屯门",
+        "py": "túnmén",
+        "en": "Tuen Mun district of New Territories, Hong Kong"
+      },
+      {
+        "zh": "屯子",
+        "py": "túnzi",
+        "en": "village"
+      }
+    ]
+  },
+  {
+    "hanzi": "吴",
+    "structure": "⿱ stacked",
+    "etyType": "ideographic",
+    "components": [
+      {
+        "char": "口",
+        "reading": "kǒu",
+        "gloss": "a mouth",
+        "role": "meaning"
+      },
+      {
+        "char": "天",
+        "role": "form",
+        "note": "The figure below, head tilted back."
+      }
+    ],
+    "story": "A figure with the head thrown back, shouting. It named the state of the Yangtze delta and survives as one of the commonest surnames — and in 吴语, the Wu dialects of Shanghai and Suzhou.",
+    "compounds": [
+      {
+        "zh": "吴国",
+        "py": "wúguó",
+        "en": "Wu state (in south China, in different historical periods)"
+      },
+      {
+        "zh": "东吴",
+        "py": "dōngwú",
+        "en": "the southern state of Wu during the Three Kingdoms period, founded by Sun Quan 孫權|孙权"
+      },
+      {
+        "zh": "吴江",
+        "py": "wújiāng",
+        "en": "Wujiang county level city in Suzhou 蘇州|苏州, Jiangsu"
+      },
+      {
+        "zh": "吴建豪",
+        "py": "wújiànháo",
+        "en": "Wu Jianhao or Vanness Wu (1978-), Taiwan pop star and actor, F4 band member"
+      }
+    ]
+  },
+  {
+    "hanzi": "侮",
+    "structure": "⿰ left–right",
+    "etyType": "pictophonetic",
+    "components": [
+      {
+        "char": "亻",
+        "reading": "rén",
+        "gloss": "person",
+        "role": "semantic",
+        "note": "The one treated as beneath you."
+      },
+      {
+        "char": "每",
+        "reading": "měi",
+        "role": "phonetic",
+        "note": "Lends the sound."
+      }
+    ],
+    "story": "A person with 每 for the sound: to treat someone as beneath you. It survives in 侮辱 (to humiliate) and 欺侮 (to bully).",
+    "compounds": [
+      {
+        "zh": "侮辱",
+        "py": "wǔrǔ",
+        "en": "to insult; to humiliate; dishonor"
+      }
+    ]
+  },
+  {
+    "hanzi": "巷",
+    "structure": "⿱ stacked",
+    "etyType": "ideographic",
+    "components": [
+      {
+        "char": "共",
+        "reading": "gòng",
+        "gloss": "held in common",
+        "role": "meaning"
+      },
+      {
+        "char": "巳",
+        "role": "form",
+        "note": "What is left of 邑, a settlement."
+      }
+    ],
+    "story": "The ground a neighbourhood holds in common — which is exactly an alley, the lane between the houses. 小巷, 巷子, 街头巷尾.",
+    "compounds": [
+      {
+        "zh": "大街小巷",
+        "py": "dàjiēxiǎoxiàng",
+        "en": "great streets and small alleys (idiom); everywhere in the city"
+      }
+    ]
+  },
+  {
+    "hanzi": "邪",
+    "structure": "⿰ left–right",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "牙",
+        "role": "form",
+        "note": "Lends the sound."
+      },
+      {
+        "char": "阝",
+        "role": "form",
+        "note": "邑, a settlement — the mark of a place name."
+      }
+    ],
+    "story": "It began as a place name, like most characters with 阝 on the right, and was borrowed for \"crooked, heterodox, evil\": 邪恶, 改邪归正, 歪风邪气.",
+    "compounds": [
+      {
+        "zh": "邪恶",
+        "py": "xié'è",
+        "en": "sinister; vicious; wicked; evil"
+      }
+    ]
+  },
+  {
+    "hanzi": "玄",
+    "structure": "⿱ stacked",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "幺",
+        "reading": "yāo",
+        "gloss": "a twist of silk",
+        "role": "meaning",
+        "note": "Hung up after dyeing."
+      }
+    ],
+    "story": "Dyed silk hung to dry, and the deep colour it takes: black, and from black, obscure and profound. 玄妙, 玄学 — and in modern slang, far-fetched.",
+    "compounds": [
+      {
+        "zh": "玄机",
+        "py": "xuánjī",
+        "en": "profound theory (in Daoism and Buddhism); mysterious principles"
+      }
+    ]
+  },
+  {
+    "hanzi": "冶",
+    "structure": "⿰ left–right",
+    "etyType": "pictophonetic",
+    "components": [
+      {
+        "char": "冫",
+        "gloss": "melting",
+        "role": "semantic",
+        "note": "Metal running, not ice."
+      },
+      {
+        "char": "台",
+        "reading": "tái",
+        "role": "phonetic",
+        "note": "Lends the sound."
+      }
+    ],
+    "story": "Metal melting with 台 for the sound: to smelt and cast. 冶金 is metallurgy, and 陶冶 applies the same idea to a person — shaping them in the fire.",
+    "compounds": [
+      {
+        "zh": "陶冶",
+        "py": "táoyě",
+        "en": "lit. to fire pots and smelt metal; fig. to educate"
+      }
+    ]
+  },
+  {
+    "hanzi": "矣",
+    "structure": "⿱ stacked",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "矢",
+        "reading": "shǐ",
+        "gloss": "an arrow",
+        "role": "meaning",
+        "note": "Loosed — the thing is done."
+      },
+      {
+        "char": "厶",
+        "role": "form"
+      }
+    ],
+    "story": "The arrow gone from the bow: the matter has changed and cannot change back. It is the classical sentence-final particle the modern 了 replaced, and you meet it in quotations rather than in speech.",
+    "compounds": []
+  },
+  {
+    "hanzi": "冤",
+    "structure": "⿱ stacked",
+    "etyType": "ideographic",
+    "components": [
+      {
+        "char": "冖",
+        "reading": "mì",
+        "gloss": "a cover",
+        "role": "meaning"
+      },
+      {
+        "char": "兔",
+        "reading": "tù",
+        "gloss": "a rabbit",
+        "role": "meaning",
+        "note": "Trapped under it, unable to get out."
+      }
+    ],
+    "story": "A rabbit pinned under a cover. That is the feeling the character names — a wrong you cannot get out from under, a false accusation: 冤枉, 冤屈, 申冤.",
+    "compounds": [
+      {
+        "zh": "冤枉",
+        "py": "yuānwang",
+        "en": "to accuse wrongly; to treat unjustly; injustice; wronged; not worthwhile"
+      }
+    ]
+  },
+  {
+    "hanzi": "粤",
+    "structure": "⿱ stacked",
+    "etyType": "none",
+    "components": [],
+    "story": "An old particle borrowed as the classical name for the far south, and now the standard short form for Guangdong: 粤语 (Cantonese), 粤菜, and the 粤 on Guangdong number plates.",
+    "compounds": [
+      {
+        "zh": "粤语",
+        "py": "yuèyǔ",
+        "en": "Cantonese language"
+      },
+      {
+        "zh": "粤菜",
+        "py": "yuècài",
+        "en": "Cantonese cuisine"
+      },
+      {
+        "zh": "粤剧",
+        "py": "yuèjù",
+        "en": "Cantonese opera"
+      },
+      {
+        "zh": "粤海",
+        "py": "yuèhǎi",
+        "en": "Guangdong-Hainan"
+      }
+    ]
+  },
+  {
+    "hanzi": "皂",
+    "structure": "⿱ stacked",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "白",
+        "role": "form"
+      },
+      {
+        "char": "七",
+        "role": "form"
+      }
+    ],
+    "story": "The old sense is black — 不分青红皂白 is to make no distinction at all. Soap came later, from the black soapberry pods once used for washing: 肥皂.",
+    "compounds": [
+      {
+        "zh": "肥皂",
+        "py": "féizào",
+        "en": "soap"
+      }
+    ]
+  },
+  {
+    "hanzi": "赵",
+    "structure": "⿺ lower-left wrap",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "走",
+        "role": "form",
+        "note": "The running element; the rest lent the sound."
+      }
+    ],
+    "story": "It named one of the Warring States and is now one of the commonest Chinese surnames — traditionally the very first in the Hundred Family Surnames, because the Song emperors were Zhao.",
+    "compounds": [
+      {
+        "zh": "赵本山",
+        "py": "zhàoběnshān",
+        "en": "Zhao Benshan (1958-), universally known PRC TV comedian"
+      },
+      {
+        "zh": "赵云",
+        "py": "zhàoyún",
+        "en": "Zhao Yun (-229), general of Shu in Romance of the Three Kingdoms"
+      },
+      {
+        "zh": "赵薇",
+        "py": "zhàowēi",
+        "en": "Zhao Wei or Vicky Zhao (1976-), Chinese film star"
+      },
+      {
+        "zh": "赵国",
+        "py": "zhàoguó",
+        "en": "Zhao, one of the seven states during the Warring States Period of Chinese history (475-22…"
+      }
+    ]
+  },
+  {
+    "hanzi": "肇",
+    "structure": "⿱ stacked",
+    "etyType": "ideographic",
+    "components": [
+      {
+        "char": "户",
+        "reading": "hù",
+        "gloss": "a door",
+        "role": "meaning"
+      },
+      {
+        "char": "攵",
+        "role": "form",
+        "note": "A hand striking it open."
+      },
+      {
+        "char": "聿",
+        "reading": "yù",
+        "gloss": "a hand holding a brush",
+        "role": "meaning"
+      }
+    ],
+    "story": "A door struck open with a brush below: to open something up, to start it. Formal in 肇始, and blunt in modern use — 肇事 is to cause an accident, to be the one who started it.",
+    "compounds": [
+      {
+        "zh": "肇事",
+        "py": "zhàoshì",
+        "en": "to cause trouble; to provoke a disturbance"
+      }
+    ]
+  },
+  {
+    "hanzi": "贞",
+    "structure": "⿱ stacked",
+    "etyType": "ideographic",
+    "components": [
+      {
+        "char": "⺊",
+        "gloss": "a divination crack",
+        "role": "meaning",
+        "note": "The crack in the bone that answered the question."
+      },
+      {
+        "char": "贝",
+        "reading": "bèi",
+        "gloss": "a cowrie shell",
+        "role": "meaning"
+      }
+    ],
+    "story": "Putting a question to the oracle. From a straight answer came steadfastness — 忠贞 keeps that broad sense — and later the much narrower 贞洁, chastity.",
+    "compounds": [
+      {
+        "zh": "忠贞",
+        "py": "zhōngzhēn",
+        "en": "loyal and dependable"
+      }
+    ]
+  },
+  {
+    "hanzi": "兹",
+    "structure": "⿳ three stacked",
+    "etyType": "none",
+    "components": [
+      {
+        "char": "幺",
+        "reading": "yāo",
+        "gloss": "a twist of silk",
+        "role": "meaning",
+        "note": "Doubled — threads multiplying."
+      }
+    ],
+    "story": "Two twists of silk: growing, multiplying, which is where 滋 (to nourish) comes from. As a word it is the literary \"this, herewith\" — 兹定于, the phrasing of official notices.",
+    "compounds": [
+      {
+        "zh": "华尔兹",
+        "py": "huá'ěrzī",
+        "en": "waltz (dance)"
+      },
+      {
+        "zh": "利兹",
+        "py": "lìzī",
+        "en": "Leeds"
+      },
+      {
+        "zh": "匹兹堡",
+        "py": "pǐzībǎo",
+        "en": "Pittsburgh (Pennsylvania)"
+      },
+      {
+        "zh": "图卢兹",
+        "py": "túlúzī",
+        "en": "Toulouse (city in France)"
+      }
+    ]
+  }
+]

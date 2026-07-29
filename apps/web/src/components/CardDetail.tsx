@@ -147,10 +147,15 @@ export function CardDetail({ card, srs, onClose, onToggleStar, inStack, onToggle
                   <div key={i} className="flex gap-3 items-start">
                     <div className="hz text-2xl leading-none shrink-0 w-8 text-center" style={{ color: C.paper }}>{comp.char}</div>
                     <div className="flex-1 min-w-0">
+                      {/* Separators between whatever is present — a component
+                          that is only a shape has no reading, and a leading
+                          "· " would read as a missing field. */}
                       <div className="ui text-xs" style={{ color: C.dim }}>
                         {comp.reading && <span className="mono">{comp.reading}</span>}
-                        {comp.gloss && <span> · {comp.gloss}</span>}
-                        <span className="ui" style={{ color: C.faint }}> · {ROLE_LABEL[comp.role]}</span>
+                        {comp.gloss && <span>{comp.reading ? " · " : ""}{comp.gloss}</span>}
+                        <span className="ui" style={{ color: C.faint }}>
+                          {comp.reading || comp.gloss ? " · " : ""}{ROLE_LABEL[comp.role]}
+                        </span>
                       </div>
                       {comp.note && <div className="ui t-body" style={{ color: C.faint }}>{comp.note}</div>}
                     </div>

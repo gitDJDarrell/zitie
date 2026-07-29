@@ -53,10 +53,12 @@ lending the sound), recursively for components worth explaining.
   (`apps/api/data/insights-hsk.json`), composed from verified facts rather than
   written by a model — structure from the IDS operator, components and roles
   from the recorded etymology, "appears in" from real HSK vocabulary ranked by
-  level then frequency. Where the data records no account of a character, the
-  story says so. The 18 hand-written HSK 1 entries still win, and a re-seed
-  leaves AI-enriched rows alone, so the runtime worker only ever runs for
-  characters outside the dex — which is what it was for.
+  level then frequency. Where no bundled dataset records an account of a
+  character, the story is hand-written instead (`data/stories.json`, 184 of
+  them), so nothing in the database falls back to saying the data is silent.
+  Those and the 18 hand-written HSK 1 entries win over the generated pass, and
+  a re-seed leaves AI-enriched rows alone, so the runtime worker only ever runs
+  for characters outside the dex — which is what it was for.
 - **Word bank — SHIPPED:** all 10,954 HSK 3.0 word forms with reading, gloss,
   the level they're first examinable at, and the standard's part-of-speech
   annotations (`hsk_words`, migration 0006). Complete: the 272 entries
@@ -140,12 +142,23 @@ they were queued:
 
 ## Backlog — next (queued 2026-07-27)
 
-1. **Upgrade the generated stories where they read flattest.** All 3,000 dex
-   characters now have a grounded breakdown, but ~200 of them have no recorded
-   etymology and say so plainly ("the data records the parts but no account of
-   how they came to mean…"). Those are the ones worth hand-writing or enriching
-   next, highest-frequency first — the machinery reads them back from
-   `character_insights` by `source = 'seed:hsk-derived'`.
+1. ~~**Upgrade the generated stories where they read flattest.**~~ — SHIPPED,
+   all of them. The 184 dex characters whose etymology no bundled dataset
+   records used to fall back to saying so ("the data records the parts but no
+   account of how they came to mean…"); every one now has a hand-written
+   account instead, and no story in the database says that any more. The
+   hand-written half is only what a person has to decide — which components
+   are worth naming, what each is doing, and the story. `build-curated.ts`
+   fills in the rest (readings from `hanzi.json`, compounds from the generated
+   pass) and refuses to build if a story names a component the dataset doesn't
+   place inside the character, so the same grounding rule the runtime worker
+   enforces applies to the writing too. `curated.test.ts` fails if a rebuild of
+   `insights-hsk.json` ever introduces a flat story nobody has written yet.
+   Two things fell out of doing it: a component that is only a shape now shows
+   no reading and no gloss (labelling 去's top "tǔ · earth" invites a story
+   that isn't there), and `pickCompounds` falls back to four-character idioms
+   for the handful of characters — 六, 七 — that HSK 3.0 lists in nothing
+   shorter.
 2. **Watch the first real enrichment run.** The loop's mechanics are now
    covered by tests that drive it with a scripted client (`enrich.loop.test.ts`
    — tool offered, results fed back, JSON parsed, every failure mode raising
@@ -172,9 +185,50 @@ they were queued:
    rejected session and an unreachable one are now told apart.
 5. ~~**Window the character dex too.**~~ — SHIPPED. Both catalogs now share
    `lib/useGridWindow`; ~60 tiles in the DOM whatever the level holds.
-6. **Study from the word dex.** Words are collectable and browsable now but
-   there's no "study the words I'm missing from HSK 3" path; the stack
-   mechanism is the obvious place to hang it.
+6. ~~**Study from the word dex.**~~ — SHIPPED. Both catalogs now carry a "学
+   study these N" button that opens a session over exactly what's on screen,
+   so a search or the collected filter narrows it. It runs through the same
+   preselected-session mechanism as the stack but deliberately **does not
+   write to the stack** — a dex selection is a one-off, the stack is a list
+   you curated and come back to. Since the two now share that mechanism, a
+   session says where it came from (`StudyOrigin`): "HSK 3 — words you have ·
+   drawn from 63 collected" rather than claiming to be your stack.
+
+## Backlog — next (queued 2026-07-28)
+
+1. **Collection is earned, not imported — SHIPPED.** A dex slot used to fill
+   itself the moment a card existed, so pasting a paragraph filled a hundred
+   of them at once and none of them meant anything. A slot is now earned by
+   proving the character in both directions, and the two proofs are recorded
+   on `seen_state` (`read_ok`, `write_ok`, migration 0007):
+   - **认 recognise** — read mode became a test. The character is shown with
+     four English meanings, one of them right; distractors come from the
+     user's own bank, ranked to share a part of speech so the answer is never
+     the odd one out (`lib/choices.ts`). A correct pick grades "good" and
+     banks the read proof, a wrong one grades "again" and sends the card back
+     to the end of the deck — the same contract write mode already had, so
+     both directions are tests rather than one test and one self-report. A
+     bank too small to field plausible distractors keeps the classic
+     flip-and-self-rate.
+   - **写 write** — unchanged, and still accepts the reading as well as the
+     characters. Producing the characters grades better, but requiring them
+     for the proof would shut out anyone without a Chinese keyboard.
+   - **The reward.** The moment the second proof lands, a banner names the
+     slot — 收 collected · 字鉴 No. 0142. A banner rather than a modal: it
+     arrives mid-session, and a dialog you have to dismiss to keep studying
+     turns a reward into an interruption.
+   - **The middle state.** A character in your bank but not yet earned gets
+     its own tile — solid character, outlined slot, 认/写 showing which half
+     is owed — and both dexes count it separately ("85 collected · 31 in
+     progress"). The level button becomes "学 earn these N" and puts the
+     unearned ones first.
+   - **Migration.** Cards that were merely imported lose their slot, which is
+     the point. Cards that had actually passed a review keep it: they were
+     studied in good faith under the old rules, and taking the slot away
+     retroactively would read as data loss rather than as a game.
+   - Proofs are one-way. Forgetting a character later costs you the schedule,
+     not the slot — `masteryOf` still moves both ways and is what the tile's
+     strength bar shows.
 
 ## Sequencing
 

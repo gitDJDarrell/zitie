@@ -43,12 +43,17 @@ function serialize(row: typeof seenState.$inferSelect) {
     reps: row.reps,
     lapses: row.lapses,
     lastGrade: row.lastGrade,
+    readOk: row.readOk,
+    writeOk: row.writeOk,
   };
 }
 
 const gradeSchema = z.object({
   id: z.string(),
   grade: z.enum(["again", "hard", "good", "easy"]),
+  // Which direction the answer was produced in, sent only when the answer was
+  // right. Two of these — one each way — is what earns a dex slot.
+  proof: z.enum(["read", "write"]).optional(),
 });
 
 // POST /seen/grade — record a self-rating and reschedule the card.
@@ -57,9 +62,9 @@ seenRoute.post("/grade", async (c) => {
   const userId = c.get("userId");
   const parsed = gradeSchema.safeParse(await c.req.json().catch(() => null));
   if (!parsed.success) {
-    return c.json({ error: "Expected { id: string, grade: again|hard|good|easy }." }, 400);
+    return c.json({ error: "Expected { id: string, grade: again|hard|good|easy, proof?: read|write }." }, 400);
   }
-  const { id, grade } = parsed.data;
+  const { id, grade, proof } = parsed.data;
 
   const [card] = await db.select({ id: cards.id }).from(cards).where(and(eq(cards.id, id), eq(cards.userId, userId)));
   if (!card) return c.json({ error: "Card not found." }, 404);
@@ -72,11 +77,21 @@ seenRoute.post("/grade", async (c) => {
   const now = new Date();
   const next = schedule(prev, grade as Grade, now);
 
+  // A proof only counts when the answer was right — a card you graded "again"
+  // proves the opposite. Flags are raised, never lowered: forgetting a
+  // character later costs you the schedule, not the slot you earned.
+  const earned = proof && grade !== "again" ? proof : null;
+  const proofSet = {
+    ...(earned === "read" ? { readOk: true } : {}),
+    ...(earned === "write" ? { writeOk: true } : {}),
+  };
+
   const [row] = await db.insert(seenState)
     .values({
       cardId: id, userId, last: now, views: 1,
       ease: next.ease, intervalDays: next.intervalDays, due: next.due,
       reps: next.reps, lapses: next.lapses, lastGrade: grade,
+      ...proofSet,
     })
     .onConflictDoUpdate({
       target: seenState.cardId,
@@ -84,6 +99,7 @@ seenRoute.post("/grade", async (c) => {
         last: now, views: sql`${seenState.views} + 1`,
         ease: next.ease, intervalDays: next.intervalDays, due: next.due,
         reps: next.reps, lapses: next.lapses, lastGrade: grade,
+        ...proofSet,
       },
     })
     .returning();

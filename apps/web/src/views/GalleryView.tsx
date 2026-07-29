@@ -3,14 +3,18 @@ import { Chip, Rating, SpeakBtn, Switch } from "../components/atoms";
 import { CardDetail } from "../components/CardDetail";
 import { MysteryCardDetail } from "../components/MysteryCardDetail";
 import { DEX_LEVELS, DEX_INDEX, DEX_ORDER, DEX_TOTAL } from "../data/dex";
+import { isCollected, proofsOf } from "../lib/srs";
 import { C } from "../theme";
-import type { Card, SeenMap } from "../types";
+import type { Card, SeenMap, StudyIds } from "../types";
 import { WordDex } from "./WordDex";
 import { useGridWindow } from "../lib/useGridWindow";
 
 // Character tiles are square-ish and small — five or six to a phone row.
 const TILE_MIN = 64;
-const TILE_HEIGHT = 68;
+// Pinned on every tile below, not just assumed: the windowing spacers reserve
+// exactly this per row, and a tile that grows past it (a third line of glyphs,
+// say) silently drags the scroll position off by a row every row.
+const TILE_HEIGHT = 80;
 const GAP = 4;
 
 // What's currently open in the detail modal: a position in the global dex
@@ -34,9 +38,10 @@ function isFullyComplete(card: Card): boolean {
    HSK 3.0 character-list levels (7-9 combined the same way the standard
    itself combines them). Dex numbers are a stable catalog index, not a
    difficulty or frequency rank — same as a Pokédex number. */
-export function GalleryView({ bank, srs, onToggleStar, stack, onAddToStack, onRemoveFromStack }: {
+export function GalleryView({ bank, srs, onToggleStar, stack, onAddToStack, onRemoveFromStack, onStudyIds }: {
   bank: Card[]; srs: SeenMap; onToggleStar: (id: string) => void;
   stack: string[]; onAddToStack: (ids: string[]) => void; onRemoveFromStack: (ids: string[]) => void;
+  onStudyIds: StudyIds;
 }) {
   // Which catalog is on screen. Characters lead: they're the smaller, more
   // finishable set, and every word in the other dex is built out of them.
@@ -46,9 +51,23 @@ export function GalleryView({ bank, srs, onToggleStar, stack, onAddToStack, onRe
   const stackSet = useMemo(() => new Set(stack), [stack]);
 
   const byHanzi = useMemo(() => new Map(bank.map(c => [c.hanzi, c])), [bank]);
+
+  // A slot is filled by proving the character, not by owning a card for it —
+  // otherwise pasting a paragraph fills a hundred slots you have never met.
+  // `held` is the middle state: the card is in the bank, both proofs are not
+  // in yet, and that is what the dex nudges you to finish.
+  const earned = (ch: string) => isCollected(srs[byHanzi.get(ch)?.id ?? ""]);
+  const held = (ch: string) => byHanzi.has(ch) && !earned(ch);
+
   const caughtTotal = useMemo(
-    () => [...DEX_INDEX.keys()].filter(ch => byHanzi.has(ch)).length,
-    [byHanzi],
+    () => [...DEX_INDEX.keys()].filter(earned).length,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [byHanzi, srs],
+  );
+  const heldTotal = useMemo(
+    () => [...DEX_INDEX.keys()].filter(held).length,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [byHanzi, srs],
   );
 
   const extras = useMemo(
@@ -58,7 +77,11 @@ export function GalleryView({ bank, srs, onToggleStar, stack, onAddToStack, onRe
 
   const level = DEX_LEVELS.find(l => l.id === levelId);
   const levelChars = useMemo(() => (level ? [...level.chars] : []), [level]);
-  const levelCaught = levelChars.filter(ch => byHanzi.has(ch)).length;
+  const levelCaught = levelChars.filter(earned).length;
+  const levelHeld = levelChars.filter(held).length;
+  // In-progress first: the point of the button is to finish what you started.
+  const levelStudyIds = [...levelChars.filter(held), ...levelChars.filter(earned)]
+    .map(ch => byHanzi.get(ch)?.id).filter((id): id is string => !!id);
   const showing = levelId === "extras" ? null : level;
 
   const { ref: gridRef, columns, rowCount, firstRow, lastRow } =
@@ -89,7 +112,8 @@ export function GalleryView({ bank, srs, onToggleStar, stack, onAddToStack, onRe
       <div className="flex flex-col gap-4">
         {catalogSwitch}
         <WordDex bank={bank} srs={srs} onToggleStar={onToggleStar}
-          stack={stack} onAddToStack={onAddToStack} onRemoveFromStack={onRemoveFromStack} />
+          stack={stack} onAddToStack={onAddToStack} onRemoveFromStack={onRemoveFromStack}
+          onStudyIds={onStudyIds} />
       </div>
     );
   }
@@ -103,9 +127,14 @@ export function GalleryView({ bank, srs, onToggleStar, stack, onAddToStack, onRe
           <span className="hz text-base" style={{ color: C.dim }}>图鉴</span>
           <span className="ui t-label" style={{ color: C.faint }}>character dex</span>
         </div>
-        <div className="ui text-xs" style={{ color: C.dim }}>
-          <span style={{ color: C.paper }}>{caughtTotal}</span>
-          <span style={{ color: C.faint }}> / {DEX_TOTAL} collected</span>
+        <div className="ui text-xs text-right" style={{ color: C.dim }}>
+          <div>
+            <span style={{ color: C.paper }}>{caughtTotal}</span>
+            <span style={{ color: C.faint }}> / {DEX_TOTAL} collected</span>
+          </div>
+          {heldTotal > 0 && (
+            <div className="ui t-micro" style={{ color: C.faint }}>{heldTotal} in progress</div>
+          )}
         </div>
       </div>
 
@@ -134,6 +163,20 @@ export function GalleryView({ bank, srs, onToggleStar, stack, onAddToStack, onRe
             </div>
           </div>
 
+          {levelStudyIds.length > 0 && (
+            <button
+              onClick={() => onStudyIds(levelStudyIds, {
+                zh: "鉴", label: `${level?.label ?? "dex"} — characters you have`,
+                noun: "in your bank", emptyText: "Nothing from this level is in your bank yet.",
+              })}
+              className="ui self-start px-4 py-2 t-btn border rounded"
+              style={{ borderColor: C.line, color: C.paper }}>
+              {levelHeld > 0
+                ? <>学 earn these {levelHeld}</>
+                : <>学 study these {levelStudyIds.length}</>}
+            </button>
+          )}
+
           <div ref={gridRef} className="grid gap-1"
             style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}>
             {/* Same windowing as the word dex: HSK 7-9 is 1,200 slots, and
@@ -147,14 +190,16 @@ export function GalleryView({ bank, srs, onToggleStar, stack, onAddToStack, onRe
               const n = levelOffset + i + 1;
               const dexIndex = n - 1; // DEX_ORDER is 0-based; slot.n is 1-based
               const shiny = card ? isFullyComplete(card) : false;
-              return card ? (
+              const proofs = card ? proofsOf(srs[card.id]) : { read: false, write: false };
+              const got = card ? proofs.read && proofs.write : false;
+              return card && got ? (
                 // The speak button has to be a sibling of the tile button, not
                 // a child — a <button> inside a <button> is invalid and Safari
                 // drops the inner one's clicks.
-                <div key={ch} className="relative">
+                <div key={ch} className="relative" style={{ height: TILE_HEIGHT }}>
                   <button onClick={() => setCursor({ kind: "dex", index: dexIndex })}
                     aria-label={`No. ${n} ${ch} — collected${shiny ? ", fully completed" : ""}, view details`}
-                    className={`w-full flex flex-col items-center gap-0.5 py-2 rounded${shiny ? " dex-shiny" : ""}`}
+                    className={`w-full h-full flex flex-col items-center justify-center gap-0.5 rounded${shiny ? " dex-shiny" : ""}`}
                     style={shiny ? undefined : { background: C.ink2, border: `1px solid ${C.ink3}` }}>
                     <span className="hz text-2xl leading-tight" style={{ color: shiny ? "#1a1a1a" : C.paper }}>{ch}</span>
                     <span className="ui t-micro" style={{ color: shiny ? "#3a3a3a" : C.faint }}>
@@ -167,13 +212,31 @@ export function GalleryView({ bank, srs, onToggleStar, stack, onAddToStack, onRe
                   <SpeakBtn text={ch} className="absolute top-0 right-0 !px-1 !py-0.5"
                     style={{ fontSize: 10, color: shiny ? "#3a3a3a" : C.faint }} />
                 </div>
+              ) : card ? (
+                // In your bank, not yet earned. The character is shown solid —
+                // withholding it would be silly when it is sitting in Browse —
+                // but the slot stays outlined and says which half is missing,
+                // so the tile reads as a task rather than as a trophy.
+                <button key={ch} onClick={() => setCursor({ kind: "dex", index: dexIndex })}
+                  aria-label={`No. ${n} ${ch} — in your bank, ${
+                    proofs.read ? "recognised" : "not yet recognised"}, ${
+                    proofs.write ? "written" : "not yet written"}. Tap to view.`}
+                  className="flex flex-col items-center justify-center gap-0.5 rounded"
+                  style={{ height: TILE_HEIGHT, border: `1px dashed ${C.line}` }}>
+                  <span className="hz text-2xl leading-tight" style={{ color: C.dim }}>{ch}</span>
+                  <span className="ui t-micro" style={{ color: C.faint }}>{String(n).padStart(4, "0")}</span>
+                  <span className="ui t-micro" aria-hidden="true">
+                    <span style={{ color: proofs.read ? C.paper : C.ink3 }}>认</span>
+                    <span style={{ color: proofs.write ? C.paper : C.ink3 }}>写</span>
+                  </span>
+                </button>
               ) : (
                 // No speak button here on purpose: hearing an uncollected
                 // character would give away the reading the dex is holding back.
                 <button key={ch} onClick={() => setCursor({ kind: "dex", index: dexIndex })}
                   aria-label={`No. ${n} — not yet collected, tap to view`}
-                  className="flex flex-col items-center py-2 rounded"
-                  style={{ border: `1px dashed ${C.ink3}` }}>
+                  className="flex flex-col items-center justify-center gap-0.5 rounded"
+                  style={{ height: TILE_HEIGHT, border: `1px dashed ${C.ink3}` }}>
                   <span className="hz text-2xl leading-tight" aria-hidden="true"
                     style={{ color: "transparent", WebkitTextStroke: `1px ${C.line}` }}>{ch}</span>
                   <span className="ui t-micro" style={{ color: C.faint }}>{String(n).padStart(4, "0")}</span>

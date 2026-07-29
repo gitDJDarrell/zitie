@@ -2,14 +2,30 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Chip, Collapsible, Empty, MultiSelect, Slider, SpeakBtn, StarBtn, StarToggle, Switch } from "../components/atoms";
 import { availableLevels, buildSession, DIFFICULTY_STEPS, filterByLevels, sessionSize, stepFor } from "../lib/difficulty";
 import { checkAnswer, type AnswerKind } from "../lib/answer";
+import { CHOICE_COUNT, meaningChoices } from "../lib/choices";
 import { applyFilters, type Filters } from "../lib/filters";
 import { POS_HANZI } from "../lib/posLabels";
 import { canSpeak, speak } from "../lib/speech";
-import { countDue, formatInterval, previewIntervalDays } from "../lib/srs";
+import { countDue, formatInterval, previewIntervalDays, proofsOf } from "../lib/srs";
 import { C } from "../theme";
-import type { Card, Grade, SeenMap } from "../types";
+import type { Card, Grade, Proof, SeenMap, StudyOrigin } from "../types";
 
-interface StackSession { ids: string[]; nonce: number }
+/**
+ * A preselected run: exactly these cards, in this order. `origin` says where
+ * the selection came from, because the two callers are different promises —
+ * the saved stack is a list you curated and can come back to, a dex selection
+ * is a one-off that leaves the stack alone. Calling both "your stack" would be
+ * a lie in one of the two cases.
+ */
+export interface StackSession {
+  ids: string[];
+  nonce: number;
+  origin?: StudyOrigin;
+}
+
+const STACK_ORIGIN: StudyOrigin = {
+  zh: "▤", label: "your stack", noun: "stacked", emptyText: "Your stack is empty.",
+};
 
 const AGE_OPTIONS: { value: Filters["age"]; label: string }[] = [
   { value: "all", label: "all" },
@@ -28,7 +44,8 @@ const GRADES: { grade: Grade; label: string; zh: string }[] = [
 /* ————————————— study session: read (tap-to-flip) + write (reverse, typed) ————————————— */
 export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onGrade, onToggleStar, stackSession, onExitStackSession, stack, onStudyStack, difficulty, onSetDifficulty, autoSpeak, onToggleAutoSpeak }: {
   bank: Card[]; srs: SeenMap; filters: Filters; setFilters: React.Dispatch<React.SetStateAction<Filters>>;
-  posList: string[]; onSeen: (id: string) => void; onGrade: (id: string, grade: Grade) => void;
+  posList: string[]; onSeen: (id: string) => void;
+  onGrade: (id: string, grade: Grade, proof?: Proof) => void;
   onToggleStar: (id: string) => void;
   stackSession?: StackSession | null; onExitStackSession?: () => void;
   stack: string[]; onStudyStack: () => void;
@@ -44,6 +61,9 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
   // Which form the answer took — characters or reading. Drives both the grade
   // and the nudge shown on the reveal.
   const [answerKind, setAnswerKind] = useState<AnswerKind>(null);
+  // The option tapped in read mode. Null before answering; the card reveals
+  // itself the moment one is chosen, so this doubles as "has been answered".
+  const [picked, setPicked] = useState<string | null>(null);
   const [score, setScore] = useState({ ok: 0, no: 0 });
   const [initialLen, setInitialLen] = useState(0);
   const [levels, setLevels] = useState<string[]>([]); // empty = every level
@@ -73,6 +93,15 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
     return parts.length ? parts.join(" · ") : "none";
   }, [filters]);
   const card = queue && queue[idx] ? bank.find(c => c.id === queue[idx]) : null;
+
+  // Read mode's options, re-rolled on every card visit — a card that comes
+  // back at the end of the deck should be a test of the character again, not
+  // of which option was highlighted last time.
+  const options = useMemo(
+    () => (card ? meaningChoices(card, bank) : []),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [card?.id, idx, bank],
+  );
   const unseenCount = pool.filter(c => !srs[c.id]).length;
   const dueCount = useMemo(() => countDue(pool, srs), [pool, srs]);
 
@@ -89,12 +118,12 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
     let q = sessionCards.map(c => c.id);
     if (shuffle) q = [...q].sort(() => Math.random() - 0.5);
     setQueue(q); setIdx(0); setFlipped(false); setWasShuffled(shuffle);
-    setInput(""); setVerdict(null); setScore({ ok: 0, no: 0 }); setInitialLen(q.length);
+    setInput(""); setVerdict(null); setPicked(null); setScore({ ok: 0, no: 0 }); setInitialLen(q.length);
   }
 
   function quit() {
     setQueue(null); setIdx(0); setFlipped(false);
-    setInput(""); setVerdict(null); setScore({ ok: 0, no: 0 });
+    setInput(""); setVerdict(null); setPicked(null); setScore({ ok: 0, no: 0 });
   }
 
   // Land on the (stack-aware) picker whenever a new stack session is requested
@@ -159,19 +188,66 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
     // Producing the characters is the harder recall and the thing this app
     // teaches; giving only the reading is a step short of it, so it grades
     // "hard" rather than "good" and comes back sooner.
-    onGrade(card.id, kind === "hanzi" ? "good" : kind === "pinyin" ? "hard" : "again");
+    // Producing the characters is the harder recall, so the reading alone
+    // grades "hard" — but both are a genuine production of the answer from the
+    // English, and both count as the write proof. Requiring the characters
+    // would shut out anyone without a Chinese keyboard.
+    onGrade(card.id, kind === "hanzi" ? "good" : kind === "pinyin" ? "hard" : "again", ok ? "write" : undefined);
     if (autoSpeak) speak(card.hanzi);
   }
 
-  function next() { setIdx(i => i + 1); setFlipped(false); setInput(""); setVerdict(null); setAnswerKind(null); }
-  function prev() { setIdx(i => Math.max(i - 1, 0)); setFlipped(false); setInput(""); setVerdict(null); setAnswerKind(null); }
+  /**
+   * Read mode's answer: the meaning picked out of the options. Correct grades
+   * "good" and banks the read proof, wrong grades "again" and sends the card
+   * back to the end of the deck — the same contract write mode already has, so
+   * both directions are tests rather than one test and one self-report.
+   */
+  function choose(option: string) {
+    if (!card || picked !== null) return;
+    const ok = option === card.meaning;
+    setPicked(option);
+    setVerdict(ok ? "ok" : "no");
+    setFlipped(true);
+    setScore(s => ok ? { ...s, ok: s.ok + 1 } : { ...s, no: s.no + 1 });
+    if (!ok) setQueue(q => [...(q as string[]), card.id]);
+    onSeen(card.id);
+    onGrade(card.id, ok ? "good" : "again", ok ? "read" : undefined);
+    if (autoSpeak) speak(card.hanzi);
+  }
+
+  function next() { setIdx(i => i + 1); reset(); }
+  function prev() { setIdx(i => Math.max(i - 1, 0)); reset(); }
+  function reset() { setFlipped(false); setInput(""); setVerdict(null); setAnswerKind(null); setPicked(null); }
 
   if (!bank.length) return (
     <Empty zh="库空" text="No characters yet. Open Import and paste your vocabulary to begin." />
   );
 
+  // Read mode is a recognition test whenever the bank can field plausible
+  // wrong answers. Below that — a handful of cards — there is nothing to
+  // choose between, so it stays the classic flip-and-self-rate.
+  const quiz = mode === "read" && options.length > 0;
+  // Whether read mode will be a quiz at all — a property of the bank rather
+  // than of one card, so the mode chip can say which it is before you start.
+  // Gated on the bank, not the session: distractors are drawn from every card
+  // you own, so a one-card stack is still a quiz.
+  const quizAvailable = bank.length >= CHOICE_COUNT
+    && (!pool[0] || meaningChoices(pool[0], bank).length > 0);
+
   const step = stepFor(difficulty);
+  // What is still owed before this character earns its dex slot, shown the
+  // moment a proof lands. The goal belongs where it is being pursued, not
+  // only on the gallery screen the user may not have opened yet.
+  const proofHint = ((): string | null => {
+    if (!card) return null;
+    const { read, write } = proofsOf(srs[card.id]);
+    if (read && write) return null;             // earned — the banner says so
+    if (!write && read) return "写 write it from the English to collect it.";
+    if (!read && write) return "认 recognise it from the character to collect it.";
+    return null;
+  })();
   const plannedCount = stackSession ? pool.length : sessionSize(pool, difficulty);
+  const origin = stackSession?.origin ?? STACK_ORIGIN;
 
   /* ——— session start ——— */
   if (!queue) return (
@@ -179,12 +255,12 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
       {stackSession ? (
         <div className="flex flex-col items-center gap-2">
           <div className="flex items-baseline gap-2">
-            <span className="hz text-base" style={{ color: C.dim }}>{"▤"}</span>
-            <span className="ui t-label" style={{ color: C.faint }}>your stack</span>
+            <span className="hz text-base" style={{ color: C.dim }}>{origin.zh}</span>
+            <span className="ui t-label" style={{ color: C.faint }}>{origin.label}</span>
           </div>
           {onExitStackSession && (
             <button onClick={onExitStackSession} className="ui text-xs" style={{ color: C.faint }}>
-              {"✕"} exit stack mode — back to lessons
+              {"✕"} exit — back to lessons
             </button>
           )}
         </div>
@@ -252,7 +328,7 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
       <div className="ui t-meta text-center" style={{ color: C.dim }}>
         <div>
           <span style={{ color: C.paper }}>{plannedCount}</span> in this session
-          <span style={{ color: C.faint }}> · drawn from {pool.length} {stackSession ? "stacked" : "matching"}</span>
+          <span style={{ color: C.faint }}> · drawn from {pool.length} {stackSession ? origin.noun : "matching"}</span>
         </div>
         <div style={{ color: C.faint }}>
           {dueCount > 0 && <><span style={{ color: C.paper }}>{dueCount}</span> due for review</>}
@@ -262,7 +338,9 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
         </div>
       </div>
       <div className="flex gap-2 flex-wrap justify-center items-center">
-        <Chip active={mode === "read"} onClick={() => setMode("read")}>认 read — flip cards</Chip>
+        <Chip active={mode === "read"} onClick={() => setMode("read")}>
+          认 read — {quizAvailable ? "pick the meaning" : "flip cards"}
+        </Chip>
         <Chip active={mode === "write"} onClick={() => setMode("write")}>写 write — type hanzi</Chip>
         {canSpeak() && (
           <Chip active={autoSpeak} onClick={onToggleAutoSpeak}>
@@ -289,7 +367,7 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
       )}
       {!plannedCount && (
         <p className="ui t-body" style={{ color: C.faint }}>
-          {stackSession ? "Your stack is empty." : "Nothing matches the current filters."}
+          {stackSession ? origin.emptyText : "Nothing matches the current filters."}
         </p>
       )}
     </div>
@@ -302,7 +380,7 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
       <div className="flex flex-col items-center gap-4 pt-10">
         <div className="hz text-5xl" style={{ color: C.paper }}>毕</div>
         <p className="ui text-sm text-center" style={{ color: C.dim }}>
-          {mode === "write" && total > 0
+          {total > 0
             ? <>Deck complete — ✓ {score.ok} · ✕ {score.no} · {Math.round((score.ok / total) * 100)}% accuracy</>
             : <>Deck complete — {queue.length} card{queue.length === 1 ? "" : "s"} reviewed.</>}
         </p>
@@ -320,7 +398,8 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
   const inFirstPass = idx < initialLen;
   const graded = score.ok + score.no;
   const accuracy = graded ? Math.round((score.ok / graded) * 100) : null;
-  const progress = mode === "write"
+  const scored = mode === "write" || quiz;
+  const progress = scored
     ? graded / (graded + (queue.length - idx))
     : (idx + 1) / queue.length;
 
@@ -342,7 +421,7 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
           {!srs[card.id] ? " · new" : ""}
         </span>
         <span>
-          {mode === "write" ? (
+          {scored ? (
             <>
               <span style={{ color: C.paper }}>✓ {score.ok}</span>
               {" · "}
@@ -407,6 +486,9 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
                 Reading correct — try for the characters next time.
               </div>
             )}
+            {verdict === "ok" && proofHint && (
+              <div className="ui t-meta text-center max-w-xs" style={{ color: C.faint }}>{proofHint}</div>
+            )}
             <div className="flex flex-col items-center gap-2">
               <div className="hz font-black" style={{ color: C.paper, fontSize: 64, lineHeight: 1.1 }}>{card.hanzi}</div>
               <div className="flex items-center gap-1">
@@ -424,22 +506,42 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
     </div>
   );
 
-  /* ——— read mode (tap to flip) ——— */
+  /* ——— read mode: recognise the meaning, or (small banks) tap to flip ——— */
+  const asking = quiz && verdict === null;   // a question is open
+  const faceProps = quiz
+    // No tap-to-flip while a question is open: the answer is on the back.
+    ? { as: "div" as const, onClick: undefined, aria: undefined }
+    : { as: "button" as const, onClick: flip, aria: flipped ? "Show character" : "Reveal answer" };
+  const Face = faceProps.as;
+
   return (
     <div className="flex flex-col items-center gap-5 pt-4">
       {header}
       <div className="relative w-full max-w-sm">
       <StarBtn starred={!!card.starred} onClick={() => onToggleStar(card.id)} />
-      <button
-        onClick={flip}
-        onTouchStart={onTouchStart}
-        onTouchEnd={onTouchEnd}
-        aria-label={flipped ? "Show character" : "Reveal answer"}
-        className="w-full rounded-lg px-6 py-12 flex flex-col items-center justify-center gap-4"
-        style={{ background: C.ink2, border: `1px solid ${C.line}`, minHeight: 300, cursor: "pointer" }}
+      <Face
+        {...(faceProps.onClick ? { onClick: faceProps.onClick } : {})}
+        {...(asking ? {} : { onTouchStart, onTouchEnd })}
+        aria-label={faceProps.aria}
+        className={`w-full rounded-lg px-6 flex flex-col items-center justify-center gap-4 ${
+          asking ? "py-4" : "py-12"}`}
+        style={{
+          background: C.ink2, border: `1px solid ${C.line}`,
+          // Smaller while a question is open. All four options have to sit
+          // above the nav bar on a short phone, or the test becomes a
+          // scavenger hunt — and the character is legible either way.
+          minHeight: asking ? 108 : 300,
+          cursor: quiz ? "default" : "pointer",
+        }}
       >
         {!flipped ? (
-          <div className="hz font-black text-center" style={{ color: C.paper, fontSize: card.hanzi.length > 2 ? 64 : 96, lineHeight: 1.1 }}>
+          <div className="hz font-black text-center"
+            style={{
+              color: C.paper, lineHeight: 1.1,
+              fontSize: asking
+                ? (card.hanzi.length > 2 ? 48 : 64)
+                : (card.hanzi.length > 2 ? 64 : 96),
+            }}>
             {card.hanzi}
           </div>
         ) : (
@@ -472,10 +574,46 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
             )}
           </div>
         )}
-      </button>
+      </Face>
       </div>
 
-      {!flipped ? (
+      {quiz ? (
+        verdict === null ? (
+          /* The question. Four meanings, one of them this character's — the
+             thing that turns a flashcard into evidence you can earn a dex
+             slot with. Distractors share the part of speech where possible,
+             so the answer is never the odd one out. */
+          <div className="w-full max-w-sm flex flex-col gap-2">
+            <div className="ui t-meta text-center" style={{ color: C.faint }}>
+              What does it mean?
+            </div>
+            {options.map(option => (
+              <button key={option} onClick={() => choose(option)}
+                className="ui text-sm text-left px-4 py-3 rounded border leading-snug"
+                style={{ borderColor: C.line, color: C.paper, background: C.ink2 }}>
+                {option}
+              </button>
+            ))}
+          </div>
+        ) : (
+          <div className="w-full max-w-sm flex flex-col items-center gap-3">
+            <div className="hz font-black" aria-label={verdict === "ok" ? "correct" : "incorrect"}
+              style={{ color: verdict === "ok" ? C.paper : C.cinnabar, fontSize: 40, lineHeight: 1 }}>
+              {verdict === "ok" ? "✓" : "✕"}
+            </div>
+            {verdict === "no" && (
+              <div className="ui t-meta text-center" style={{ color: C.faint }}>
+                you chose <span style={{ color: C.dim }}>{picked}</span> — repeats at end of deck
+              </div>
+            )}
+            {verdict === "ok" && proofHint && (
+              <div className="ui t-meta text-center max-w-xs" style={{ color: C.faint }}>{proofHint}</div>
+            )}
+            <button onClick={next} className="ui px-8 py-2 t-btn border rounded"
+              style={{ borderColor: C.paper, color: C.paper }}>Next →</button>
+          </div>
+        )
+      ) : !flipped ? (
         <>
           <div className="ui t-meta" style={{ color: C.faint }}>tap to flip {"·"} swipe left/right for next/back</div>
           <div className="flex gap-3">

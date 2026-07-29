@@ -126,6 +126,16 @@ describe("pickCompounds", () => {
     assert.ok(!picked.includes("吃"));
   });
 
+  it("falls back to idioms when the standard lists no shorter word", () => {
+    // 六 and 七 are real cases: HSK 3.0 has them only inside 五颜六色 and
+    // 乱七八糟, and an idiom beats an empty "appears in".
+    const only = [
+      { zh: "七", py: "qī", en: "seven", level: "1" },
+      { zh: "乱七八糟", py: "luànqībāzāo", en: "in a mess", level: "7-9" },
+    ];
+    assert.deepEqual(pickCompounds("七", only).map((w) => w.zh), ["乱七八糟"]);
+  });
+
   it("respects the limit", () => {
     assert.equal(pickCompounds("吃", candidates, 2).length, 2);
   });

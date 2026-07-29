@@ -1,5 +1,5 @@
 import { api, ApiError } from "../api/client";
-import type { Card, Grade, SeenMap, SeenRecord, Theme } from "../types";
+import type { Card, Grade, SeenMap, SeenRecord, Theme, Proof } from "../types";
 import { readCache, writeCache } from "./localCache";
 import { enqueue, outboxDepth, readOutbox, writeOutbox, type NewOp, type PendingOp, type SettingsPatch } from "./outbox";
 import type { PendingListener, StorageBackend, SyncListener } from "./types";
@@ -71,7 +71,7 @@ export class ApiStorage implements StorageBackend {
 
   private send(op: PendingOp): Promise<unknown> {
     switch (op.kind) {
-      case "grade": return api.gradeCard(op.cardId, op.grade);
+      case "grade": return api.gradeCard(op.cardId, op.grade, op.proof);
       case "seen": return api.markSeen(op.cardId);
       case "patch": return api.patchCard(op.cardId, op.patch);
       case "settings": return api.patchSettings(op.patch);
@@ -151,17 +151,17 @@ export class ApiStorage implements StorageBackend {
 
   // Self-rating: drives the SRS scheduler. Returns the server's authoritative
   // post-grade state, or null when offline (optimistic local state stands).
-  async gradeCard(id: string, grade: Grade): Promise<SeenRecord | null> {
+  async gradeCard(id: string, grade: Grade, proof?: Proof): Promise<SeenRecord | null> {
     this.notify("syncing");
     try {
-      const record = await api.gradeCard(id, grade);
+      const record = await api.gradeCard(id, grade, proof);
       this.notify("synced");
       return record;
     } catch (err) {
       if (err instanceof ApiError) throw err;
       // The whole point of the outbox: a graded card on a train is a review
       // the scheduler must eventually see, not a keystroke into the void.
-      this.park({ kind: "grade", cardId: id, grade });
+      this.park({ kind: "grade", cardId: id, grade, proof });
       return null;
     }
   }
