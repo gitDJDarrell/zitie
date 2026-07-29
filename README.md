@@ -15,16 +15,25 @@ Requires Node 20+ and a Postgres database (see "Local database" below).
 
 ```
 npm install
-cp apps/api/.env.example apps/api/.env      # fill in DATABASE_URL, SESSION_SECRET
-cp apps/web/.env.example apps/web/.env      # fill in VITE_API_URL
+cp apps/api/.env.example apps/api/.env      # defaults work as-is for local dev
+cp apps/web/.env.example apps/web/.env      # defaults to http://localhost:8787
 
+npm run db:local --workspace apps/api       # embedded Postgres — leave running
 npm run db:migrate                          # apply schema
 npm run db:seed                             # load seed-dev.json for the dev user
-npm run db:seed-reference --workspace apps/api   # HSK words + character breakdowns
+npm run db:seed-reference --workspace apps/api   # HSK words, breakdowns, stroke data
 
 npm run dev:api                             # http://localhost:8787
 npm run dev:web                             # http://localhost:5173
 ```
+
+Four terminals: the database, the API, the web dev server, and one to work in.
+Log in with `dev@zitie.local` / `dev-password-change-me`.
+
+The reference seed is the slow step (~11k words, 3k breakdowns, 3k characters'
+stroke geometry) and only needs re-running when that data changes. Brush mode
+needs it — without `character_strokes` the pad has no target to grade against
+and falls back to freehand.
 
 ## Local database
 
