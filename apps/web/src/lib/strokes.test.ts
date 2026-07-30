@@ -1,8 +1,9 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
+  brushOutcome, GLYPH_BASELINE, GLYPH_DESCENT, glyphCanvasTransform,
   gradeAttempt, matchStrokes, pathLength, resample, strokeDistance,
-  toCanvasSpace, toGlyphSpace, type Point,
+  toCanvasSpace, toGlyphSpace, type Point, type Verdict,
 } from "./strokes.js";
 
 /** A straight line from a to b, sampled unevenly on purpose. */
@@ -164,6 +165,129 @@ describe("coordinate spaces", () => {
     const [[, highY]] = toGlyphSpace([[100, 10]], 320);
     const [[, lowY]] = toGlyphSpace([[100, 310]], 320);
     assert.ok(highY > lowY, `top of canvas (${highY}) should exceed bottom (${lowY})`);
+  });
+
+  /**
+   * The traced outline and the graded medians have to land in the same place.
+   * They didn't: the canvas transform was hand-written with the descent applied
+   * after the y flip, so the outline sat 248 units — a quarter of the pad —
+   * below the strokes being matched. Tracing exactly what was on screen scored
+   * 0.242 against a 0.18 tolerance, so every stroke read "unrecognised" and the
+   * numbered stroke order floated above the character it belonged to.
+   */
+  it("draws the target glyph where the medians are graded", () => {
+    for (const size of [220, 320, 420]) {
+      const { ty, sx, sy } = glyphCanvasTransform(size);
+      // Apply the transform the way canvas does: translate, then scale.
+      const viaTransform = ([x, y]: Point): Point => [x * sx, y * sy + ty];
+
+      for (const p of [[0, 0], [512, 450], [1024, GLYPH_BASELINE], [300, -GLYPH_DESCENT]] as Point[]) {
+        const [want] = toCanvasSpace([p], size);
+        const got = viaTransform(p);
+        assert.ok(Math.abs(got[0] - want[0]) < 1e-9 && Math.abs(got[1] - want[1]) < 1e-9,
+          `size ${size}, glyph point ${p}: transform gave ${got}, toCanvasSpace gives ${want}`);
+      }
+    }
+  });
+
+  /**
+   * The property a learner actually cares about: if you trace the outline the
+   * pad shows you, it counts. This is the end-to-end version of the check
+   * above — canvas projection out, grading projection back — and it is what
+   * silently broke, turning a careful trace into "8 unrecognised".
+   */
+  it("scores a trace of the drawn outline as a match", () => {
+    const size = 320;
+    const medians: Point[][] = [
+      [[200, 700], [200, 300]],
+      [[150, 500], [600, 500]],
+      [[300, 800], [700, 200]],
+    ];
+    // Draw exactly where the pad renders the target, then grade it.
+    const drawn = medians.map(m => toGlyphSpace(toCanvasSpace(m, size), size));
+    const v = gradeAttempt(drawn, medians);
+
+    assert.equal(v.complete, true, "a perfect trace must be complete");
+    assert.equal(v.stray, 0, "a perfect trace must leave nothing unrecognised");
+    for (const m of v.matches) {
+      assert.ok(m.distance < 1e-9, `expected a near-zero distance, got ${m.distance}`);
+    }
+  });
+
+  it("keeps the glyph box inside the pad", () => {
+    const size = 320;
+    // Baseline at the top edge, full descent at the bottom edge.
+    const [[, atBaseline]] = toCanvasSpace([[0, GLYPH_BASELINE]], size);
+    const [[, atDescent]] = toCanvasSpace([[0, -GLYPH_DESCENT]], size);
+    assert.equal(atBaseline, 0);
+    assert.equal(atDescent, size);
+  });
+});
+
+describe("brushOutcome", () => {
+  /** A verdict with the shape the pad produces, overridden per case. */
+  const v = (over: Partial<Verdict>): Verdict => ({
+    perfect: false, complete: false, orderOk: true,
+    matched: 0, expected: 11, stray: 0, missing: [], matches: [], ...over,
+  });
+
+  /**
+   * The regression this whole change exists for. Brush mode used to grade
+   * itself the instant the character was complete, so a wrong attempt could
+   * not be submitted at all — the only way past it was "skip", which records
+   * nothing. Every failure was silently discarded, which makes the grading
+   * meaningless: a scheduler that only ever hears about successes will keep
+   * telling you a character you cannot write is due in three weeks.
+   */
+  it("grades an incomplete attempt instead of discarding it", () => {
+    const o = brushOutcome(v({ matched: 4, expected: 11, missing: [4, 5, 6, 7, 8, 9, 10] }));
+    assert.equal(o.grade, "again", "a half-written character must not pass");
+    assert.equal(o.correct, false);
+    assert.equal(o.earnsProof, false, "an unfinished character cannot earn the dex slot");
+    assert.equal(o.requeue, true, "it has to come back, like any wrong answer");
+  });
+
+  it("gives a clean attempt the proof and the best grade", () => {
+    const o = brushOutcome(v({ complete: true, perfect: true, matched: 11 }));
+    assert.equal(o.grade, "good");
+    assert.equal(o.earnsProof, true);
+    assert.equal(o.requeue, false);
+    assert.equal(o.correct, true);
+  });
+
+  it("still earns the proof when every stroke is down in the wrong order", () => {
+    // Writing 思 with the box built backwards is still writing 思 — order is
+    // coached, not gated. It costs the grade, not the slot.
+    const o = brushOutcome(v({ complete: true, perfect: false, orderOk: false, matched: 11 }));
+    assert.equal(o.grade, "hard");
+    assert.equal(o.earnsProof, true);
+    assert.equal(o.requeue, false);
+  });
+
+  it("shades the grade for stray marks without failing the attempt", () => {
+    const o = brushOutcome(v({ complete: true, perfect: false, matched: 11, stray: 2 }));
+    assert.equal(o.grade, "hard");
+    assert.equal(o.earnsProof, true);
+  });
+
+  it("claims no proof for a character it cannot check", () => {
+    // No stroke data: nothing to be right or wrong about. Schedule on trust,
+    // but never bank a proof we did not actually verify.
+    const o = brushOutcome(null);
+    assert.equal(o.grade, "good");
+    assert.equal(o.earnsProof, false);
+    assert.equal(o.requeue, false);
+  });
+
+  it("only ever earns the proof when the character was complete", () => {
+    for (const complete of [true, false]) {
+      for (const perfect of [true, false]) {
+        if (perfect && !complete) continue;         // not a state the pad produces
+        const o = brushOutcome(v({ complete, perfect, matched: complete ? 11 : 5 }));
+        assert.equal(o.earnsProof, complete,
+          `complete=${complete} perfect=${perfect} should${complete ? "" : " not"} earn the proof`);
+      }
+    }
   });
 });
 

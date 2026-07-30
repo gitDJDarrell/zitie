@@ -12,6 +12,10 @@
 
 /** makemeahanzi's coordinate space: 1024 wide, y increasing upward. */
 export const GLYPH_BOX = 1024;
+/** How far the glyph box extends below the baseline, in the same units. */
+export const GLYPH_DESCENT = 124;
+/** y of the baseline in makemeahanzi's space — the box top once flipped. */
+export const GLYPH_BASELINE = GLYPH_BOX - GLYPH_DESCENT; // 900
 
 export interface CharacterStrokes {
   strokes: string[];        // SVG path per stroke, for drawing the glyph
@@ -175,17 +179,68 @@ export function gradeAttempt(drawn: Point[][], medians: Point[][]): Verdict {
   };
 }
 
+/**
+ * What a handed-in brush attempt means for scheduling.
+ *
+ * Separated out and tested because the interesting cases are the failures, and
+ * they used to be unreachable: the pad graded itself the instant the character
+ * was complete, so an attempt could only ever be submitted if it was already
+ * right. A wrong attempt had nowhere to go but "skip", which records nothing —
+ * so the mode graded successes and quietly discarded every failure.
+ *
+ * - complete, right order, no strays → "good", and the brush proof is earned
+ * - complete otherwise               → "hard"; the character was written, the
+ *                                      execution needs work, proof still earned
+ * - incomplete                       → "again", no proof, back into the deck
+ * - nothing to check against         → "good" on trust, and *no* proof, because
+ *                                      we cannot claim to have verified it
+ */
+export interface BrushOutcome {
+  grade: "again" | "hard" | "good";
+  /** Whether this attempt banks the brush proof toward the dex slot. */
+  earnsProof: boolean;
+  /** Whether the card goes back into the deck to be met again this session. */
+  requeue: boolean;
+  /** Whether it counts toward the session's correct tally. */
+  correct: boolean;
+}
+
+export function brushOutcome(v: Verdict | null): BrushOutcome {
+  if (!v) return { grade: "good", earnsProof: false, requeue: false, correct: true };
+  if (!v.complete) return { grade: "again", earnsProof: false, requeue: true, correct: false };
+  return { grade: v.perfect ? "good" : "hard", earnsProof: true, requeue: false, correct: true };
+}
+
 /** Points on a canvas → the glyph's coordinate space, so distances compare. */
 export function toGlyphSpace(points: Point[], size: number): Point[] {
   const scale = GLYPH_BOX / size;
   // makemeahanzi's y axis points up and sits on a 900-unit baseline; canvas y
   // points down. Flip here so a stroke drawn at the top of the canvas lands at
   // the top of the glyph.
-  return points.map(([x, y]) => [x * scale, GLYPH_BOX - y * scale - 124]);
+  return points.map(([x, y]) => [x * scale, GLYPH_BASELINE - y * scale]);
 }
 
 /** The inverse, for drawing the target glyph and its medians on the canvas. */
 export function toCanvasSpace(points: Point[], size: number): Point[] {
   const scale = size / GLYPH_BOX;
-  return points.map(([x, y]) => [x * scale, (GLYPH_BOX - y - 124) * scale]);
+  return points.map(([x, y]) => [x * scale, (GLYPH_BASELINE - y) * scale]);
+}
+
+/**
+ * The same mapping as `toCanvasSpace`, as a canvas transform — for filling the
+ * target glyph's own SVG paths, which can't be run through a point function.
+ *
+ * It exists so the outline and the medians cannot land in different places.
+ * They did: the transform was written out by hand as
+ *   translate(0, size) · scale(s, -s) · translate(0, -124)
+ * and that last step runs *after* the y flip, so the descent was applied
+ * upward — putting the traceable outline 248 units (a quarter of the pad)
+ * below the strokes being graded. Tracing what you could see then scored 0.242
+ * against a 0.18 tolerance, so every stroke came back "unrecognised".
+ *
+ * Apply as: ctx.translate(0, ty); ctx.scale(sx, sy).
+ */
+export function glyphCanvasTransform(size: number): { ty: number; sx: number; sy: number } {
+  const scale = size / GLYPH_BOX;
+  return { ty: GLYPH_BASELINE * scale, sx: scale, sy: -scale };
 }

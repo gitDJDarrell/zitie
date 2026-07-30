@@ -4,6 +4,7 @@ import { z } from "zod";
 import { db } from "../db/client.js";
 import { cards, seenState } from "../db/schema.js";
 import { requireAuth } from "../lib/auth.js";
+import { serializeSeen } from "../lib/seenWire.js";
 import { initialState, schedule, type Grade } from "../lib/srs.js";
 
 export const seenRoute = new Hono();
@@ -32,22 +33,9 @@ seenRoute.post("/", async (c) => {
   return c.json(serialize(row));
 });
 
-// The wire shape of a seen_state row — timestamps flattened to epoch millis.
-function serialize(row: typeof seenState.$inferSelect) {
-  return {
-    last: row.last.getTime(),
-    views: row.views,
-    ease: row.ease,
-    intervalDays: row.intervalDays,
-    due: row.due ? row.due.getTime() : null,
-    reps: row.reps,
-    lapses: row.lapses,
-    lastGrade: row.lastGrade,
-    readOk: row.readOk,
-    writeOk: row.writeOk,
-    brushOk: row.brushOk,
-  };
-}
+// Wire shape lives in lib/seenWire.ts — shared with GET /cards so the two
+// can't disagree about which columns the client gets.
+const serialize = serializeSeen;
 
 const gradeSchema = z.object({
   id: z.string(),

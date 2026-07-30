@@ -6,6 +6,7 @@ import { db } from "../db/client.js";
 import { cards, seenState } from "../db/schema.js";
 import { requireAuth } from "../lib/auth.js";
 import { mergeCard, normalizeItem } from "../lib/merge.js";
+import { serializeSeen, type SeenWire } from "../lib/seenWire.js";
 
 export const cardsRoute = new Hono();
 cardsRoute.use("*", requireAuth);
@@ -22,15 +23,8 @@ cardsRoute.get("/", async (c) => {
     db.select().from(seenState).where(eq(seenState.userId, userId)),
   ]);
 
-  const seen: Record<string, unknown> = {};
-  for (const r of seenRows) {
-    seen[r.cardId] = {
-      last: r.last.getTime(), views: r.views,
-      ease: r.ease, intervalDays: r.intervalDays,
-      due: r.due ? r.due.getTime() : null,
-      reps: r.reps, lapses: r.lapses, lastGrade: r.lastGrade,
-    };
-  }
+  const seen: Record<string, SeenWire> = {};
+  for (const r of seenRows) seen[r.cardId] = serializeSeen(r);
 
   return c.json({ cards: rows, seen });
 });

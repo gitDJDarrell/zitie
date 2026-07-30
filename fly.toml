@@ -1,19 +1,25 @@
 # Fly.io config for the Zitie API. Deploy from the repo ROOT (this file and the
-# Dockerfile live here so the monorepo build context is correct):
-#   fly launch --no-deploy   # first time — pick a unique app name & region
-#   fly deploy
+# Dockerfile live here so the monorepo build context is correct).
 #
-# `app` is set by `fly launch`; if "zitie-api" is taken it will pick/prompt for
-# another and rewrite this line.
-app = "zitie-api"
-primary_region = "iad"
+# `app` and `primary_region` were set by `fly launch`; the rest is hand-written
+# and has to survive a re-run of it. `fly launch` regenerates this file from
+# scratch and will drop everything below [build] again — if you re-run it,
+# check this file back over before deploying.
+
+app = 'claude-noble-butterfly-6771'
+primary_region = 'ewr'
 
 [build]
   dockerfile = "Dockerfile"
 
 [deploy]
   # Runs in a one-off VM before traffic shifts: apply migrations, then upsert
-  # the shared character-insight reference data. Idempotent — safe every deploy.
+  # the shared reference data (HSK word bank, character breakdowns, stroke
+  # geometry). Idempotent — safe on every deploy.
+  #
+  # Not optional. .github/workflows/fly-deploy.yml deploys on every push to
+  # main, so without this a merge ships code that expects columns and tables
+  # its database has never been given.
   release_command = "npm run db:deploy"
 
 [env]
@@ -23,9 +29,10 @@ primary_region = "iad"
 [http_service]
   internal_port = 8787
   force_https = true
-  auto_stop_machines = "stop"
+  auto_stop_machines = 'stop'
   auto_start_machines = true
   min_machines_running = 0
+  processes = ['app']
 
   [[http_service.checks]]
     interval = "15s"
@@ -35,6 +42,7 @@ primary_region = "iad"
     path = "/health"
 
 [[vm]]
-  memory = "512mb"
-  cpu_kind = "shared"
+  memory = '1gb'
+  cpu_kind = 'shared'
   cpus = 1
+  memory_mb = 1024
