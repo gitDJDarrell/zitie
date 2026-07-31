@@ -8,8 +8,8 @@ import { POS_HANZI } from "../lib/posLabels";
 import { canSpeak, speak } from "../lib/speech";
 import { BrushPad, type PadMode, type Surface } from "../components/BrushPad";
 import { DEFAULT_INK, type InkParams } from "../lib/ink";
-import { brushOutcome, type Verdict } from "../lib/strokes";
-import { useStrokes } from "../lib/useStrokes";
+import { brushOutcome, combineVerdicts, type Verdict } from "../lib/strokes";
+import { useStrokeSet } from "../lib/useStrokes";
 import { countDue, formatInterval, previewIntervalDays, PROOF_GLYPH, proofsOf } from "../lib/srs";
 import { C } from "../theme";
 import type { Card, Grade, Proof, SeenMap, StudyOrigin } from "../types";
@@ -30,14 +30,22 @@ export interface StackSession {
 /** The three ways a card can be studied — and the three proofs a dex slot wants. */
 type StudyMode = "read" | "write" | "brush";
 
-// The ink controls, and how finely each one steps. Kept as data so the panel
-// is a map rather than five near-identical blocks.
-const INK_SLIDERS: { key: "weight" | "wetness" | "speed" | "formality"; label: string; steps: number }[] = [
-  { key: "weight", label: "weight", steps: 100 },
-  { key: "wetness", label: "wetness", steps: 100 },
-  { key: "speed", label: "speed", steps: 100 },
-  { key: "formality", label: "formality", steps: 100 },
+// The brush, as a calligrapher would describe it. Kept as data so the panel is
+// a map rather than six near-identical blocks, and so each control can say what
+// it does — a slider called "speed" teaches nothing, 提按 lift-and-press does.
+const INK_SLIDERS: {
+  key: "weight" | "density" | "water" | "flyingWhite" | "pressure" | "slant";
+  zh: string; label: string; hint: string;
+}[] = [
+  { key: "weight", zh: "大", label: "size", hint: "how big a brush" },
+  { key: "density", zh: "濃", label: "density", hint: "pale wash to full black" },
+  { key: "water", zh: "潤", label: "water", hint: "wet ink bleeds and holds its tone" },
+  { key: "flyingWhite", zh: "飛", label: "flying white", hint: "dry streaks through the stroke" },
+  { key: "pressure", zh: "按", label: "press", hint: "how much the line answers speed" },
+  { key: "slant", zh: "側", label: "tilt", hint: "writing on the side of the tip" },
 ];
+
+const SLIDER_STEPS = 100;
 
 const STACK_ORIGIN: StudyOrigin = {
   zh: "▤", label: "your stack", noun: "stacked", emptyText: "Your stack is empty.",
@@ -96,6 +104,10 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
   const [inkOpen, setInkOpen] = useState(false);
   const [brushDone, setBrushDone] = useState(false);
   const [brushVerdict, setBrushVerdict] = useState<Verdict | null>(null);
+  // Where we are in a multi-character card, and what each character scored.
+  // 咖啡 is written 咖 then 啡, and the card's proof is the whole word.
+  const [charIndex, setCharIndex] = useState(0);
+  const [charVerdicts, setCharVerdicts] = useState<(Verdict | null)[]>([]);
 
   // A stack session bypasses the lesson-filter pool entirely and studies
   // exactly the preselected cards, in the order they were stacked.
@@ -131,7 +143,7 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
   // Stroke geometry for the card on screen — fetched once per character and
   // cached, so flipping back and forth costs nothing and an offline session can
   // still practise anything already seen.
-  const strokeState = useStrokes(card?.hanzi);
+  const strokeSet = useStrokeSet(card?.hanzi);
 
   const unseenCount = pool.filter(c => !srs[c.id]).length;
   const dueCount = useMemo(() => countDue(pool, srs), [pool, srs]);
@@ -244,11 +256,22 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
    */
   function onBrushSubmit(v: Verdict | null) {
     if (!card || brushDone) return;
+    const collected = [...charVerdicts, v];
+    setCharVerdicts(collected);
+
+    // A word is written a character at a time. Keep going until the last one;
+    // only then does the card get graded, on the whole word.
+    if (charIndex < strokeSet.length - 1) {
+      setCharIndex(charIndex + 1);
+      return;
+    }
+
+    const whole = combineVerdicts(collected);
     setBrushDone(true);
-    setBrushVerdict(v);
+    setBrushVerdict(whole);
     onSeen(card.id);
 
-    const { grade, earnsProof, requeue, correct } = brushOutcome(v);
+    const { grade, earnsProof, requeue, correct } = brushOutcome(whole);
     setScore(s => correct ? { ...s, ok: s.ok + 1 } : { ...s, no: s.no + 1 });
     onGrade(card.id, grade, earnsProof ? "brush" : undefined);
     if (requeue) setQueue(q => [...(q as string[]), card.id]);
@@ -288,7 +311,8 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
   function prev() { setIdx(i => Math.max(i - 1, 0)); reset(); }
   function reset() {
     setFlipped(false); setInput(""); setVerdict(null);
-    setAnswerKind(null); setPicked(null); setBrushDone(false); setBrushVerdict(null);
+    setAnswerKind(null); setPicked(null); setBrushDone(false);
+    setBrushVerdict(null); setCharIndex(0); setCharVerdicts([]);
   }
 
   if (!bank.length) return (
@@ -526,31 +550,127 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
   );
 
   /* ——— brush mode: write it by hand ——— */
-  if (mode === "brush") return (
-    <div className="flex flex-col items-center gap-4 pt-4">
-      {header}
-      <div className="relative w-full max-w-sm flex flex-col items-center gap-3">
-        <StarBtn starred={!!card.starred} onClick={() => onToggleStar(card.id)} />
-        {/* The prompt is the English, same as write mode: the character is what
-            you're producing, so showing it would defeat the exercise —
-            except in trace mode, where copying the shape *is* the exercise. */}
-        <div className="ui text-lg text-center leading-snug px-8" style={{ color: C.paper }}>
-          {card.meaning}
-        </div>
-        <div className="mono t-meta" style={{ color: C.faint }}>{card.pinyin}</div>
+  if (mode === "brush") {
+    const chars = [...card.hanzi];
+    const active = strokeSet[charIndex] ?? null;
 
-        <BrushPad
-          key={card.id}
-          hanzi={card.hanzi}
-          target={strokeState.data}
-          ink={ink}
-          onInk={setInk}
-          surface={surface}
-          mode={padMode}
-          showStrokeOrder={showStrokeOrder}
-          onSubmit={onBrushSubmit}
-          submitted={brushDone}
-        />
+    return (
+      // Brush mode breaks out of the app's narrow column: the pad wants room,
+      // and the controls belong beside it rather than under a disclosure that
+      // pushes the paper off the screen the moment you open it.
+      // Full-bleed: the app's column is 448px, which is a fine width for a
+      // flashcard and far too narrow to put a sheet of paper next to a brush
+      // tray. This is the one screen that wants the whole window.
+      <div className="flex flex-col items-center gap-3 pt-3"
+        style={{
+          width: "100vw", marginLeft: "calc(50% - 50vw)", marginRight: "calc(50% - 50vw)",
+          paddingLeft: "max(16px, env(safe-area-inset-left))",
+          paddingRight: "max(16px, env(safe-area-inset-right))",
+        }}>
+        {header}
+
+        <div className="relative w-full flex flex-col items-center gap-1">
+          <StarBtn starred={!!card.starred} onClick={() => onToggleStar(card.id)} />
+          {/* The prompt is the English, same as write mode: the character is
+              what you're producing, so showing it would defeat the exercise —
+              except in trace mode, where copying the shape *is* the exercise. */}
+          <div className="ui text-lg text-center leading-snug px-8" style={{ color: C.paper }}>
+            {card.meaning}
+          </div>
+          <div className="mono t-meta" style={{ color: C.faint }}>{card.pinyin}</div>
+        </div>
+
+        {/* Paper on the left, brush on the right — the layout of a desk. Stacks
+            on a narrow screen, where there is no room to sit them side by side. */}
+        <div className="w-full flex flex-col sm:flex-row items-start justify-center gap-5"
+          style={{ maxWidth: 880 }}>
+          <div className="flex-1 flex flex-col items-center gap-2" style={{ minWidth: 0 }}>
+            {chars.length > 1 && (
+              <div className="flex items-center gap-1">
+                {chars.map((ch, i) => (
+                  <span key={i} className="hz text-lg leading-none px-1"
+                    style={{
+                      color: i < charIndex ? C.paper : i === charIndex ? C.cinnabar : C.ink3,
+                      borderBottom: i === charIndex ? `1px solid ${C.cinnabar}` : "1px solid transparent",
+                    }}>
+                    {/* Written already, or being written now — a character you
+                        haven't reached is still the thing being tested. */}
+                    {i <= charIndex ? ch : "•"}
+                  </span>
+                ))}
+              </div>
+            )}
+            <BrushPad
+              key={`${card.id}:${charIndex}`}
+              hanzi={chars[charIndex] ?? card.hanzi}
+              target={active?.data ?? null}
+              ink={ink}
+              surface={surface}
+              mode={padMode}
+              showStrokeOrder={showStrokeOrder}
+              onSubmit={onBrushSubmit}
+              submitted={brushDone}
+              step={{ index: charIndex + 1, total: chars.length }}
+            />
+          </div>
+
+          {/* 墨 the brush tray. Two columns of controls once there's room for
+              them, so the tray stops being taller than the paper beside it. */}
+          <div className="w-full sm:w-52 lg:w-[400px] shrink-0 flex flex-col gap-2">
+            <div className="flex items-baseline gap-2">
+              <span className="hz text-base" style={{ color: C.dim }}>墨</span>
+              <span className="ui t-label" style={{ color: C.faint }}>brush</span>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-5 gap-y-2">
+            {INK_SLIDERS.map(({ key, zh, label, hint }) => (
+              <div key={key} className="w-full flex flex-col gap-0.5">
+                <div className="flex items-baseline justify-between gap-2">
+                  <span className="ui t-label" style={{ color: C.dim }}>
+                    <span className="hz" style={{ color: C.faint }}>{zh}</span> {label}
+                  </span>
+                  <span className="mono t-micro" style={{ color: C.faint }}>{ink[key].toFixed(2)}</span>
+                </div>
+                <Slider value={Math.round(ink[key] * SLIDER_STEPS)} max={SLIDER_STEPS}
+                  label={`${label} — ${hint}`}
+                  onChange={v => setInk(i => ({ ...i, [key]: v / SLIDER_STEPS }))} />
+              </div>
+            ))}
+
+            <div className="w-full flex flex-col gap-0.5">
+              <div className="flex items-baseline justify-between">
+                <span className="ui t-label" style={{ color: C.dim }}>
+                  <span className="hz" style={{ color: C.faint }}>手</span> hand
+                </span>
+                <span className="mono t-micro" style={{ color: C.faint }}>{ink.seed}</span>
+              </div>
+              {/* The seed is a whole different hand, not a quantity — same
+                  gesture, different brush and different sheet of paper. */}
+              <Slider value={ink.seed} max={99} label="Hand — a different brush and sheet"
+                onChange={v => setInk(i => ({ ...i, seed: v }))} />
+            </div>
+            </div>
+
+            <div className="flex flex-col lg:flex-row lg:flex-wrap lg:items-center gap-2 pt-2"
+              style={{ borderTop: `1px solid ${C.ink3}` }}>
+              <span className="ui t-label" style={{ color: C.faint }}>
+                <span className="hz" style={{ color: C.dim }}>紙</span> paper
+              </span>
+              <Switch value={surface} options={[
+                { value: "plain" as const, label: "plain" },
+                { value: "grid" as const, label: "grid" },
+                { value: "scroll" as const, label: "scroll" },
+              ]} onChange={setSurface} />
+              <Switch value={padMode} options={[
+                { value: "write" as const, label: "write" },
+                { value: "trace" as const, label: "trace" },
+              ]} onChange={setPadMode} />
+              <Chip active={showStrokeOrder} onClick={() => setShowStrokeOrder(v => !v)}>
+                習 stroke order
+              </Chip>
+            </div>
+          </div>
+        </div>
 
         {brushDone ? (
           <div className="w-full flex flex-col items-center gap-3">
@@ -582,49 +702,9 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
             skip this one »
           </button>
         )}
-
-        {/* The ink and paper controls, folded away — the pad should lead with
-            paper to write on, not with five sliders. */}
-        <Collapsible label="墨 ink & paper" open={inkOpen} onToggle={() => setInkOpen(o => !o)}
-          summary={`${padMode}${showStrokeOrder ? " · numbered" : ""} · ${surface}`}>
-          <div className="w-full flex flex-col gap-3">
-            {INK_SLIDERS.map(({ key, label, steps }) => (
-              <div key={key} className="w-full flex flex-col gap-1">
-                <div className="flex items-baseline justify-between">
-                  <span className="ui t-label" style={{ color: C.faint }}>{label}</span>
-                  <span className="mono t-micro" style={{ color: C.dim }}>{ink[key].toFixed(2)}</span>
-                </div>
-                <Slider value={Math.round(ink[key] * steps)} max={steps} label={label}
-                  onChange={v => setInk(i => ({ ...i, [key]: v / steps }))} />
-              </div>
-            ))}
-            <div className="w-full flex flex-col gap-1">
-              <div className="flex items-baseline justify-between">
-                <span className="ui t-label" style={{ color: C.faint }}>seed</span>
-                <span className="mono t-micro" style={{ color: C.dim }}>{ink.seed}</span>
-              </div>
-              <Slider value={ink.seed} max={99} label="Brush seed"
-                onChange={v => setInk(i => ({ ...i, seed: v }))} />
-            </div>
-            <div className="flex flex-wrap items-center gap-2 justify-center">
-              <Switch value={surface} options={[
-                { value: "plain" as const, label: "plain" },
-                { value: "grid" as const, label: "grid" },
-                { value: "scroll" as const, label: "scroll" },
-              ]} onChange={setSurface} />
-              <Switch value={padMode} options={[
-                { value: "write" as const, label: "write" },
-                { value: "trace" as const, label: "trace" },
-              ]} onChange={setPadMode} />
-              <Chip active={showStrokeOrder} onClick={() => setShowStrokeOrder(v => !v)}>
-                習 stroke order
-              </Chip>
-            </div>
-          </div>
-        </Collapsible>
       </div>
-    </div>
-  );
+    );
+  }
 
   /* ——— write mode ——— */
   if (mode === "write") return (

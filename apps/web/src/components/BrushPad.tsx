@@ -1,7 +1,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { bristles, DEFAULT_INK, strokeOutline, widthProfile, type InkParams, type SamplePoint } from "../lib/ink";
-import { glyphCanvasTransform, gradeAttempt, toCanvasSpace, toGlyphSpace, type CharacterStrokes, type Point, type Verdict } from "../lib/strokes";
-import { C } from "../theme";
+import {
+  bristles, flyingWhite, inkColor, strokeOutline, tonProfile, travel, widthProfile,
+  type InkParams, type SamplePoint,
+} from "../lib/ink";
+import { PAPER_TONES, paperTexture } from "../lib/paper";
+import {
+  glyphCanvasTransform, gradeAttempt, toCanvasSpace, toGlyphSpace,
+  type CharacterStrokes, type Point, type Verdict,
+} from "../lib/strokes";
+import { C, isDarkTheme } from "../theme";
 
 /* ————————————————— 墨 the brush pad —————————————————
    Write the character by hand. Strokes are kept as the points and timings they
@@ -27,27 +34,20 @@ export interface BrushPadProps {
    * Hand the attempt in. Fires on the learner's say-so, not the pad's: whatever
    * is on the paper gets graded, complete or not. Null verdict means there was
    * nothing to grade it against (no stroke data for this character).
-   *
-   * It used to fire itself the instant the last stroke landed, which meant a
-   * wrong attempt could never be submitted at all — the only way past a
-   * character you had got wrong was to skip it, and a skip records nothing. An
-   * attempt you can't hand in is an attempt the scheduler never learns from.
    */
   onSubmit?: (verdict: Verdict | null) => void;
   /** Graded already: the paper is read-only and the actions step aside. */
   submitted?: boolean;
   ink: InkParams;
-  onInk: (ink: InkParams) => void;
   surface: Surface;
   mode: PadMode;
   showStrokeOrder: boolean;
+  /** Position in a multi-character word, for the caption. 1-based. */
+  step?: { index: number; total: number };
 }
 
-const PAPER = "#f4f1ea";
-const INK_COLOR = "#1a1a1a";
-
 export function BrushPad({
-  hanzi, target, onSubmit, submitted = false, ink, surface, mode, showStrokeOrder,
+  hanzi, target, onSubmit, submitted = false, ink, surface, mode, showStrokeOrder, step,
 }: BrushPadProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const wrapRef = useRef<HTMLDivElement | null>(null);
@@ -57,16 +57,33 @@ export function BrushPad({
   const startedAt = useRef(0);
   // The stroke index being demonstrated by "show me", or null when idle.
   const [teaching, setTeaching] = useState<number | null>(null);
+  const dark = isDarkTheme();
+  const tone = dark ? PAPER_TONES.dark : PAPER_TONES.light;
 
-  // Square, and as wide as the column allows.
+  // Square, as wide as the column allows — and no taller than the window can
+  // spare. Width alone gave a pad that pushed its own controls off a laptop
+  // screen, which is the thing this layout exists to avoid.
   useEffect(() => {
     const el = wrapRef.current;
     if (!el) return;
-    const measure = () => setSize(Math.max(220, Math.min(el.clientWidth, 420)));
+    const measure = () => {
+      // Side by side, the whole screen should fit without scrolling, so the pad
+      // gives up height to make that true. Stacked — a phone — the tray sits
+      // below the paper and the page scrolls anyway, so height buys nothing and
+      // a pad shrunk to fit would just be a worse pad to write on.
+      const sideBySide = window.innerWidth >= 640;
+      const roomForHeight = sideBySide
+        // Header, prompt, the pad's own controls, the feedback line, the skip
+        // link and the nav bar come to roughly this much.
+        ? Math.round((window.innerHeight - 500) * 0.98)
+        : Infinity;
+      setSize(Math.max(200, Math.min(el.clientWidth, 440, roomForHeight)));
+    };
     measure();
     const observer = new ResizeObserver(measure);
     observer.observe(el);
-    return () => observer.disconnect();
+    window.addEventListener("resize", measure);
+    return () => { observer.disconnect(); window.removeEventListener("resize", measure); };
   }, []);
 
   // A new character is a clean sheet.
@@ -86,7 +103,6 @@ export function BrushPad({
     return gradeAttempt(drawn, medians);
   }, [strokes, medians, size]);
 
-
   /* ——— rendering ——— */
   const draw = useCallback(() => {
     const canvas = canvasRef.current;
@@ -103,10 +119,12 @@ export function BrushPad({
     ctx.clearRect(0, 0, size, size);
 
     // ——— paper ———
-    ctx.fillStyle = PAPER;
-    ctx.fillRect(0, 0, size, size);
+    // A generated sheet rather than a flat fill: fibres, tonal drift and a
+    // vignette, so ink sits *on* something.
+    ctx.drawImage(paperTexture(size, tone, ink.seed % 5), 0, 0, size, size);
+
     if (surface === "grid" || surface === "scroll") {
-      ctx.strokeStyle = "rgba(120,110,95,0.22)";
+      ctx.strokeStyle = tone.rule;
       ctx.lineWidth = 0.5;
       ctx.beginPath();
       // The 田字格 a beginner learns inside: quarters plus the diagonals.
@@ -120,7 +138,7 @@ export function BrushPad({
     }
     if (surface === "scroll") {
       // A single ruled column, the way a hanging scroll is written.
-      ctx.strokeStyle = "rgba(120,110,95,0.35)";
+      ctx.strokeStyle = tone.rule;
       ctx.lineWidth = 1;
       ctx.strokeRect(size * 0.12, size * 0.06, size * 0.76, size * 0.88);
     }
@@ -128,66 +146,20 @@ export function BrushPad({
     // ——— the character being copied ———
     if (mode === "trace" && target?.strokes.length) {
       ctx.save();
-      ctx.globalAlpha = 0.16;
-      ctx.fillStyle = INK_COLOR;
+      ctx.globalAlpha = dark ? 0.2 : 0.14;
+      ctx.fillStyle = inkColor(0.5);
       // Shared with toCanvasSpace, so the outline you trace is exactly where
       // the medians being graded are.
       const { ty, sx, sy } = glyphCanvasTransform(size);
       ctx.translate(0, ty);
       ctx.scale(sx, sy);
-      for (const path of target.strokes) {
-        ctx.fill(new Path2D(path));
-      }
+      for (const path of target.strokes) ctx.fill(new Path2D(path));
       ctx.restore();
     }
 
     // ——— what has been written ———
-    const paint = (points: SamplePoint[]) => {
-      if (!points.length) return;
-      const widths = widthProfile(points, ink, size);
-      const outline = strokeOutline(points, widths);
-      // Curve through the outline rather than joining it with straight lines:
-      // the centrelines are simplified and a polyline shows every facet, which
-      // reads as a cut-paper shape instead of a brush stroke.
-      const path = new Path2D();
-      if (outline.length < 3) {
-        outline.forEach(([x, y], i) => (i ? path.lineTo(x, y) : path.moveTo(x, y)));
-      } else {
-        path.moveTo(outline[0][0], outline[0][1]);
-        for (let i = 1; i < outline.length; i++) {
-          const [x, y] = outline[i];
-          const [nx, ny] = outline[(i + 1) % outline.length];
-          path.quadraticCurveTo(x, y, (x + nx) / 2, (y + ny) / 2);
-        }
-      }
-      path.closePath();
-
-      // Wet ink spreads into the paper before the stroke itself lands on top.
-      if (ink.wetness > 0.02) {
-        ctx.save();
-        ctx.globalAlpha = 0.1 + ink.wetness * 0.18;
-        ctx.filter = `blur(${(0.6 + ink.wetness * 2.4).toFixed(2)}px)`;
-        ctx.fillStyle = INK_COLOR;
-        ctx.fill(path);
-        ctx.restore();
-      }
-
-      ctx.fillStyle = INK_COLOR;
-      ctx.fill(path);
-
-      for (const hair of bristles(points, widths, ink)) {
-        ctx.strokeStyle = INK_COLOR;
-        ctx.lineWidth = hair.width;
-        ctx.lineCap = "round";
-        ctx.beginPath();
-        ctx.moveTo(hair.from[0], hair.from[1]);
-        ctx.lineTo(hair.to[0], hair.to[1]);
-        ctx.stroke();
-      }
-    };
-
-    for (const s of strokes) paint(s.points);
-    if (drawing.current) paint(drawing.current);
+    for (const s of strokes) paintStroke(ctx, s.points, ink, size);
+    if (drawing.current) paintStroke(ctx, drawing.current, ink, size);
 
     // ——— 習 teach: the taught order, numbered ———
     if (showStrokeOrder && medians.length) {
@@ -217,7 +189,7 @@ export function BrushPad({
       ctx.arc(pts[0][0], pts[0][1], Math.max(3, size * 0.016), 0, Math.PI * 2);
       ctx.fill();
     }
-  }, [size, strokes, ink, surface, mode, target, showStrokeOrder, medians, teaching]);
+  }, [size, strokes, ink, surface, mode, target, showStrokeOrder, medians, teaching, tone, dark]);
 
   useEffect(() => { draw(); }, [draw]);
 
@@ -282,19 +254,22 @@ export function BrushPad({
 
   const feedback = (() => {
     if (!medians.length) {
-      return target === null
-        ? "no stroke data for this character — write freely"
-        : null;
+      return target === null ? "no stroke data — write freely" : null;
     }
     if (!verdict || !strokes.length) return null;
     if (verdict.complete && verdict.orderOk) return "written as taught";
     if (verdict.complete) return "written in a different stroke order";
-    if (verdict.stray) return `${verdict.matched} of ${verdict.expected} strokes · ${verdict.stray} unrecognised`;
+    if (verdict.stray) return `${verdict.matched} of ${verdict.expected} · ${verdict.stray} unrecognised`;
     return `${verdict.matched} of ${verdict.expected} strokes`;
   })();
 
   return (
     <div ref={wrapRef} className="w-full flex flex-col items-center gap-2">
+      {step && step.total > 1 && (
+        <div className="ui t-micro self-start" style={{ color: C.faint }}>
+          character {step.index} of {step.total}
+        </div>
+      )}
       <canvas
         ref={canvasRef}
         role="img"
@@ -305,11 +280,12 @@ export function BrushPad({
         onPointerCancel={onPointerUp}
         onPointerLeave={onPointerUp}
         style={{
-          width: size, height: size, borderRadius: 4,
+          width: size, height: size, borderRadius: 2,
           border: `1px solid ${C.line}`,
+          boxShadow: "0 1px 3px rgba(0,0,0,0.12), 0 8px 24px rgba(0,0,0,0.06)",
           // The pad owns the gesture: without this a drag scrolls the page
           // instead of drawing, which makes writing impossible on a phone.
-          touchAction: "none", cursor: "crosshair",
+          touchAction: "none", cursor: submitted ? "default" : "crosshair",
         }}
       />
 
@@ -341,21 +317,19 @@ export function BrushPad({
                   color: strokes.length ? C.paper : C.faint,
                   opacity: strokes.length ? 1 : 0.5,
                 }}>
-                submit
+                hand in
               </button>
             )}
           </div>
         </div>
       )}
 
-      {/* While writing this is live coaching. Once graded the verdict belongs to
-          whoever owns the session, so only the teaching aid stays. */}
-      {(submitted || feedback) && (
+      {feedback && (
         <div className="ui t-micro text-center" style={{ color: C.faint, maxWidth: size }}>
-          {!submitted && feedback}
+          {feedback}
           {medians.length > 0 && (
             <>
-              {!submitted && feedback ? " · " : ""}
+              {" · "}
               <button onClick={showMe} className="ui underline" style={{ color: C.dim }}>show me</button>
             </>
           )}
@@ -363,4 +337,118 @@ export function BrushPad({
       )}
     </div>
   );
+}
+
+/**
+ * One stroke, laid down the way ink actually lands: a damp halo where the
+ * paper drinks it, the body of the stroke in a tone that fades as the brush
+ * spends what it is carrying, dry streaks carved back out, and the hairs that
+ * trail off a fast tail.
+ */
+function paintStroke(
+  ctx: CanvasRenderingContext2D, points: SamplePoint[], ink: InkParams, size: number,
+): void {
+  if (!points.length) return;
+  const widths = widthProfile(points, ink, size);
+  const tones = tonProfile(points, ink);
+  const outline = strokeOutline(points, widths, ink.slant);
+  const path = outlinePath(outline);
+
+  // 潤 — water pushing into the fibres before the stroke itself lands on top.
+  if (ink.water > 0.02) {
+    ctx.save();
+    ctx.globalAlpha = 0.08 + ink.water * 0.22;
+    ctx.filter = `blur(${(0.5 + ink.water * 3.2).toFixed(2)}px)`;
+    ctx.fillStyle = inkColor(ink.density * 0.7);
+    ctx.fill(path);
+    ctx.restore();
+  }
+
+  // The body. A gradient down the stroke carries the tone profile, so a long
+  // stroke visibly runs out of ink rather than being one flat value.
+  const head = points[0], tail = points[points.length - 1];
+  const body = ctx.createLinearGradient(head.x, head.y, tail.x, tail.y);
+  const stops = 5;
+  for (let i = 0; i <= stops; i++) {
+    const at = i / stops;
+    const idx = Math.min(tones.length - 1, Math.round(at * (tones.length - 1)));
+    body.addColorStop(at, inkColor(tones[idx]));
+  }
+  ctx.fillStyle = body;
+  ctx.fill(path);
+
+  // 飛白 — carve the dry streaks back out with the paper showing through.
+  const streaks = flyingWhite(points, ink);
+  if (streaks.length) {
+    const along = travel(points);
+    ctx.save();
+    ctx.clip(path);
+    ctx.globalCompositeOperation = "destination-out";
+    for (const streak of streaks) {
+      const from = indexAt(along, streak.from);
+      const to = indexAt(along, streak.to);
+      if (to <= from) continue;
+      ctx.beginPath();
+      for (let i = from; i <= to; i++) {
+        const p = points[i];
+        const n = normalAt(points, i);
+        const w = widths[i] * streak.offset;
+        const x = p.x + n[0] * w, y = p.y + n[1] * w;
+        if (i === from) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.strokeStyle = "rgba(0,0,0,1)";
+      ctx.lineWidth = Math.max(0.5, widths[Math.round((from + to) / 2)] * streak.width);
+      ctx.lineCap = "round";
+      // Thin ink, not bare paper: a dry patch still holds some pigment, and
+      // punching a hole straight through looks like damage.
+      ctx.globalAlpha = 0.22 + streak.width * 0.9;
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  for (const hair of bristles(points, widths, ink)) {
+    ctx.strokeStyle = inkColor(tones[tones.length - 1] * 0.85);
+    ctx.lineWidth = hair.width;
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo(hair.from[0], hair.from[1]);
+    ctx.lineTo(hair.to[0], hair.to[1]);
+    ctx.stroke();
+  }
+}
+
+/** The outline as a smooth closed path — a polyline shows every facet. */
+function outlinePath(outline: [number, number][]): Path2D {
+  const path = new Path2D();
+  if (outline.length < 3) {
+    outline.forEach(([x, y], i) => (i ? path.lineTo(x, y) : path.moveTo(x, y)));
+    path.closePath();
+    return path;
+  }
+  path.moveTo(outline[0][0], outline[0][1]);
+  for (let i = 1; i < outline.length; i++) {
+    const [x, y] = outline[i];
+    const [nx, ny] = outline[(i + 1) % outline.length];
+    path.quadraticCurveTo(x, y, (x + nx) / 2, (y + ny) / 2);
+  }
+  path.closePath();
+  return path;
+}
+
+/** Nearest sample index to a fractional position along the stroke. */
+function indexAt(along: number[], at: number): number {
+  let best = 0;
+  for (let i = 1; i < along.length; i++) {
+    if (Math.abs(along[i] - at) < Math.abs(along[best] - at)) best = i;
+  }
+  return best;
+}
+
+function normalAt(points: SamplePoint[], i: number): [number, number] {
+  const prev = points[Math.max(0, i - 1)];
+  const next = points[Math.min(points.length - 1, i + 1)];
+  const dx = next.x - prev.x, dy = next.y - prev.y;
+  const len = Math.hypot(dx, dy) || 1;
+  return [-dy / len, dx / len];
 }

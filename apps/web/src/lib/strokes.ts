@@ -244,3 +244,34 @@ export function glyphCanvasTransform(size: number): { ty: number; sx: number; sy
   const scale = size / GLYPH_BOX;
   return { ty: GLYPH_BASELINE * scale, sx: scale, sy: -scale };
 }
+
+/**
+ * One verdict for a whole word, from the per-character attempts.
+ *
+ * A word is written a character at a time — 咖啡 is 咖 then 啡 — and the card's
+ * proof is the whole word, so the weakest character sets the result. Anything
+ * else would let someone earn 咖啡 by writing 咖 and giving up.
+ *
+ * A character with no stroke geometry contributes a null verdict. Those are
+ * skipped rather than counted as failures: the pad had nothing to grade them
+ * against, and holding that against the learner would punish them for a gap in
+ * the dataset. A word made entirely of such characters returns null, which
+ * `brushOutcome` already treats as ungradeable.
+ */
+export function combineVerdicts(parts: (Verdict | null)[]): Verdict | null {
+  const graded = parts.filter((v): v is Verdict => v !== null);
+  if (!graded.length) return null;
+
+  return {
+    perfect: graded.every((v) => v.perfect),
+    complete: graded.every((v) => v.complete),
+    orderOk: graded.every((v) => v.orderOk),
+    matched: graded.reduce((n, v) => n + v.matched, 0),
+    expected: graded.reduce((n, v) => n + v.expected, 0),
+    stray: graded.reduce((n, v) => n + v.stray, 0),
+    // Indices are per character and don't compose into one list; the count is
+    // what the summary needs, and expected − matched gives it.
+    missing: [],
+    matches: graded.flatMap((v) => v.matches),
+  };
+}

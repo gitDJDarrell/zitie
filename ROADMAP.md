@@ -266,6 +266,33 @@ they were queued:
      same reasoning as 0007: the change should be felt going forward, not
      applied to the past.
 
+## Backlog — next (queued 2026-07-31)
+
+1. **The brush, as a brush — SHIPPED.** Four changes to 描 mode after using it.
+   - **Words are graded character by character.** A word card walks its
+     characters in turn — 咖啡 is 咖 then 啡 — with a pad per character and one
+     verdict for the whole word (`combineVerdicts`). The weakest character sets
+     the result, so writing 咖 and giving up earns nothing; a character with no
+     stroke geometry is skipped rather than failed, since the pad had nothing
+     to grade it against. This makes the word dex's 10,954 slots collectable,
+     which they were not before.
+   - **The controls sit beside the paper.** They were behind a disclosure that
+     pushed the pad off the screen the moment it opened. Brush mode now breaks
+     out of the app's 448px column to full width, paper on the left and the
+     brush tray on the right, the tray going to two columns once there is room.
+     The pad gives up height when side by side so the whole screen fits without
+     scrolling; stacked on a phone it keeps its width, because the page scrolls
+     there anyway and a shrunken pad is just a worse pad.
+   - **The controls are artistic properties, not renderer knobs.** 濃 density,
+     潤 water, 飛白 flying white, 提按 press, 側鋒 tilt, and a 手 hand seed. Each
+     changes the picture in a way you can point at: water closes the dry gaps
+     and holds an even tone, a dry brush fades along its stroke and splits into
+     fibre, tilt runs one flank of the stroke heavier than the other.
+   - **It looks painted.** Ink is a warm near-black that varies in tone along
+     each stroke as the brush spends what it carries, never flat. Paper is a
+     generated sheet (`lib/paper.ts`) with fibres, tonal drift and a vignette,
+     cached per size so it doesn't recompute on every pointer move.
+
 ## Sequencing
 
 1. ~~Mobile UX polish + PWA~~ — done (11bd2c8, 1a31893).
