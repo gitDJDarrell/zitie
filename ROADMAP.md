@@ -6,6 +6,25 @@ accounts, AI extraction, HSK character dex, study stacks). Decisions locked
 
 ## Confirmed decisions
 
+0. **Patience over dopamine — the product philosophy (locked 2026-07-31).**
+   Zitie is a *collection you tend over time*, the way a birder keeps a life
+   list or a lepidopterist a specimen drawer — not a game chasing quick hits.
+   The reward is starting from nothing and watching a real thing grow. This is
+   a deliberate rejection of the streak/badge/daily-goal playbook, and it
+   settles a class of proposals for good:
+   - **No streaks, no badges, no daily goals, no placement quiz, no
+     quick-onboarding shortcut.** These were raised in the 2026-07-31 QA
+     report and *declined on purpose.* The empty starting state and the slow
+     grind are the point, not friction to be engineered away.
+   - **The three-proof dex already embodies this**: a slot measures competence
+     you earned in three directions, not minutes logged or days in a row. That
+     is the honest version of progress, and it's the whole game.
+   - What we *do* invest in: making the patient path feel good — quiet study
+     sessions, a collection that's a pleasure to browse, and specimens worth
+     keeping (a finished brush sheet you can save). Retention comes from the
+     relationship, not from nagging.
+   Anything that proposes to shorten the climb, or to reward showing up rather
+   than getting better, is out of scope by this decision.
 1. **Etymology is grounded in open data, not freestyled.** Ship IDS
    (Ideographic Description Sequences — component decomposition, e.g.
    吃 → ⿰口乞) + Unihan (radical, stroke count, reading, gloss) as static
@@ -292,6 +311,37 @@ they were queued:
      each stroke as the brush spends what it carries, never flat. Paper is a
      generated sheet (`lib/paper.ts`) with fibres, tonal drift and a vignette,
      cached per size so it doesn't recompute on every pointer move.
+
+## Backlog — QA polish — SHIPPED (2026-07-31)
+
+From a full QA pass (`scratchpad/qa/QA-REPORT.md`). The report's onboarding and
+retention-loop proposals were **declined** under decision #0; these are the
+quality-of-life fixes that were accepted, all landed together:
+
+- **Dark-mode brush was unusable** — near-black ink on a near-black sheet. The
+  paper now stays a lit warm sheet in both themes (a dark room, not dark paper,
+  the way calligraphy actually works), so ink reads in dark mode. `PAPER_TONES`
+  collapsed to one `PAPER_TONE`.
+- **Export your bank** — a button in Browse downloads the whole bank as JSON in
+  the Import format, so a backup is also a way to move between accounts. The
+  endpoint existed with no UI; now it has one.
+- **Keyboard-drivable study** — 1–4 answer the read quiz, Enter/Space turns the
+  page. Desktop no longer needs the mouse for the core loop.
+- **The answer stays on the table** — a wrong pick used to clear the four
+  options; they now stay, the right one marked ✓ and your miss ✕, because
+  recalling *which* of the four it was is the memory being trained.
+- **The session gets a quiet room** — the account chrome (email, theme, logout,
+  bank count) hides while a deck is running and returns when it ends.
+- **The brush tray teaches** — each slider shows its one-line meaning ("dry
+  streaks through the stroke"), turning the panel into a small calligraphy
+  lesson; two columns from 768px so it fits beside the paper.
+- **Save the sheet** — a finished brush character downloads as a PNG, a
+  specimen for the notebook (and, incidentally, shareable).
+- **Kinder server messages** — a failed AI import no longer names
+  `ANTHROPIC_API_KEY` at the learner; the login limiter keys per-account with a
+  looser per-IP ceiling, so a classroom behind one NAT doesn't lock itself out.
+- The difficulty slider now labels its ends ("short, mostly review" → "long,
+  mostly new").
 
 ## Sequencing
 

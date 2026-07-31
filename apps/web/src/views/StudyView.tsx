@@ -66,7 +66,7 @@ const GRADES: { grade: Grade; label: string; zh: string }[] = [
 ];
 
 /* ————————————— study session: read (tap-to-flip) + write (reverse, typed) ————————————— */
-export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onGrade, onToggleStar, stackSession, onExitStackSession, stack, onStudyStack, difficulty, onSetDifficulty, autoSpeak, onToggleAutoSpeak }: {
+export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onGrade, onToggleStar, stackSession, onExitStackSession, stack, onStudyStack, difficulty, onSetDifficulty, autoSpeak, onToggleAutoSpeak, onSessionActive }: {
   bank: Card[]; srs: SeenMap; filters: Filters; setFilters: React.Dispatch<React.SetStateAction<Filters>>;
   posList: string[]; onSeen: (id: string) => void;
   onGrade: (id: string, grade: Grade, proof?: Proof) => void;
@@ -75,6 +75,8 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
   stack: string[]; onStudyStack: () => void;
   difficulty: number; onSetDifficulty: (d: number) => void;
   autoSpeak: boolean; onToggleAutoSpeak: () => void;
+  /** Fires when a deck starts or ends, so the app chrome can step aside. */
+  onSessionActive?: (active: boolean) => void;
 }) {
   const [queue, setQueue] = useState<string[] | null>(null);
   const [idx, setIdx] = useState(0);
@@ -156,6 +158,42 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
   );
 
   const [wasShuffled, setWasShuffled] = useState(false);
+
+  // A session wants a quiet room: tell the app when one is running so the
+  // account chrome can step aside, and put it back if this view unmounts
+  // mid-deck (switching tabs already ends the session).
+  const inDeck = queue !== null;
+  useEffect(() => {
+    onSessionActive?.(inDeck);
+    return () => onSessionActive?.(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inDeck]);
+
+  // Desktop shouldn't need the mouse: 1–4 answers the quiz, Enter/Space turns
+  // the page once a verdict is up. Write mode keeps its own Enter (the input
+  // handles it), and anything typed into a field is left alone.
+  useEffect(() => {
+    if (!inDeck) return;
+    const onKey = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (target && (target.tagName === "INPUT" || target.tagName === "TEXTAREA")) return;
+      if (mode === "read" && verdict === null && options.length) {
+        const n = Number(e.key);
+        if (n >= 1 && n <= options.length) {
+          e.preventDefault();
+          choose(options[n - 1]);
+        }
+        return;
+      }
+      if (verdict !== null && (e.key === "Enter" || e.key === " ")) {
+        e.preventDefault();
+        next();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inDeck, mode, verdict, options]);
 
   function begin(shuffle: boolean) {
     let q = sessionCards.map(c => c.id);
@@ -393,6 +431,10 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
             <Slider value={difficulty} max={DIFFICULTY_STEPS.length - 1}
               onChange={onSetDifficulty} label="Session difficulty"
               ticks={DIFFICULTY_STEPS.map(s => s.zh)} />
+            <div className="flex justify-between ui t-micro" style={{ color: C.faint }} aria-hidden="true">
+              <span>short, mostly review</span>
+              <span>long, mostly new</span>
+            </div>
           </div>
 
           {/* Everything else stays folded away — the study screen should lead
@@ -616,13 +658,13 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
 
           {/* 墨 the brush tray. Two columns of controls once there's room for
               them, so the tray stops being taller than the paper beside it. */}
-          <div className="w-full sm:w-52 lg:w-[400px] shrink-0 flex flex-col gap-2">
+          <div className="w-full sm:w-56 md:w-[400px] shrink-0 flex flex-col gap-2">
             <div className="flex items-baseline gap-2">
               <span className="hz text-base" style={{ color: C.dim }}>墨</span>
               <span className="ui t-label" style={{ color: C.faint }}>brush</span>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-5 gap-y-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-2">
             {INK_SLIDERS.map(({ key, zh, label, hint }) => (
               <div key={key} className="w-full flex flex-col gap-0.5">
                 <div className="flex items-baseline justify-between gap-2">
@@ -634,6 +676,9 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
                 <Slider value={Math.round(ink[key] * SLIDER_STEPS)} max={SLIDER_STEPS}
                   label={`${label} — ${hint}`}
                   onChange={v => setInk(i => ({ ...i, [key]: v / SLIDER_STEPS }))} />
+                {/* The hint is the lesson: a slider named 飛白 teaches nothing
+                    until it says what flying white is. */}
+                <div className="ui t-micro" style={{ color: C.faint }}>{hint}</div>
               </div>
             ))}
 
@@ -648,6 +693,7 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
                   gesture, different brush and different sheet of paper. */}
               <Slider value={ink.seed} max={99} label="Hand — a different brush and sheet"
                 onChange={v => setInk(i => ({ ...i, seed: v }))} />
+              <div className="ui t-micro" style={{ color: C.faint }}>a different brush and sheet</div>
             </div>
             </div>
 
@@ -856,23 +902,47 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
             <div className="ui t-meta text-center" style={{ color: C.faint }}>
               What does it mean?
             </div>
-            {options.map(option => (
+            {options.map((option, i) => (
               <button key={option} onClick={() => choose(option)}
                 className="ui text-sm text-left px-4 py-3 rounded border leading-snug"
                 style={{ borderColor: C.line, color: C.paper, background: C.ink2 }}>
+                <span className="mono t-micro" style={{ color: C.faint }} aria-hidden="true">{i + 1} </span>
                 {option}
               </button>
             ))}
+            <div className="ui t-micro text-center" style={{ color: C.faint }} aria-hidden="true">
+              press 1–4 to answer
+            </div>
           </div>
         ) : (
           <div className="w-full max-w-sm flex flex-col items-center gap-3">
+            {/* The options stay on the table with the right one named — recall
+                of which of those four it was is exactly the memory being
+                trained, and they'd otherwise vanish the moment you answered. */}
+            <div className="w-full flex flex-col gap-2" aria-hidden="true">
+              {options.map(option => {
+                const isAnswer = option === card.meaning;
+                const wasPick = option === picked;
+                return (
+                  <div key={option}
+                    className="ui text-sm text-left px-4 py-3 rounded border leading-snug"
+                    style={{
+                      borderColor: isAnswer ? C.paper : wasPick ? C.cinnabar : C.ink3,
+                      color: isAnswer ? C.paper : wasPick ? C.cinnabar : C.faint,
+                      background: isAnswer ? C.ink2 : "transparent",
+                    }}>
+                    {isAnswer ? "✓ " : wasPick ? "✕ " : ""}{option}
+                  </div>
+                );
+              })}
+            </div>
             <div className="hz font-black" aria-label={verdict === "ok" ? "correct" : "incorrect"}
-              style={{ color: verdict === "ok" ? C.paper : C.cinnabar, fontSize: 40, lineHeight: 1 }}>
+              style={{ color: verdict === "ok" ? C.paper : C.cinnabar, fontSize: 32, lineHeight: 1 }}>
               {verdict === "ok" ? "✓" : "✕"}
             </div>
             {verdict === "no" && (
               <div className="ui t-meta text-center" style={{ color: C.faint }}>
-                you chose <span style={{ color: C.dim }}>{picked}</span> — repeats at end of deck
+                repeats at end of deck
               </div>
             )}
             {verdict === "ok" && proofHint && (

@@ -18,12 +18,13 @@ export interface PaperTone {
   rule: string;
 }
 
-export const PAPER_TONES: Record<"light" | "dark", PaperTone> = {
+// One sheet, both themes. The first cut had a dark sheet for dark mode, and
+// QA found the obvious-in-hindsight problem: near-black ink on near-black
+// paper is invisible. Real calligraphy solves this the same way — the room
+// gets dark, the paper doesn't. A lit sheet on a dark desk is the look.
+export const PAPER_TONE: PaperTone = {
   // Aged mulberry paper: warm, slightly yellow, never white.
-  light: { base: "#efe9dc", fibre: "#c9bda4", rule: "rgba(120,105,80,0.28)" },
-  // Not an inversion — an ink-stone dark, so white ink on it still reads as
-  // a wash rather than as glowing text.
-  dark: { base: "#20201d", fibre: "#3a382f", rule: "rgba(210,200,175,0.20)" },
+  base: "#efe9dc", fibre: "#c9bda4", rule: "rgba(120,105,80,0.28)",
 };
 
 const cache = new Map<string, HTMLCanvasElement>();

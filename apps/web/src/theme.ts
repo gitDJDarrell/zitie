@@ -37,18 +37,7 @@ export const FONT_CSS = `
 input:focus, button:focus-visible, textarea:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
 `;
 
-// Which theme C currently holds. The brush pad needs to know: paper is a
-// painted surface with its own tones, not a token, so it picks a sheet rather
-// than reading a colour off C.
-let current: Theme = "light";
-
-/** True when the app is in dark mode — for canvas work that can't read tokens. */
-export function isDarkTheme(): boolean {
-  return current === "dark";
-}
-
 export function applyTheme(theme: Theme) {
-  current = theme;
   Object.assign(C, THEMES[theme]);
   // Keep the browser/OS chrome (status bar, PWA title bar) in sync with the
   // app's own theme toggle, which is independent of the OS colour scheme.

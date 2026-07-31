@@ -34,6 +34,9 @@ export default function App({ onLogout, userEmail }: { onLogout: () => void; use
   const [stackSession, setStackSession] = useState<StackSession | null>(null);
   // The character whose dex slot was just earned, shown as a one-off reward.
   const [earned, setEarned] = useState<Card | null>(null);
+  // A study deck is running: the account chrome steps aside so the session
+  // has the room — and the quiet — to itself.
+  const [sessionActive, setSessionActive] = useState(false);
 
   const storageRef = useRef<ApiStorage | null>(null);
   if (!storageRef.current) storageRef.current = new ApiStorage(setSyncState, setPending);
@@ -238,7 +241,8 @@ export default function App({ onLogout, userEmail }: { onLogout: () => void; use
         paddingLeft: "max(1rem, env(safe-area-inset-left))",
         paddingRight: "max(1rem, env(safe-area-inset-right))",
       }}>
-        <header className="flex items-end justify-between mb-6">
+        <header className="flex items-end justify-between mb-6"
+          style={sessionActive ? { display: "none" } : undefined}>
           <div>
             <div className="hz text-2xl font-black tracking-wide" style={{ color: C.paper }}>字帖</div>
             <div className="ui t-label mt-1" style={{ color: C.faint }}>character study</div>
@@ -273,7 +277,7 @@ export default function App({ onLogout, userEmail }: { onLogout: () => void; use
           <div className="ui text-xs pt-10 text-center" style={{ color: C.faint }}>loading…</div>
         ) : (
           <>
-            {tab === "study" && <StudyView bank={bank} srs={srs} filters={filters} setFilters={setFilters} posList={posList} onSeen={onSeen} onGrade={onGrade} onToggleStar={onToggleStar} stackSession={stackSession} onExitStackSession={() => setStackSession(null)} stack={stack} onStudyStack={onStudyStack} difficulty={difficulty} onSetDifficulty={onSetDifficulty} autoSpeak={autoSpeak} onToggleAutoSpeak={onToggleAutoSpeak} />}
+            {tab === "study" && <StudyView bank={bank} srs={srs} filters={filters} setFilters={setFilters} posList={posList} onSeen={onSeen} onGrade={onGrade} onToggleStar={onToggleStar} stackSession={stackSession} onExitStackSession={() => setStackSession(null)} stack={stack} onStudyStack={onStudyStack} difficulty={difficulty} onSetDifficulty={onSetDifficulty} autoSpeak={autoSpeak} onToggleAutoSpeak={onToggleAutoSpeak} onSessionActive={setSessionActive} />}
             {tab === "gallery" && <GalleryView bank={bank} srs={srs} onToggleStar={onToggleStar} stack={stack} onAddToStack={onAddToStack} onRemoveFromStack={onRemoveFromStack} onStudyIds={onStudyIds} />}
             {tab === "browse" && <BrowseView bank={bank} srs={srs} filters={filters} setFilters={setFilters} posList={posList} onDelete={onDelete} onDeleteMany={onDeleteMany} onClearAll={onClearAll} onResetSeen={onResetSeen} onToggleStar={onToggleStar} stack={stack} onAddToStack={onAddToStack} onRemoveFromStack={onRemoveFromStack} onClearStack={onClearStack} onStudyStack={onStudyStack} />}
             {tab === "import" && <ImportView bank={bank} srs={srs} onImport={onImport} onStudyIds={onStudyIds} />}

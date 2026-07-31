@@ -3,12 +3,12 @@ import {
   bristles, flyingWhite, inkColor, strokeOutline, tonProfile, travel, widthProfile,
   type InkParams, type SamplePoint,
 } from "../lib/ink";
-import { PAPER_TONES, paperTexture } from "../lib/paper";
+import { PAPER_TONE, paperTexture } from "../lib/paper";
 import {
   glyphCanvasTransform, gradeAttempt, toCanvasSpace, toGlyphSpace,
   type CharacterStrokes, type Point, type Verdict,
 } from "../lib/strokes";
-import { C, isDarkTheme } from "../theme";
+import { C } from "../theme";
 
 /* ————————————————— 墨 the brush pad —————————————————
    Write the character by hand. Strokes are kept as the points and timings they
@@ -57,8 +57,7 @@ export function BrushPad({
   const startedAt = useRef(0);
   // The stroke index being demonstrated by "show me", or null when idle.
   const [teaching, setTeaching] = useState<number | null>(null);
-  const dark = isDarkTheme();
-  const tone = dark ? PAPER_TONES.dark : PAPER_TONES.light;
+  const tone = PAPER_TONE;
 
   // Square, as wide as the column allows — and no taller than the window can
   // spare. Width alone gave a pad that pushed its own controls off a laptop
@@ -146,7 +145,7 @@ export function BrushPad({
     // ——— the character being copied ———
     if (mode === "trace" && target?.strokes.length) {
       ctx.save();
-      ctx.globalAlpha = dark ? 0.2 : 0.14;
+      ctx.globalAlpha = 0.14;
       ctx.fillStyle = inkColor(0.5);
       // Shared with toCanvasSpace, so the outline you trace is exactly where
       // the medians being graded are.
@@ -189,7 +188,7 @@ export function BrushPad({
       ctx.arc(pts[0][0], pts[0][1], Math.max(3, size * 0.016), 0, Math.PI * 2);
       ctx.fill();
     }
-  }, [size, strokes, ink, surface, mode, target, showStrokeOrder, medians, teaching, tone, dark]);
+  }, [size, strokes, ink, surface, mode, target, showStrokeOrder, medians, teaching, tone]);
 
   useEffect(() => { draw(); }, [draw]);
 
@@ -228,6 +227,22 @@ export function BrushPad({
     drawing.current = null;
     if (!points?.length) return;
     setStrokes((s) => [...s, { points }]);
+  };
+
+  // The finished sheet, downloadable — a field notebook wants specimens you
+  // can keep, and the canvas is already the picture.
+  const saveSheet = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    canvas.toBlob((blob) => {
+      if (!blob) return;
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `zitie-${hanzi}.png`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }, "image/png");
   };
 
   const undo = () => setStrokes((s) => s.slice(0, -1));
@@ -302,6 +317,11 @@ export function BrushPad({
               style={{ borderColor: C.line, color: strokes.length ? C.dim : C.faint, opacity: strokes.length ? 1 : 0.5 }}>
               clear
             </button>
+            <button onClick={saveSheet} disabled={!strokes.length}
+              className="ui px-3 py-1 t-btn border rounded-full"
+              style={{ borderColor: C.line, color: strokes.length ? C.dim : C.faint, opacity: strokes.length ? 1 : 0.5 }}>
+              save
+            </button>
           </div>
           <div className="flex items-center gap-2">
             <div className="ui t-micro" style={{ color: C.faint }}>
@@ -322,6 +342,12 @@ export function BrushPad({
             )}
           </div>
         </div>
+      )}
+
+      {submitted && strokes.length > 0 && (
+        <button onClick={saveSheet} className="ui t-micro underline" style={{ color: C.dim }}>
+          save this sheet as an image
+        </button>
       )}
 
       {feedback && (

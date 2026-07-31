@@ -26,8 +26,8 @@ const emailKey = (_c: unknown, body: unknown) => {
 };
 
 auth.use("/signup", rateLimit({ windowMs: 60 * 60 * 1000, max: 10 }));
-auth.use("/login", rateLimit({ windowMs: 15 * 60 * 1000, max: 10, keyExtra: emailKey }));
-auth.use("/forgot", rateLimit({ windowMs: 15 * 60 * 1000, max: 5, keyExtra: emailKey }));
+auth.use("/login", rateLimit({ windowMs: 15 * 60 * 1000, max: 10, ipMax: 60, keyExtra: emailKey }));
+auth.use("/forgot", rateLimit({ windowMs: 15 * 60 * 1000, max: 5, ipMax: 30, keyExtra: emailKey }));
 auth.use("/reset", rateLimit({ windowMs: 15 * 60 * 1000, max: 10 }));
 
 auth.post("/signup", async (c) => {
