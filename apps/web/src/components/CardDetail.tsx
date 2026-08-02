@@ -5,7 +5,7 @@ import { DAY } from "../lib/filters";
 import { DEX_LEVELS, DEX_INDEX } from "../data/dex";
 import { WORD_DEX_LEVELS, WORD_INDEX } from "../data/wordDex";
 import { C } from "../theme";
-import { isCollected, isMastered, MASTERY_MARKS, masteryMarks, PROOF_GLYPH, proofsOf } from "../lib/srs";
+import { hasProduced, isCollected, isFullyProven, isMastered, MASTERY_MARKS, masteryMarks, PROOF_GLYPH, proofsOf } from "../lib/srs";
 import type { Card, SeenMap } from "../types";
 
 const ROLE_LABEL: Record<InsightComponent["role"], string> = {
@@ -225,11 +225,17 @@ export function CardDetail({ card, srs, onClose, onToggleStar, inStack, onToggle
             })}
           </div>
           <div className="ui t-micro" style={{ color: C.faint }}>
+            {/* One ladder, three rungs: recognise it to hold the slot, produce
+                it for depth, pass the strict exam for the shiny. */}
             {isMastered(rec)
               ? <><span className="hz" style={{ color: C.cinnabar }}>精通</span> mastered — shiny</>
-              : isCollected(rec)
-                ? "collected · sit the 考 exam to master it"
-                : "recognise, write, and brush it to collect it"}
+              : !isCollected(rec)
+                ? "recognise it to collect it"
+                : isFullyProven(rec)
+                  ? "collected · sit the 考 exam to master it"
+                  : hasProduced(rec)
+                    ? "collected · brush and write it to unlock the 考 exam"
+                    : "collected · write or brush it to go deeper"}
           </div>
         </div>
 

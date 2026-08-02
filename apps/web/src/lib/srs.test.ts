@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { canExam, formatInterval, isCollected, isDue, isMastered, isScheduled, MASTERY_MARKS, masteryLabel, masteryMarks, masteryOf, masteryProgress, previewIntervalDays, proofCount } from "./srs.js";
+import { canExam, formatInterval, hasProduced, isCollected, isDue, isFullyProven, isMastered, isScheduled, MASTERY_MARKS, strengthLabel, masteryMarks, strengthOf, masteryProgress, previewIntervalDays, proofCount } from "./srs.js";
 import type { SeenRecord } from "../types.js";
 
 const NOW = Date.UTC(2026, 6, 26);
@@ -10,47 +10,47 @@ function rec(over: Partial<SeenRecord> = {}): SeenRecord {
   return { last: NOW, views: 1, ease: 2.5, intervalDays: 1, due: NOW + DAY, reps: 1, lapses: 0, ...over };
 }
 
-describe("masteryOf", () => {
+describe("strengthOf", () => {
   it("is 0 for a card that has never been graded", () => {
-    assert.equal(masteryOf(undefined), 0);
-    assert.equal(masteryOf(rec({ reps: 0 })), 0);
+    assert.equal(strengthOf(undefined), 0);
+    assert.equal(strengthOf(rec({ reps: 0 })), 0);
   });
 
   it("climbs with the scheduled interval", () => {
-    assert.equal(masteryOf(rec({ intervalDays: 1 })), 1);
-    assert.equal(masteryOf(rec({ intervalDays: 7 })), 2);
-    assert.equal(masteryOf(rec({ intervalDays: 21 })), 3);
-    assert.equal(masteryOf(rec({ intervalDays: 200 })), 4);
+    assert.equal(strengthOf(rec({ intervalDays: 1 })), 1);
+    assert.equal(strengthOf(rec({ intervalDays: 7 })), 2);
+    assert.equal(strengthOf(rec({ intervalDays: 21 })), 3);
+    assert.equal(strengthOf(rec({ intervalDays: 200 })), 4);
   });
 
   it("never exceeds the documented maximum", () => {
-    assert.equal(masteryOf(rec({ intervalDays: 365, reps: 40 })), 4);
+    assert.equal(strengthOf(rec({ intervalDays: 365, reps: 40 })), 4);
   });
 
   it("caps a low-ease card even on a long interval", () => {
     // Interval alone would say 4; the ease says it keeps needing help.
-    assert.equal(masteryOf(rec({ intervalDays: 200, ease: 1.3 })), 2);
+    assert.equal(strengthOf(rec({ intervalDays: 200, ease: 1.3 })), 2);
   });
 
   it("caps a card that keeps being forgotten outright", () => {
-    assert.equal(masteryOf(rec({ intervalDays: 200, lapses: 5 })), 2);
+    assert.equal(strengthOf(rec({ intervalDays: 200, lapses: 5 })), 2);
   });
 
   it("does not cap a card with only occasional lapses", () => {
-    assert.equal(masteryOf(rec({ intervalDays: 200, lapses: 2 })), 4);
+    assert.equal(strengthOf(rec({ intervalDays: 200, lapses: 2 })), 4);
   });
 
   it("tolerates records missing the SRS fields entirely", () => {
     // A pre-SRS cached record: seen, but no scheduling data.
-    assert.equal(masteryOf({ last: NOW, views: 3 }), 0);
+    assert.equal(strengthOf({ last: NOW, views: 3 }), 0);
   });
 });
 
-describe("masteryLabel", () => {
+describe("strengthLabel", () => {
   it("names every level and falls back safely", () => {
-    assert.deepEqual([0, 1, 2, 3, 4].map(masteryLabel),
+    assert.deepEqual([0, 1, 2, 3, 4].map(strengthLabel),
       ["new", "learning", "familiar", "strong", "mastered"]);
-    assert.equal(masteryLabel(99), "new");
+    assert.equal(strengthLabel(99), "new");
   });
 });
 
@@ -101,15 +101,50 @@ describe("previewIntervalDays", () => {
 });
 
 describe("collection", () => {
-  it("needs all three proofs, not two", () => {
-    assert.equal(isCollected({ last: 0, views: 1, readOk: true }), false);
-    assert.equal(isCollected({ last: 0, views: 1, writeOk: true }), false);
-    assert.equal(isCollected({ last: 0, views: 1, brushOk: true }), false);
-    assert.equal(isCollected({ last: 0, views: 1, readOk: true, writeOk: true }), false);
-    assert.equal(isCollected({ last: 0, views: 1, readOk: true, brushOk: true }), false);
-    assert.equal(isCollected({ last: 0, views: 1, writeOk: true, brushOk: true }), false);
+  /**
+   * The slot is earned by recognising the character, not by producing it.
+   *
+   * This asserted the opposite until the app settled on what it is for. Wanting
+   * all three proofs made the gallery's headline count a measure of
+   * handwriting: someone who could read 800 characters and hand-write 40 was
+   * told they had collected 40. For an app whose purpose is reading Chinese in
+   * the wild, that reported the least transferable skill as the progress.
+   */
+  it("is earned by recognising the character", () => {
+    assert.equal(isCollected({ last: 0, views: 1, readOk: true }), true);
     assert.equal(
       isCollected({ last: 0, views: 1, readOk: true, writeOk: true, brushOk: true }), true);
+  });
+
+  it("is not earned by producing a character you cannot read", () => {
+    // Copying a shape you don't recognise is not reading it.
+    assert.equal(isCollected({ last: 0, views: 1, writeOk: true }), false);
+    assert.equal(isCollected({ last: 0, views: 1, brushOk: true }), false);
+    assert.equal(isCollected({ last: 0, views: 1, writeOk: true, brushOk: true }), false);
+  });
+
+  it("tracks production as depth above the slot, not as a gate on it", () => {
+    const readOnly = { last: 0, views: 1, readOk: true };
+    assert.equal(isCollected(readOnly), true, "the slot is already held");
+    assert.equal(hasProduced(readOnly), false, "but nothing has been produced yet");
+
+    assert.equal(hasProduced({ last: 0, views: 1, readOk: true, writeOk: true }), true);
+    assert.equal(hasProduced({ last: 0, views: 1, readOk: true, brushOk: true }), true);
+  });
+
+  it("still recognises a fully proven card, for exam eligibility", () => {
+    // The 考 exam tests all three strictly, so it keeps the stricter bar —
+    // sitting a brush exam on a character never once brushed would be unfair.
+    assert.equal(isFullyProven({ last: 0, views: 1, readOk: true }), false);
+    assert.equal(isFullyProven({ last: 0, views: 1, readOk: true, writeOk: true }), false);
+    assert.equal(
+      isFullyProven({ last: 0, views: 1, readOk: true, writeOk: true, brushOk: true }), true);
+  });
+
+  it("only lets a fully proven, unmastered card sit the exam", () => {
+    assert.equal(canExam({ last: 0, views: 1, readOk: true }), false);
+    assert.equal(
+      canExam({ last: 0, views: 1, readOk: true, writeOk: true, brushOk: true }), true);
   });
 
   it("treats a card that has never been graded as uncollected", () => {
@@ -124,7 +159,7 @@ describe("collection", () => {
       last: 0, views: 20, ease: 1.3, intervalDays: 0, reps: 0, lapses: 5,
       readOk: true, writeOk: true, brushOk: true,
     };
-    assert.equal(masteryOf(lapsed), 0);
+    assert.equal(strengthOf(lapsed), 0);
     assert.equal(isCollected(lapsed), true);
   });
 

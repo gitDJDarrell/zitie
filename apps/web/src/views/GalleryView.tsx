@@ -163,7 +163,7 @@ export function GalleryView({ bank, srs, onToggleStar, stack, onAddToStack, onRe
               <span className="ui t-micro" style={{ color: C.faint }}>
                 {examReady > 0
                   ? <><span style={{ color: C.paper }}>{examReady}</span> card{examReady === 1 ? "" : "s"} due — strict, no assistance</>
-                  : <>nothing due yet — collected cards return here to be mastered</>}
+                  : <>nothing due yet — read, write and brush a card to enter it</>}
               </span>
             </span>
           </span>

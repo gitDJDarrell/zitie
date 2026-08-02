@@ -1,5 +1,5 @@
 import { canSpeak, speak } from "../lib/speech";
-import { GRADE_GLYPH, MASTERY_MAX, masteryLabel, masteryOf } from "../lib/srs";
+import { GRADE_GLYPH, STRENGTH_MAX, strengthLabel, strengthOf } from "../lib/srs";
 import { C } from "../theme";
 import type { SeenRecord } from "../types";
 
@@ -185,15 +185,15 @@ export function MultiSelect({ label, options, selected, onChange, allLabel = "Al
 // questions — "how well do I know this" and "what did I rate it" — so they get
 // two marks rather than one conflated score.
 export function Rating({ rec, compact = false }: { rec: SeenRecord | undefined; compact?: boolean }) {
-  const level = masteryOf(rec);
+  const level = strengthOf(rec);
   const grade = rec?.lastGrade ?? null;
-  const label = `${masteryLabel(level)}${grade ? `, last rated ${grade}` : ""}`;
+  const label = `${strengthLabel(level)}${grade ? `, last rated ${grade}` : ""}`;
 
   if (compact) {
     // 56px dex tiles: segmented bar only, with the grade folded into the title.
     return (
       <span className="flex gap-px items-center" role="img" aria-label={label} title={label}>
-        {Array.from({ length: MASTERY_MAX }, (_, i) => (
+        {Array.from({ length: STRENGTH_MAX }, (_, i) => (
           <span key={i} style={{
             width: 5, height: 3, borderRadius: 1,
             background: i < level ? "currentColor" : "transparent",
@@ -208,7 +208,7 @@ export function Rating({ rec, compact = false }: { rec: SeenRecord | undefined; 
   return (
     <span className="inline-flex items-center gap-1.5" title={label}>
       <span className="flex gap-px items-center" role="img" aria-label={label}>
-        {Array.from({ length: MASTERY_MAX }, (_, i) => (
+        {Array.from({ length: STRENGTH_MAX }, (_, i) => (
           <span key={i} style={{
             width: 6, height: 4, borderRadius: 1,
             background: i < level ? C.paper : "transparent",
