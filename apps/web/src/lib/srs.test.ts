@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { formatInterval, isCollected, isDue, isScheduled, masteryLabel, masteryOf, previewIntervalDays, proofCount } from "./srs.js";
+import { canExam, formatInterval, isCollected, isDue, isMastered, isScheduled, MASTERY_MARKS, masteryLabel, masteryMarks, masteryOf, masteryProgress, previewIntervalDays, proofCount } from "./srs.js";
 import type { SeenRecord } from "../types.js";
 
 const NOW = Date.UTC(2026, 6, 26);
@@ -134,5 +134,40 @@ describe("collection", () => {
     assert.equal(proofCount({ last: 0, views: 1, readOk: true, writeOk: true }), 2);
     assert.equal(
       proofCount({ last: 0, views: 1, readOk: true, writeOk: true, brushOk: true }), 3);
+  });
+});
+
+describe("mastery (the 考 exam)", () => {
+  const collected = { last: 0, views: 5, readOk: true, writeOk: true, brushOk: true };
+  const full = { ...collected, readMarks: MASTERY_MARKS, writeMarks: MASTERY_MARKS, brushMarks: MASTERY_MARKS };
+
+  it("reads marks back, clamped and defaulted", () => {
+    assert.deepEqual(masteryMarks(undefined), { read: 0, write: 0, brush: 0 });
+    assert.deepEqual(masteryMarks({ last: 0, views: 1, readMarks: 2 }), { read: 2, write: 0, brush: 0 });
+    // Never reports past the cap even if the row somehow overran.
+    assert.equal(masteryMarks({ last: 0, views: 1, brushMarks: 99 }).brush, MASTERY_MARKS);
+  });
+
+  it("is mastered only with full marks in every direction", () => {
+    assert.equal(isMastered(undefined), false);
+    assert.equal(isMastered(collected), false);
+    // Two of three maxed is not mastery — every skill has to clear.
+    assert.equal(isMastered({ ...full, brushMarks: MASTERY_MARKS - 1 }), false);
+    assert.equal(isMastered(full), true);
+  });
+
+  it("sums progress toward the shiny", () => {
+    assert.equal(masteryProgress(undefined), 0);
+    assert.equal(masteryProgress({ ...collected, readMarks: 3, writeMarks: 1 }), 4);
+    assert.equal(masteryProgress(full), MASTERY_MARKS * 3);
+  });
+
+  it("only lets collected, unmastered cards sit the exam", () => {
+    assert.equal(canExam(undefined), false);
+    // Half-collected — nothing strict to prove yet.
+    assert.equal(canExam({ last: 0, views: 1, readOk: true, writeOk: true }), false);
+    assert.equal(canExam(collected), true);
+    // Already shiny — no exam left to sit.
+    assert.equal(canExam(full), false);
   });
 });

@@ -343,6 +343,42 @@ quality-of-life fixes that were accepted, all landed together:
 - The difficulty slider now labels its ends ("short, mostly review" → "long,
   mostly new").
 
+## Backlog — next (queued 2026-08-02)
+
+1. **精通 mastery, and the 考 exam — the second bar — SHIPPED.** Collection asks
+   you to produce a character three ways with the study screen's help. Mastery
+   is the same three ways proven *strict*, and it is what turns a card shiny.
+   This is deliberately the patience payoff of decision #0: a shiny is earned
+   slowly, over separate sittings, not handed out for a streak.
+   - **The exam is its own place, not a mode of Study.** A 考 entry on the
+     gallery (`ExamView`) gathers every collected, due, not-yet-mastered card
+     and sits it strict in each direction it still owes: 认 recognise from five
+     meanings not four, 写 write the characters only (the reading is not a pass
+     here), 描 brush with no numbered order, no tracing, no "show me", and every
+     stroke in the taught sequence or it doesn't count. A "final boss", by
+     request — an exam should feel like one.
+   - **Marks, not a flag.** Mastery is `MASTERY_MARKS` (3) clean passes banked
+     in *each* direction — `read_marks`/`write_marks`/`brush_marks` on
+     `seen_state`, set upward and capped like the proofs, exposed through
+     `serializeSeen` (the one wire shape, guarded by `seenWire.test.ts`). Kept
+     per-direction so the exam has to test every skill: you can't brush your way
+     to a shiny you can't read.
+   - **It can't be farmed in one go.** A mark banks only on a clean pass of an
+     already-collected card, and a pass reschedules the card out of the due
+     pool — so the ninth mark lands over at least three separate sittings, days
+     apart. The server enforces both (`routes/seen.ts`): no exam flag, no mark;
+     not collected, no mark; capped with `least(... + 1, MASTERY_MARKS)`.
+   - **Shiny now means mastered.** The gallery's shiny/chrome tile used to mean
+     *data-complete* (radical + strokes + examples + notes), which was a
+     property of the card, not of the learner. It now means `isMastered` — the
+     dex's rarest, loudest state is reserved for the thing actually worth the
+     glow. `CardDetail` shows the three directions and their banked marks as
+     pips, so the path to shiny is legible.
+   - **The reward.** When the ninth mark lands, a `MasteredBanner` stops the
+     room — a lit, gold-sheened card over a dimmed app, louder than the quiet
+     ink banner collection uses, because mastery is a far rarer moment. Raised
+     once per character, like collection.
+
 ## Sequencing
 
 1. ~~Mobile UX polish + PWA~~ — done (11bd2c8, 1a31893).

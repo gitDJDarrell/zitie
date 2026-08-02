@@ -5,6 +5,7 @@ import { DAY } from "../lib/filters";
 import { DEX_LEVELS, DEX_INDEX } from "../data/dex";
 import { WORD_DEX_LEVELS, WORD_INDEX } from "../data/wordDex";
 import { C } from "../theme";
+import { isCollected, isMastered, MASTERY_MARKS, masteryMarks, PROOF_GLYPH, proofsOf } from "../lib/srs";
 import type { Card, SeenMap } from "../types";
 
 const ROLE_LABEL: Record<InsightComponent["role"], string> = {
@@ -199,11 +200,44 @@ export function CardDetail({ card, srs, onClose, onToggleStar, inStack, onToggle
           <div className="ui text-xs text-center leading-relaxed italic" style={{ color: C.faint }}>{card.notes}</div>
         )}
 
-        <div className="ui text-xs text-center pt-3" style={{ color: C.faint, borderTop: `1px solid ${C.ink3}` }}>
+        {/* The three proofs, and — once collected — how far the 考 exam has
+            carried each toward the shiny. A filled pip is a banked mark. */}
+        <div className="flex flex-col items-center gap-1.5 pt-3" style={{ borderTop: `1px solid ${C.ink3}` }}>
+          <div className="flex items-center justify-center gap-4">
+            {PROOF_GLYPH.map(({ key, zh, label }) => {
+              const got = proofsOf(rec)[key];
+              const marks = masteryMarks(rec)[key];
+              return (
+                <div key={key} className="flex flex-col items-center gap-1"
+                  title={got ? `${label} — ${marks}/${MASTERY_MARKS} exam marks` : `not yet ${label}`}>
+                  <span className="hz text-lg leading-none" style={{ color: got ? C.paper : C.ink3 }}>{zh}</span>
+                  <div className="flex gap-0.5" aria-hidden="true">
+                    {Array.from({ length: MASTERY_MARKS }, (_, i) => (
+                      <span key={i} className="rounded-full" style={{
+                        width: 5, height: 5,
+                        background: i < marks ? C.cinnabar : got ? C.ink3 : "transparent",
+                        border: i < marks ? "none" : `1px solid ${C.ink3}`,
+                      }} />
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <div className="ui t-micro" style={{ color: C.faint }}>
+            {isMastered(rec)
+              ? <><span className="hz" style={{ color: C.cinnabar }}>精通</span> mastered — shiny</>
+              : isCollected(rec)
+                ? "collected · sit the 考 exam to master it"
+                : "recognise, write, and brush it to collect it"}
+          </div>
+        </div>
+
+        <div className="ui text-xs text-center pt-2" style={{ color: C.faint }}>
           {rec
             ? <>studied {rec.views} time{rec.views === 1 ? "" : "s"} · {ago === 0 ? "seen today" : `last seen ${ago}d ago`}</>
             : "not studied yet"}
-          {" · "}collected {card.added}
+          {" · "}added {card.added}
         </div>
 
         {(onPrev || onNext) && (

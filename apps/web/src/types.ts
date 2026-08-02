@@ -38,6 +38,12 @@ export interface SeenRecord {
   writeOk?: boolean;
   /** Brushed: drew every stroke of the character by hand (brush mode). */
   brushOk?: boolean;
+  /** 考 exam marks — clean strict passes banked in each direction, capped at
+   *  MASTERY_MARKS. Full marks in all three is mastery (the shiny). Optional so
+   *  a pre-mastery cached snapshot still deserializes. */
+  readMarks?: number;
+  writeMarks?: number;
+  brushMarks?: number;
 }
 
 export type SeenMap = Record<string, SeenRecord>;

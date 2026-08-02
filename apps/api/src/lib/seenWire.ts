@@ -23,6 +23,9 @@ export function serializeSeen(row: typeof seenState.$inferSelect) {
     readOk: row.readOk,
     writeOk: row.writeOk,
     brushOk: row.brushOk,
+    readMarks: row.readMarks,
+    writeMarks: row.writeMarks,
+    brushMarks: row.brushMarks,
   };
 }
 

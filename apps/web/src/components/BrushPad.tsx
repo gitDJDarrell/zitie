@@ -42,12 +42,17 @@ export interface BrushPadProps {
   surface: Surface;
   mode: PadMode;
   showStrokeOrder: boolean;
+  /**
+   * Whether the "show me" walkthrough is offered under the feedback line.
+   * Defaults on; the 考 exam turns it off — the whole point there is to write
+   * the character with no one showing you how. */
+  allowShowMe?: boolean;
   /** Position in a multi-character word, for the caption. 1-based. */
   step?: { index: number; total: number };
 }
 
 export function BrushPad({
-  hanzi, target, onSubmit, submitted = false, ink, surface, mode, showStrokeOrder, step,
+  hanzi, target, onSubmit, submitted = false, ink, surface, mode, showStrokeOrder, allowShowMe = true, step,
 }: BrushPadProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const wrapRef = useRef<HTMLDivElement | null>(null);
@@ -353,7 +358,7 @@ export function BrushPad({
       {feedback && (
         <div className="ui t-micro text-center" style={{ color: C.faint, maxWidth: size }}>
           {feedback}
-          {medians.length > 0 && (
+          {allowShowMe && medians.length > 0 && (
             <>
               {" · "}
               <button onClick={showMe} className="ui underline" style={{ color: C.dim }}>show me</button>

@@ -19,7 +19,7 @@ export interface SettingsPatch {
 }
 
 export type PendingOp =
-  | { kind: "grade"; seq: number; at: number; cardId: string; grade: Grade; proof?: Proof }
+  | { kind: "grade"; seq: number; at: number; cardId: string; grade: Grade; proof?: Proof; exam?: boolean }
   | { kind: "seen"; seq: number; at: number; cardId: string }
   | { kind: "patch"; seq: number; at: number; cardId: string; patch: Partial<Card> }
   | { kind: "settings"; seq: number; at: number; patch: SettingsPatch };
@@ -92,7 +92,7 @@ export function writeOutbox(ops: PendingOp[]): void {
 
 /** A write as the caller states it — the queue adds ordering and a timestamp. */
 export type NewOp =
-  | { kind: "grade"; cardId: string; grade: Grade; proof?: Proof }
+  | { kind: "grade"; cardId: string; grade: Grade; proof?: Proof; exam?: boolean }
   | { kind: "seen"; cardId: string }
   | { kind: "patch"; cardId: string; patch: Partial<Card> }
   | { kind: "settings"; patch: SettingsPatch };

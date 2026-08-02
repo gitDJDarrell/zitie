@@ -77,6 +77,15 @@ export const seenState = pgTable("seen_state", {
   // the three and the only one that checks *how* the character is formed
   // rather than just which one it is.
   brushOk: boolean("brush_ok").notNull().default(false),
+  // Mastery marks — the second, higher bar above collection. A collected card
+  // (all three proofs) enters the 考 exam, where it is tested strict, with no
+  // assistance, in each direction; a clean strict pass banks a mark. Mastery is
+  // MASTERY_MARKS of each, earned over separate sittings (a strict pass
+  // reschedules the card, so the exam can't be farmed in one go). Set only
+  // upward, like the proofs.
+  readMarks: integer("read_marks").notNull().default(0),
+  writeMarks: integer("write_marks").notNull().default(0),
+  brushMarks: integer("brush_marks").notNull().default(0),
 });
 
 // Stroke geometry, shared across all users like character_insights — the
