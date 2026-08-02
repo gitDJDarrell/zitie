@@ -3,6 +3,7 @@ import { Chip, Collapsible, Empty, MultiSelect, Slider, SpeakBtn, StarBtn, StarT
 import { availableLevels, buildSession, DIFFICULTY_STEPS, filterByLevels, sessionSize, stepFor } from "../lib/difficulty";
 import { checkAnswer, type AnswerKind } from "../lib/answer";
 import { CHOICE_COUNT, meaningChoices } from "../lib/choices";
+import { contextFor, wordsContaining } from "../lib/context";
 import { applyFilters, type Filters } from "../lib/filters";
 import { POS_HANZI } from "../lib/posLabels";
 import { canSpeak, speak } from "../lib/speech";
@@ -141,6 +142,19 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
     () => (card ? meaningChoices(card, bank) : []),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [card?.id, idx, bank],
+  );
+
+  // How the character is presented for recognition — alone while it's new,
+  // embedded in a real word once it's known. Pinned per visit like the options
+  // above, so it can't reshuffle under the learner mid-answer.
+  const reading = useMemo(
+    () => (card ? contextFor(card.hanzi, srs[card.id]) : { display: "", at: 0, embedded: false }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [card?.id, idx],
+  );
+  const appearsIn = useMemo(
+    () => (card && card.hanzi.length === 1 ? wordsContaining(card.hanzi, 4) : []),
+    [card],
   );
   // Stroke geometry for the card on screen — fetched once per character and
   // cached, so flipping back and forth costs nothing and an offline session can
@@ -850,14 +864,26 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
         }}
       >
         {!flipped ? (
-          <div className="hz font-black text-center"
-            style={{
-              color: C.paper, lineHeight: 1.1,
-              fontSize: asking
-                ? (card.hanzi.length > 2 ? 48 : 64)
-                : (card.hanzi.length > 2 ? 64 : 96),
-            }}>
-            {card.hanzi}
+          // Once a character is known, it stops appearing on its own and turns
+          // up inside a real HSK word — the neighbours quiet, the character at
+          // full ink. Reading in the wild is always reading past something.
+          <div className="flex flex-col items-center gap-2">
+            <div className="hz font-black text-center"
+              style={{
+                color: C.paper, lineHeight: 1.1,
+                fontSize: asking
+                  ? (reading.display.length > 2 ? 48 : 64)
+                  : (reading.display.length > 2 ? 64 : 96),
+              }}>
+              {[...reading.display].map((ch, i) => (
+                <span key={i} style={{ color: i === reading.at ? C.paper : C.faint }}>{ch}</span>
+              ))}
+            </div>
+            {reading.embedded && (
+              <div className="ui t-micro" style={{ color: C.faint }}>
+                what does the dark character mean?
+              </div>
+            )}
           </div>
         ) : (
           <div className="flex flex-col items-center gap-3 w-full">
@@ -882,6 +908,23 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
                     {ex.en && <div className="ui text-xs" style={{ color: C.dim }}>{ex.en}</div>}
                   </div>
                 ))}
+              </div>
+            )}
+            {/* Where it actually turns up. Reading is associative — you know 咖
+                because you have met 咖啡 — so every review pays a small dose of
+                the words this character does its work in. */}
+            {appearsIn.length > 0 && (
+              <div className="w-full flex flex-col items-center gap-1 pt-3 mt-1" style={{ borderTop: `1px solid ${C.ink3}` }}>
+                <div className="ui t-label" style={{ color: C.faint }}>appears in</div>
+                <div className="flex flex-wrap justify-center gap-x-3 gap-y-1">
+                  {appearsIn.map(word => (
+                    <span key={word} className="hz text-base">
+                      {[...word].map((ch, i) => (
+                        <span key={i} style={{ color: ch === card.hanzi ? C.paper : C.dim }}>{ch}</span>
+                      ))}
+                    </span>
+                  ))}
+                </div>
               </div>
             )}
             {card.notes && (
