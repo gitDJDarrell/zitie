@@ -6,6 +6,25 @@ accounts, AI extraction, HSK character dex, study stacks). Decisions locked
 
 ## Confirmed decisions
 
+0. **Patience over dopamine — the product philosophy (locked 2026-07-31).**
+   Zitie is a *collection you tend over time*, the way a birder keeps a life
+   list or a lepidopterist a specimen drawer — not a game chasing quick hits.
+   The reward is starting from nothing and watching a real thing grow. This is
+   a deliberate rejection of the streak/badge/daily-goal playbook, and it
+   settles a class of proposals for good:
+   - **No streaks, no badges, no daily goals, no placement quiz, no
+     quick-onboarding shortcut.** These were raised in the 2026-07-31 QA
+     report and *declined on purpose.* The empty starting state and the slow
+     grind are the point, not friction to be engineered away.
+   - **The three-proof dex already embodies this**: a slot measures competence
+     you earned in three directions, not minutes logged or days in a row. That
+     is the honest version of progress, and it's the whole game.
+   - What we *do* invest in: making the patient path feel good — quiet study
+     sessions, a collection that's a pleasure to browse, and specimens worth
+     keeping (a finished brush sheet you can save). Retention comes from the
+     relationship, not from nagging.
+   Anything that proposes to shorten the climb, or to reward showing up rather
+   than getting better, is out of scope by this decision.
 1. **Etymology is grounded in open data, not freestyled.** Ship IDS
    (Ideographic Description Sequences — component decomposition, e.g.
    吃 → ⿰口乞) + Unihan (radical, stroke count, reading, gloss) as static
@@ -265,6 +284,100 @@ they were queued:
      its slot. Only characters earned from here on have to be brushed too —
      same reasoning as 0007: the change should be felt going forward, not
      applied to the past.
+
+## Backlog — next (queued 2026-07-31)
+
+1. **The brush, as a brush — SHIPPED.** Four changes to 描 mode after using it.
+   - **Words are graded character by character.** A word card walks its
+     characters in turn — 咖啡 is 咖 then 啡 — with a pad per character and one
+     verdict for the whole word (`combineVerdicts`). The weakest character sets
+     the result, so writing 咖 and giving up earns nothing; a character with no
+     stroke geometry is skipped rather than failed, since the pad had nothing
+     to grade it against. This makes the word dex's 10,954 slots collectable,
+     which they were not before.
+   - **The controls sit beside the paper.** They were behind a disclosure that
+     pushed the pad off the screen the moment it opened. Brush mode now breaks
+     out of the app's 448px column to full width, paper on the left and the
+     brush tray on the right, the tray going to two columns once there is room.
+     The pad gives up height when side by side so the whole screen fits without
+     scrolling; stacked on a phone it keeps its width, because the page scrolls
+     there anyway and a shrunken pad is just a worse pad.
+   - **The controls are artistic properties, not renderer knobs.** 濃 density,
+     潤 water, 飛白 flying white, 提按 press, 側鋒 tilt, and a 手 hand seed. Each
+     changes the picture in a way you can point at: water closes the dry gaps
+     and holds an even tone, a dry brush fades along its stroke and splits into
+     fibre, tilt runs one flank of the stroke heavier than the other.
+   - **It looks painted.** Ink is a warm near-black that varies in tone along
+     each stroke as the brush spends what it carries, never flat. Paper is a
+     generated sheet (`lib/paper.ts`) with fibres, tonal drift and a vignette,
+     cached per size so it doesn't recompute on every pointer move.
+
+## Backlog — QA polish — SHIPPED (2026-07-31)
+
+From a full QA pass (`scratchpad/qa/QA-REPORT.md`). The report's onboarding and
+retention-loop proposals were **declined** under decision #0; these are the
+quality-of-life fixes that were accepted, all landed together:
+
+- **Dark-mode brush was unusable** — near-black ink on a near-black sheet. The
+  paper now stays a lit warm sheet in both themes (a dark room, not dark paper,
+  the way calligraphy actually works), so ink reads in dark mode. `PAPER_TONES`
+  collapsed to one `PAPER_TONE`.
+- **Export your bank** — a button in Browse downloads the whole bank as JSON in
+  the Import format, so a backup is also a way to move between accounts. The
+  endpoint existed with no UI; now it has one.
+- **Keyboard-drivable study** — 1–4 answer the read quiz, Enter/Space turns the
+  page. Desktop no longer needs the mouse for the core loop.
+- **The answer stays on the table** — a wrong pick used to clear the four
+  options; they now stay, the right one marked ✓ and your miss ✕, because
+  recalling *which* of the four it was is the memory being trained.
+- **The session gets a quiet room** — the account chrome (email, theme, logout,
+  bank count) hides while a deck is running and returns when it ends.
+- **The brush tray teaches** — each slider shows its one-line meaning ("dry
+  streaks through the stroke"), turning the panel into a small calligraphy
+  lesson; two columns from 768px so it fits beside the paper.
+- **Save the sheet** — a finished brush character downloads as a PNG, a
+  specimen for the notebook (and, incidentally, shareable).
+- **Kinder server messages** — a failed AI import no longer names
+  `ANTHROPIC_API_KEY` at the learner; the login limiter keys per-account with a
+  looser per-IP ceiling, so a classroom behind one NAT doesn't lock itself out.
+- The difficulty slider now labels its ends ("short, mostly review" → "long,
+  mostly new").
+
+## Backlog — next (queued 2026-08-02)
+
+1. **精通 mastery, and the 考 exam — the second bar — SHIPPED.** Collection asks
+   you to produce a character three ways with the study screen's help. Mastery
+   is the same three ways proven *strict*, and it is what turns a card shiny.
+   This is deliberately the patience payoff of decision #0: a shiny is earned
+   slowly, over separate sittings, not handed out for a streak.
+   - **The exam is its own place, not a mode of Study.** A 考 entry on the
+     gallery (`ExamView`) gathers every collected, due, not-yet-mastered card
+     and sits it strict in each direction it still owes: 认 recognise from five
+     meanings not four, 写 write the characters only (the reading is not a pass
+     here), 描 brush with no numbered order, no tracing, no "show me", and every
+     stroke in the taught sequence or it doesn't count. A "final boss", by
+     request — an exam should feel like one.
+   - **Marks, not a flag.** Mastery is `MASTERY_MARKS` (3) clean passes banked
+     in *each* direction — `read_marks`/`write_marks`/`brush_marks` on
+     `seen_state`, set upward and capped like the proofs, exposed through
+     `serializeSeen` (the one wire shape, guarded by `seenWire.test.ts`). Kept
+     per-direction so the exam has to test every skill: you can't brush your way
+     to a shiny you can't read.
+   - **It can't be farmed in one go.** A mark banks only on a clean pass of an
+     already-collected card, and a pass reschedules the card out of the due
+     pool — so the ninth mark lands over at least three separate sittings, days
+     apart. The server enforces both (`routes/seen.ts`): no exam flag, no mark;
+     not collected, no mark; capped with `least(... + 1, MASTERY_MARKS)`.
+   - **Shiny now means mastered.** The gallery's shiny/chrome tile used to mean
+     *data-complete* (radical + strokes + examples + notes), which was a
+     property of the card, not of the learner. It now means `isMastered` — the
+     dex's rarest, loudest state is reserved for the thing actually worth the
+     glow. `CardDetail` shows the three directions and their banked marks as
+     pips, so the path to shiny is legible.
+   - **The reward.** When the ninth mark lands, a `MasteredBanner` stops the
+     room — a lit, gold-sheened card over a dimmed app, louder than the quiet
+     ink banner collection uses, because mastery is a far rarer moment. Raised
+     once per character, like collection.
 
 ## Sequencing
 

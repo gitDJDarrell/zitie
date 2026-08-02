@@ -12,6 +12,7 @@ const row: typeof seenState.$inferSelect = {
   ease: 2.35, intervalDays: 4.5, due: new Date(NOW.getTime() + 86_400_000),
   reps: 2, lapses: 1, lastGrade: "hard",
   readOk: true, writeOk: false, brushOk: false,
+  readMarks: 2, writeMarks: 0, brushMarks: 1,
 };
 
 describe("serializeSeen", () => {
@@ -34,6 +35,13 @@ describe("serializeSeen", () => {
 
   it("carries the last grade pressed", () => {
     assert.equal(serializeSeen(row).lastGrade, "hard");
+  });
+
+  it("carries the mastery marks — the exam progress the shiny is earned from", () => {
+    const w = serializeSeen(row);
+    assert.equal(w.readMarks, 2);
+    assert.equal(w.writeMarks, 0);
+    assert.equal(w.brushMarks, 1);
   });
 
   /**

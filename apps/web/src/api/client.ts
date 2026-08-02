@@ -53,8 +53,8 @@ export const api = {
   clearAll: () => request<{ ok: true }>("/cards/clear-all", { method: "POST" }),
 
   markSeen: (id: string) => request<SeenRecord>("/seen", { method: "POST", body: JSON.stringify({ id }) }),
-  gradeCard: (id: string, grade: Grade, proof?: Proof) =>
-    request<SeenRecord>("/seen/grade", { method: "POST", body: JSON.stringify({ id, grade, proof }) }),
+  gradeCard: (id: string, grade: Grade, proof?: Proof, exam?: boolean) =>
+    request<SeenRecord>("/seen/grade", { method: "POST", body: JSON.stringify({ id, grade, proof, exam }) }),
   resetSeen: (ids?: string[]) => request<{ ok: true }>("/seen/reset", { method: "POST", body: JSON.stringify({ ids }) }),
 
   getSettings: () => request<Settings>("/settings"),

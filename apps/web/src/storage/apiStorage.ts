@@ -71,7 +71,7 @@ export class ApiStorage implements StorageBackend {
 
   private send(op: PendingOp): Promise<unknown> {
     switch (op.kind) {
-      case "grade": return api.gradeCard(op.cardId, op.grade, op.proof);
+      case "grade": return api.gradeCard(op.cardId, op.grade, op.proof, op.exam);
       case "seen": return api.markSeen(op.cardId);
       case "patch": return api.patchCard(op.cardId, op.patch);
       case "settings": return api.patchSettings(op.patch);
@@ -151,17 +151,17 @@ export class ApiStorage implements StorageBackend {
 
   // Self-rating: drives the SRS scheduler. Returns the server's authoritative
   // post-grade state, or null when offline (optimistic local state stands).
-  async gradeCard(id: string, grade: Grade, proof?: Proof): Promise<SeenRecord | null> {
+  async gradeCard(id: string, grade: Grade, proof?: Proof, exam?: boolean): Promise<SeenRecord | null> {
     this.notify("syncing");
     try {
-      const record = await api.gradeCard(id, grade, proof);
+      const record = await api.gradeCard(id, grade, proof, exam);
       this.notify("synced");
       return record;
     } catch (err) {
       if (err instanceof ApiError) throw err;
       // The whole point of the outbox: a graded card on a train is a review
       // the scheduler must eventually see, not a keystroke into the void.
-      this.park({ kind: "grade", cardId: id, grade, proof });
+      this.park({ kind: "grade", cardId: id, grade, proof, exam });
       return null;
     }
   }

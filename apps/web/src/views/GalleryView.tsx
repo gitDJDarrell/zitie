@@ -3,7 +3,7 @@ import { Chip, Rating, SpeakBtn, Switch } from "../components/atoms";
 import { CardDetail } from "../components/CardDetail";
 import { MysteryCardDetail } from "../components/MysteryCardDetail";
 import { DEX_LEVELS, DEX_INDEX, DEX_ORDER, DEX_TOTAL } from "../data/dex";
-import { isCollected, PROOF_GLYPH, proofsOf } from "../lib/srs";
+import { canExam, isCollected, isDue, isMastered, PROOF_GLYPH, proofsOf } from "../lib/srs";
 import { C } from "../theme";
 import type { Card, SeenMap, StudyIds } from "../types";
 import { WordDex } from "./WordDex";
@@ -23,14 +23,6 @@ const GAP = 4;
 // so prev/next can page seamlessly through uncollected slots as well.
 type Cursor = { kind: "dex"; index: number } | { kind: "extra"; index: number };
 
-// A card is "fully completed" — and gets the shiny/chrome dex tile — once
-// its entry is filled in beyond the AI-extracted basics: radical, strokes,
-// at least one example, and notes.
-function isFullyComplete(card: Card): boolean {
-  return !!card.radical && card.strokes != null
-    && !!card.examples?.length && !!card.notes?.trim();
-}
-
 /* ————————————————— gallery: the character dex —————————————————
    Every HSK character is a slot. Uncaught characters render as faint tracing
    outlines — like the grey template glyphs in a paper copybook — and turn to
@@ -38,10 +30,12 @@ function isFullyComplete(card: Card): boolean {
    HSK 3.0 character-list levels (7-9 combined the same way the standard
    itself combines them). Dex numbers are a stable catalog index, not a
    difficulty or frequency rank — same as a Pokédex number. */
-export function GalleryView({ bank, srs, onToggleStar, stack, onAddToStack, onRemoveFromStack, onStudyIds }: {
+export function GalleryView({ bank, srs, onToggleStar, stack, onAddToStack, onRemoveFromStack, onStudyIds, onStartExam }: {
   bank: Card[]; srs: SeenMap; onToggleStar: (id: string) => void;
   stack: string[]; onAddToStack: (ids: string[]) => void; onRemoveFromStack: (ids: string[]) => void;
   onStudyIds: StudyIds;
+  /** Enter the 考 exam — the strict, unassisted mastery test. */
+  onStartExam: () => void;
 }) {
   // Which catalog is on screen. Characters lead: they're the smaller, more
   // finishable set, and every word in the other dex is built out of them.
@@ -68,6 +62,18 @@ export function GalleryView({ bank, srs, onToggleStar, stack, onAddToStack, onRe
     () => [...DEX_INDEX.keys()].filter(held).length,
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [byHanzi, srs],
+  );
+  // Mastered: collected, then cleared strict in all three directions of the 考
+  // exam — the shiny cards. And how many are due to sit the exam right now, so
+  // the entry can say whether there's anything to do.
+  const masteredTotal = useMemo(
+    () => [...DEX_INDEX.keys()].filter(ch => isMastered(srs[byHanzi.get(ch)?.id ?? ""])).length,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [byHanzi, srs],
+  );
+  const examReady = useMemo(
+    () => bank.filter(c => canExam(srs[c.id]) && isDue(srs[c.id])).length,
+    [bank, srs],
   );
 
   const extras = useMemo(
@@ -132,11 +138,38 @@ export function GalleryView({ bank, srs, onToggleStar, stack, onAddToStack, onRe
             <span style={{ color: C.paper }}>{caughtTotal}</span>
             <span style={{ color: C.faint }}> / {DEX_TOTAL} collected</span>
           </div>
+          {masteredTotal > 0 && (
+            <div className="ui t-micro" style={{ color: C.faint }}>
+              <span className="hz">精</span> {masteredTotal} mastered
+            </div>
+          )}
           {heldTotal > 0 && (
             <div className="ui t-micro" style={{ color: C.faint }}>{heldTotal} in progress</div>
           )}
         </div>
       </div>
+
+      {/* The 考 exam — the strict mastery test. Always offered once anything has
+          been collected, so the path to shiny is visible; the caption says
+          whether there's anything due to sit right now. */}
+      {caughtTotal > 0 && (
+        <button onClick={onStartExam}
+          className="flex items-center justify-between gap-3 px-4 py-3 rounded-lg border text-left"
+          style={{ borderColor: examReady > 0 ? C.paper : C.line, background: C.ink2 }}>
+          <span className="flex items-center gap-3">
+            <span className="hz text-2xl font-black" style={{ color: examReady > 0 ? C.paper : C.dim }}>考</span>
+            <span className="flex flex-col">
+              <span className="ui t-label" style={{ color: C.paper }}>sit the exam</span>
+              <span className="ui t-micro" style={{ color: C.faint }}>
+                {examReady > 0
+                  ? <><span style={{ color: C.paper }}>{examReady}</span> card{examReady === 1 ? "" : "s"} due — strict, no assistance</>
+                  : <>nothing due yet — collected cards return here to be mastered</>}
+              </span>
+            </span>
+          </span>
+          <span className="ui t-btn" style={{ color: examReady > 0 ? C.paper : C.faint }}>→</span>
+        </button>
+      )}
 
       <div className="flex flex-wrap gap-2">
         {DEX_LEVELS.map(l => (
@@ -189,7 +222,7 @@ export function GalleryView({ bank, srs, onToggleStar, stack, onAddToStack, onRe
               const card = byHanzi.get(ch);
               const n = levelOffset + i + 1;
               const dexIndex = n - 1; // DEX_ORDER is 0-based; slot.n is 1-based
-              const shiny = card ? isFullyComplete(card) : false;
+              const shiny = card ? isMastered(srs[card.id]) : false;
               const proofs = proofsOf(card ? srs[card.id] : undefined);
               const got = card ? proofs.read && proofs.write && proofs.brush : false;
               return card && got ? (
@@ -198,7 +231,7 @@ export function GalleryView({ bank, srs, onToggleStar, stack, onAddToStack, onRe
                 // drops the inner one's clicks.
                 <div key={ch} className="relative" style={{ height: TILE_HEIGHT }}>
                   <button onClick={() => setCursor({ kind: "dex", index: dexIndex })}
-                    aria-label={`No. ${n} ${ch} — collected${shiny ? ", fully completed" : ""}, view details`}
+                    aria-label={`No. ${n} ${ch} — collected${shiny ? ", mastered" : ""}, view details`}
                     className={`w-full h-full flex flex-col items-center justify-center gap-0.5 rounded${shiny ? " dex-shiny" : ""}`}
                     style={shiny ? undefined : { background: C.ink2, border: `1px solid ${C.ink3}` }}>
                     <span className="hz text-2xl leading-tight" style={{ color: shiny ? "#1a1a1a" : C.paper }}>{ch}</span>
@@ -259,11 +292,11 @@ export function GalleryView({ bank, srs, onToggleStar, stack, onAddToStack, onRe
           </p>
           <div className="grid gap-1" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(72px, 1fr))" }}>
             {extras.map((card, i) => {
-              const shiny = isFullyComplete(card);
+              const shiny = isMastered(srs[card.id]);
               return (
                 <div key={card.id} className="relative">
                   <button onClick={() => setCursor({ kind: "extra", index: i })}
-                    aria-label={`${card.hanzi} — view details${shiny ? " (fully completed)" : ""}`}
+                    aria-label={`${card.hanzi} — view details${shiny ? " (mastered)" : ""}`}
                     className={`w-full flex flex-col items-center gap-0.5 py-2 px-1 rounded${shiny ? " dex-shiny" : ""}`}
                     style={shiny ? undefined : { background: C.ink2, border: `1px solid ${C.ink3}` }}>
                     <span className="hz text-xl leading-tight" style={{ color: shiny ? "#1a1a1a" : C.paper }}>{card.hanzi}</span>

@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
-  brushOutcome, GLYPH_BASELINE, GLYPH_DESCENT, glyphCanvasTransform,
+  brushOutcome, combineVerdicts, GLYPH_BASELINE, GLYPH_DESCENT, glyphCanvasTransform,
   gradeAttempt, matchStrokes, pathLength, resample, strokeDistance,
   toCanvasSpace, toGlyphSpace, type Point, type Verdict,
 } from "./strokes.js";
@@ -296,5 +296,55 @@ describe("pathLength", () => {
     assert.equal(pathLength([[0, 0], [30, 40]]), 50);
     assert.equal(pathLength([[0, 0], [10, 0], [10, 10]]), 20);
     assert.equal(pathLength([[5, 5]]), 0);
+  });
+});
+
+describe("combineVerdicts — one result for a whole word", () => {
+  const v = (over: Partial<Verdict> = {}): Verdict => ({
+    perfect: true, complete: true, orderOk: true,
+    matched: 3, expected: 3, stray: 0, missing: [], matches: [], ...over,
+  });
+
+  it("is perfect only when every character is", () => {
+    assert.equal(combineVerdicts([v(), v()])?.perfect, true);
+    assert.equal(combineVerdicts([v(), v({ perfect: false, orderOk: false })])?.perfect, false);
+  });
+
+  it("is incomplete if any character is — the weakest sets the result", () => {
+    // Writing 咖 and giving up on 啡 must not earn 咖啡.
+    const half = combineVerdicts([v(), v({ complete: false, perfect: false, matched: 1, missing: [1, 2] })]);
+    assert.equal(half?.complete, false);
+    assert.equal(half?.matched, 4);
+    assert.equal(half?.expected, 6);
+  });
+
+  it("adds up the strokes across characters", () => {
+    const both = combineVerdicts([v({ matched: 8, expected: 8 }), v({ matched: 11, expected: 11 })]);
+    assert.equal(both?.matched, 19);
+    assert.equal(both?.expected, 19);
+  });
+
+  it("carries stray marks through", () => {
+    assert.equal(combineVerdicts([v({ stray: 1, perfect: false }), v()])?.stray, 1);
+  });
+
+  it("skips characters with no geometry rather than failing them", () => {
+    // A compound whose second character the dataset doesn't cover: the pad had
+    // nothing to grade it against, and that is not the learner's fault.
+    const mixed = combineVerdicts([v(), null]);
+    assert.equal(mixed?.complete, true);
+    assert.equal(mixed?.expected, 3);
+  });
+
+  it("returns null when nothing could be graded at all", () => {
+    assert.equal(combineVerdicts([null, null]), null);
+    assert.equal(combineVerdicts([]), null);
+  });
+
+  it("hands brushOutcome something it can act on", () => {
+    // The whole point of combining: a part-written word must not earn the proof.
+    const partial = combineVerdicts([v(), v({ complete: false, perfect: false })]);
+    assert.equal(brushOutcome(partial).earnsProof, false);
+    assert.equal(brushOutcome(combineVerdicts([v(), v()])).earnsProof, true);
   });
 });

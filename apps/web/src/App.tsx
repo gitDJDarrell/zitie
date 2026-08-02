@@ -8,9 +8,11 @@ import type { Card, Grade, Proof, SeenMap, SeenRecord, SyncState, Theme } from "
 import { BrowseView } from "./views/BrowseView";
 import { GalleryView } from "./views/GalleryView";
 import { ImportView } from "./views/ImportView";
-import { isCollected } from "./lib/srs";
+import { isCollected, isMastered, MASTERY_MARKS } from "./lib/srs";
 import { EarnedBanner } from "./components/EarnedBanner";
+import { MasteredBanner } from "./components/MasteredBanner";
 import { StudyView, type StackSession } from "./views/StudyView";
+import { ExamView } from "./views/ExamView";
 
 const DEFAULT_POS = ["noun", "verb", "pronoun", "adjective", "adverb", "measure word", "particle"];
 
@@ -34,6 +36,14 @@ export default function App({ onLogout, userEmail }: { onLogout: () => void; use
   const [stackSession, setStackSession] = useState<StackSession | null>(null);
   // The character whose dex slot was just earned, shown as a one-off reward.
   const [earned, setEarned] = useState<Card | null>(null);
+  // The character just mastered in the 考 exam — a louder, rarer reward than
+  // collection, so it gets its own banner over the top of the app.
+  const [mastered, setMastered] = useState<Card | null>(null);
+  // The 考 exam is running as its own full-screen flow, outside the tab bar.
+  const [examing, setExaming] = useState(false);
+  // A study deck is running: the account chrome steps aside so the session
+  // has the room — and the quiet — to itself.
+  const [sessionActive, setSessionActive] = useState(false);
 
   const storageRef = useRef<ApiStorage | null>(null);
   if (!storageRef.current) storageRef.current = new ApiStorage(setSyncState, setPending);
@@ -88,33 +98,51 @@ export default function App({ onLogout, userEmail }: { onLogout: () => void; use
   // direction, is what earns the character its dex slot. The optimistic state
   // records it too, so an offline session still lights the dex up — the queued
   // grade carries the same proof and the server agrees when it drains.
-  const onGrade = (id: string, grade: Grade, proof?: Proof) => {
+  const onGrade = (id: string, grade: Grade, proof?: Proof, exam?: boolean) => {
     const prev = srs[id] || { views: 0, last: 0 };
+    const readOk = prev.readOk || proof === "read";
+    const writeOk = prev.writeOk || proof === "write";
+    const brushOk = prev.brushOk || proof === "brush";
+    // A mark banks only on a clean exam pass of an already-collected card —
+    // mirrors the server, capped so a direction can't overrun. `bump` decides
+    // which counter, if any, moves.
+    const collected = readOk && writeOk && brushOk;
+    const banks = !!exam && grade !== "again" && collected;
+    const bump = (n: number | undefined, on: boolean) =>
+      Math.min(MASTERY_MARKS, (n || 0) + (on ? 1 : 0));
     const optimistic: SeenRecord = {
       ...prev, last: Date.now(), views: (prev.views || 0) + 1,
-      readOk: prev.readOk || proof === "read",
-      writeOk: prev.writeOk || proof === "write",
-      brushOk: prev.brushOk || proof === "brush",
+      readOk, writeOk, brushOk,
+      readMarks: bump(prev.readMarks, banks && proof === "read"),
+      writeMarks: bump(prev.writeMarks, banks && proof === "write"),
+      brushMarks: bump(prev.brushMarks, banks && proof === "brush"),
     };
     setSrs(s => ({ ...s, [id]: optimistic }));
     announceIfEarned(id, prev, optimistic);
-    storage.gradeCard(id, grade, proof).then(rec => {
+    storage.gradeCard(id, grade, proof, exam).then(rec => {
       if (!rec) return;
       setSrs(s => ({ ...s, [id]: rec }));
       announceIfEarned(id, optimistic, rec); // in case the server knew something we didn't
     }).catch(() => {});
   };
 
-  // The reward moment. Raised exactly once per character, when the second
-  // proof lands — the whole point of the change is that the dex slot arrives
-  // as an event you witness, not as a row that was always quietly there.
-  const onGradeAnnounced = useRef(new Set<string>());
+  // The reward moments. Each is raised exactly once per character: collection
+  // when the third proof lands (a dex slot filling), mastery when the ninth
+  // exam mark lands (the card turning shiny) — an event you witness, not a row
+  // that was always quietly there. Mastery outranks collection: a single grade
+  // never crosses both bars, but if it somehow did, the louder banner wins.
+  const onCollectedAnnounced = useRef(new Set<string>());
+  const onMasteredAnnounced = useRef(new Set<string>());
   function announceIfEarned(id: string, before: SeenRecord, after: SeenRecord) {
-    if (isCollected(before) || !isCollected(after)) return;
-    if (onGradeAnnounced.current.has(id)) return;
-    onGradeAnnounced.current.add(id);
     const card = bank.find(c => c.id === id);
-    if (card) setEarned(card);
+    if (!isMastered(before) && isMastered(after) && !onMasteredAnnounced.current.has(id)) {
+      onMasteredAnnounced.current.add(id);
+      if (card) { setMastered(card); return; }
+    }
+    if (!isCollected(before) && isCollected(after) && !onCollectedAnnounced.current.has(id)) {
+      onCollectedAnnounced.current.add(id);
+      if (card) setEarned(card);
+    }
   }
 
   const onToggleAutoSpeak = () => {
@@ -238,7 +266,8 @@ export default function App({ onLogout, userEmail }: { onLogout: () => void; use
         paddingLeft: "max(1rem, env(safe-area-inset-left))",
         paddingRight: "max(1rem, env(safe-area-inset-right))",
       }}>
-        <header className="flex items-end justify-between mb-6">
+        <header className="flex items-end justify-between mb-6"
+          style={sessionActive ? { display: "none" } : undefined}>
           <div>
             <div className="hz text-2xl font-black tracking-wide" style={{ color: C.paper }}>字帖</div>
             <div className="ui t-label mt-1" style={{ color: C.faint }}>character study</div>
@@ -271,10 +300,14 @@ export default function App({ onLogout, userEmail }: { onLogout: () => void; use
 
         {!loaded ? (
           <div className="ui text-xs pt-10 text-center" style={{ color: C.faint }}>loading…</div>
+        ) : examing ? (
+          <ExamView bank={bank} srs={srs} onGrade={onGrade} onToggleStar={onToggleStar}
+            onExit={() => { setExaming(false); setSessionActive(false); }}
+            onSessionActive={setSessionActive} />
         ) : (
           <>
-            {tab === "study" && <StudyView bank={bank} srs={srs} filters={filters} setFilters={setFilters} posList={posList} onSeen={onSeen} onGrade={onGrade} onToggleStar={onToggleStar} stackSession={stackSession} onExitStackSession={() => setStackSession(null)} stack={stack} onStudyStack={onStudyStack} difficulty={difficulty} onSetDifficulty={onSetDifficulty} autoSpeak={autoSpeak} onToggleAutoSpeak={onToggleAutoSpeak} />}
-            {tab === "gallery" && <GalleryView bank={bank} srs={srs} onToggleStar={onToggleStar} stack={stack} onAddToStack={onAddToStack} onRemoveFromStack={onRemoveFromStack} onStudyIds={onStudyIds} />}
+            {tab === "study" && <StudyView bank={bank} srs={srs} filters={filters} setFilters={setFilters} posList={posList} onSeen={onSeen} onGrade={onGrade} onToggleStar={onToggleStar} stackSession={stackSession} onExitStackSession={() => setStackSession(null)} stack={stack} onStudyStack={onStudyStack} difficulty={difficulty} onSetDifficulty={onSetDifficulty} autoSpeak={autoSpeak} onToggleAutoSpeak={onToggleAutoSpeak} onSessionActive={setSessionActive} />}
+            {tab === "gallery" && <GalleryView bank={bank} srs={srs} onToggleStar={onToggleStar} stack={stack} onAddToStack={onAddToStack} onRemoveFromStack={onRemoveFromStack} onStudyIds={onStudyIds} onStartExam={() => setExaming(true)} />}
             {tab === "browse" && <BrowseView bank={bank} srs={srs} filters={filters} setFilters={setFilters} posList={posList} onDelete={onDelete} onDeleteMany={onDeleteMany} onClearAll={onClearAll} onResetSeen={onResetSeen} onToggleStar={onToggleStar} stack={stack} onAddToStack={onAddToStack} onRemoveFromStack={onRemoveFromStack} onClearStack={onClearStack} onStudyStack={onStudyStack} />}
             {tab === "import" && <ImportView bank={bank} srs={srs} onImport={onImport} onStudyIds={onStudyIds} />}
           </>
@@ -282,7 +315,9 @@ export default function App({ onLogout, userEmail }: { onLogout: () => void; use
       </div>
 
       {earned && <EarnedBanner card={earned} onDismiss={() => setEarned(null)} />}
+      {mastered && <MasteredBanner card={mastered} onDismiss={() => setMastered(null)} />}
 
+      {!examing && (
       <nav className="fixed bottom-0 left-0 right-0" style={{
         background: C.ink2,
         borderTop: `1px solid ${C.line}`,
@@ -299,6 +334,7 @@ export default function App({ onLogout, userEmail }: { onLogout: () => void; use
           ))}
         </div>
       </nav>
+      )}
     </div>
   );
 }

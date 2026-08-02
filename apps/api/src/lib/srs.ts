@@ -83,3 +83,10 @@ export function schedule(prev: SrsState, grade: Grade, now: Date = new Date()): 
 export function initialState(): SrsState {
   return { ease: 2.5, intervalDays: 0, due: null, reps: 0, lapses: 0 };
 }
+
+// The 考 exam bar. A collected card (all three proofs) is tested strict and
+// unassisted in each direction; a clean pass banks one mark there. This many
+// marks of each — earned over separate sittings, since a pass reschedules the
+// card — is mastery, and mastery is what lights the shiny. Mirrored on the
+// client in apps/web/src/lib/srs.ts.
+export const MASTERY_MARKS = 3;

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { api } from "../api/client";
 import type { CharacterStrokes } from "./strokes";
 
@@ -44,6 +44,72 @@ export type StrokeState =
   | { status: "ready"; data: CharacterStrokes }
   /** Fetched, but this character has no geometry — brush mode goes freehand. */
   | { status: "absent"; data: null };
+
+/**
+ * Geometry for every character of a card, in written order.
+ *
+ * A word is written one character at a time — 咖啡 is 咖 then 啡 — so brush
+ * mode needs a sheet per character, and the card's proof is the whole set.
+ * Characters with no geometry are still returned, as "absent": the pad falls
+ * back to freehand for those rather than the card becoming unwritable.
+ */
+export function useStrokeSet(hanzi: string | undefined): StrokeState[] {
+  const chars = useMemo(() => [...(hanzi ?? "")], [hanzi]);
+  const [states, setStates] = useState<StrokeState[]>(
+    () => chars.map(() => ({ status: "loading", data: null })),
+  );
+
+  useEffect(() => {
+    if (!chars.length) { setStates([]); return; }
+    let live = true;
+    const settle = (next: StrokeState[]) => { if (live) setStates(next); };
+
+    const cached = chars.map((ch) => resolveCached(ch));
+    settle(cached);
+
+    const wanted = chars.filter((ch, i) => cached[i].status === "loading");
+    if (!wanted.length) return;
+
+    api.getStrokes([...new Set(wanted)])
+      .then(({ strokes }) => {
+        for (const ch of wanted) {
+          const found = strokes[ch];
+          if (found?.medians?.length) {
+            memory.set(ch, found);
+            writeStore(ch, found);
+          } else {
+            memory.set(ch, null);   // remember the miss; don't re-ask every card
+          }
+        }
+        settle(chars.map((ch) => resolveCached(ch, true)));
+      })
+      .catch(() => {
+        // Offline and not cached: freehand rather than a blocked session.
+        settle(chars.map((ch) => {
+          const hit = resolveCached(ch);
+          return hit.status === "loading" ? { status: "absent", data: null } : hit;
+        }));
+      });
+
+    return () => { live = false; };
+  }, [chars]);
+
+  return states;
+}
+
+/** What the caches already know about one character. */
+function resolveCached(hanzi: string, settled = false): StrokeState {
+  if (memory.has(hanzi)) {
+    const hit = memory.get(hanzi)!;
+    return hit ? { status: "ready", data: hit } : { status: "absent", data: null };
+  }
+  const stored = readStore()[hanzi];
+  if (stored) {
+    memory.set(hanzi, stored);
+    return { status: "ready", data: stored };
+  }
+  return settled ? { status: "absent", data: null } : { status: "loading", data: null };
+}
 
 export function useStrokes(hanzi: string | undefined): StrokeState {
   const [state, setState] = useState<StrokeState>({ status: "loading", data: null });

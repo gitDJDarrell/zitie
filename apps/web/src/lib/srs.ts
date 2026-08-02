@@ -161,6 +161,56 @@ export function masteryLabel(level: number): string {
   return ["new", "learning", "familiar", "strong", "mastered"][level] ?? "new";
 }
 
+/* ————————————————— mastery (the 考 exam) ————————————————— */
+
+/**
+ * The bar above collection. Collecting a character proves you can produce it,
+ * once, each of the three ways — with the help the study screen gives you.
+ * Mastery is the same three ways proven *strict*: the 考 exam sits a collected
+ * card with none of that help — no options to lean on, no pinyin, no stroke
+ * numbers or trace under the brush — and a clean pass banks one mark. This many
+ * of each is mastery, and mastery is what turns the card shiny.
+ *
+ * Kept as marks-per-direction, not a single counter, so the exam has to test
+ * every skill: you can't brush your way to a shiny you can't read. Mirrors the
+ * server's MASTERY_MARKS (apps/api/src/lib/srs.ts) — the server is
+ * authoritative and caps each direction there.
+ */
+export const MASTERY_MARKS = 3;
+
+export interface MasteryMarks { read: number; write: number; brush: number }
+
+export function masteryMarks(rec: SeenRecord | undefined): MasteryMarks {
+  return {
+    read: Math.min(MASTERY_MARKS, rec?.readMarks ?? 0),
+    write: Math.min(MASTERY_MARKS, rec?.writeMarks ?? 0),
+    brush: Math.min(MASTERY_MARKS, rec?.brushMarks ?? 0),
+  };
+}
+
+/** Full marks in every direction — the character is mastered, and shiny. */
+export function isMastered(rec: SeenRecord | undefined): boolean {
+  const m = masteryMarks(rec);
+  return m.read >= MASTERY_MARKS && m.write >= MASTERY_MARKS && m.brush >= MASTERY_MARKS;
+}
+
+/** Total marks banked toward mastery, out of MASTERY_MARKS × 3. */
+export function masteryProgress(rec: SeenRecord | undefined): number {
+  const m = masteryMarks(rec);
+  return m.read + m.write + m.brush;
+}
+
+export const MASTERY_TOTAL = MASTERY_MARKS * PROOF_COUNT;
+
+/**
+ * Eligible to sit the exam: fully collected (there's nothing to be strict about
+ * until you've produced it the easy way) and not already mastered. Whether it's
+ * *due* is a scheduling question the caller layers on top.
+ */
+export function canExam(rec: SeenRecord | undefined): boolean {
+  return isCollected(rec) && !isMastered(rec);
+}
+
 /** Single-glyph shorthand for a grade, matching the study buttons. */
 export const GRADE_GLYPH: Record<Grade, string> = {
   again: "忘", hard: "难", good: "好", easy: "易",

@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { api } from "../api/client";
 import { Chip, Collapsible, Empty, MultiSelect, Rating, SpeakBtn, StarToggle, Switch } from "../components/atoms";
 import { CardDetail } from "../components/CardDetail";
 import { availableLevels, filterByLevels } from "../lib/difficulty";
@@ -29,6 +30,7 @@ export function BrowseView({
   const [selected, setSelected] = useState<Set<string>>(() => new Set());
   const [detailId, setDetailId] = useState<string | null>(null);
   const [confirmClear, setConfirmClear] = useState(false);
+  const [exporting, setExporting] = useState(false);
   const [confirmReset, setConfirmReset] = useState(false);
   const [confirmClearStack, setConfirmClearStack] = useState(false);
   const [levels, setLevels] = useState<string[]>([]); // empty = every level
@@ -75,6 +77,26 @@ export function BrowseView({
     setConfirmClear(false);
     exitSelect();
   }
+  // Your data, downloadable: the whole bank as JSON, in the same shape the
+  // Import tab accepts — so a backup is also a way to move between accounts.
+  async function exportBank() {
+    setExporting(true);
+    try {
+      const rows = await api.exportBank();
+      const blob = new Blob([JSON.stringify(rows, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `zitie-bank-${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      // Offline or expired session — nothing was lost, so no drama needed.
+    } finally {
+      setExporting(false);
+    }
+  }
+
   function resetSeen() {
     if (!confirmReset) { setConfirmReset(true); setConfirmClear(false); return; }
     onResetSeen(null);
@@ -192,6 +214,11 @@ export function BrowseView({
                   style={{ borderColor: C.line, color: C.dim }}>Select</button>
                 {view === "all" ? (
                   <>
+                    <button onClick={exportBank} disabled={exporting}
+                      className="ui px-3 py-1 t-label border rounded"
+                      style={{ borderColor: C.line, color: C.dim, opacity: exporting ? 0.5 : 1 }}>
+                      {exporting ? "Preparing…" : "Export"}
+                    </button>
                     <button onClick={resetSeen} onBlur={() => setConfirmReset(false)} disabled={!seenCount}
                       className="ui px-3 py-1 t-label border rounded"
                       style={{ borderColor: confirmReset ? C.cinnabar : C.line, color: confirmReset ? C.cinnabar : C.dim, opacity: seenCount ? 1 : 0.5 }}>

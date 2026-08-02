@@ -10,6 +10,13 @@ interface Options {
   // Extra key derived from the request body (e.g. the login email), so an
   // attacker rotating IPs still can't hammer one account.
   keyExtra?: (c: Context, body: unknown) => string | null;
+  /**
+   * Separate ceiling for the per-IP bucket. When several people share one
+   * address — a classroom, a family NAT — the IP bucket's job is only to stop
+   * wide spraying, so it can afford to be much looser than the per-account
+   * limit. Defaults to `max`, which is right for routes with no keyExtra.
+   */
+  ipMax?: number;
 }
 
 const buckets = new Map<string, number[]>();
@@ -45,17 +52,17 @@ function hit(key: string, windowMs: number, max: number): boolean {
   return true;
 }
 
-export function rateLimit({ windowMs, max, keyExtra }: Options): MiddlewareHandler {
+export function rateLimit({ windowMs, max, keyExtra, ipMax = max }: Options): MiddlewareHandler {
   return async (c, next) => {
     sweep(windowMs);
     const path = new URL(c.req.url).pathname;
-    const keys = [`${path}:ip:${clientIp(c)}`];
+    const checks: [string, number][] = [[`${path}:ip:${clientIp(c)}`, ipMax]];
     if (keyExtra) {
       const body = await c.req.json().catch(() => null);
       const extra = keyExtra(c, body);
-      if (extra) keys.push(`${path}:${extra}`);
+      if (extra) checks.push([`${path}:${extra}`, max]);
     }
-    const allowed = keys.map((k) => hit(k, windowMs, max));
+    const allowed = checks.map(([k, m]) => hit(k, windowMs, m));
     if (allowed.includes(false)) {
       return c.json({ error: "Too many attempts — try again in a few minutes." }, 429);
     }

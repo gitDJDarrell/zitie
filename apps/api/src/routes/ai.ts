@@ -83,7 +83,10 @@ Rules:
 
 aiRoute.post("/extract", async (c) => {
   if (!process.env.ANTHROPIC_API_KEY) {
-    return c.json({ error: "AI generation is not configured on this server (missing ANTHROPIC_API_KEY)." }, 503);
+    // Which env var is missing belongs in the operator's logs, not in a
+    // learner's error toast.
+    console.error("[ai] extraction requested but ANTHROPIC_API_KEY is not set");
+    return c.json({ error: "AI import isn't available on this server yet. You can still add vocabulary once it's enabled — nothing in your bank is affected." }, 503);
   }
 
   const parsed = requestSchema.safeParse(await c.req.json().catch(() => null));
