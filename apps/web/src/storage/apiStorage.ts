@@ -84,8 +84,8 @@ export class ApiStorage implements StorageBackend {
     // that doesn't know about the offline session and overwrite it.
     await this.flush().catch(() => {});
     try {
-      const [{ cards, seen }, { theme, stack, autoSpeak, difficulty }] = await Promise.all([api.getBank(), api.getSettings()]);
-      const data = { bank: cards, srs: seen, theme, stack, autoSpeak, difficulty };
+      const [{ cards, seen }, { theme, stack, difficulty }] = await Promise.all([api.getBank(), api.getSettings()]);
+      const data = { bank: cards, srs: seen, theme, stack, difficulty };
       writeCache(data);
       this.notify("synced");
       return data;
@@ -98,7 +98,6 @@ export class ApiStorage implements StorageBackend {
         srs: cached?.srs ?? ({} as SeenMap),
         theme: cached?.theme ?? ("light" as Theme),
         stack: cached?.stack ?? [],
-        autoSpeak: cached?.autoSpeak ?? true,
         difficulty: cached?.difficulty ?? 2,
       };
     }
@@ -180,10 +179,6 @@ export class ApiStorage implements StorageBackend {
     await this.settings({ stack: ids });
   }
 
-  async setAutoSpeak(autoSpeak: boolean) {
-    await this.settings({ autoSpeak });
-  }
-
   async setDifficulty(difficulty: number) {
     await this.settings({ difficulty });
   }
@@ -200,7 +195,7 @@ export class ApiStorage implements StorageBackend {
     }
   }
 
-  cacheSnapshot(bank: Card[], srs: SeenMap, theme: Theme, stack: string[], autoSpeak?: boolean, difficulty?: number) {
-    writeCache({ bank, srs, theme, stack, autoSpeak, difficulty });
+  cacheSnapshot(bank: Card[], srs: SeenMap, theme: Theme, stack: string[], difficulty?: number) {
+    writeCache({ bank, srs, theme, stack, difficulty });
   }
 }

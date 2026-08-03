@@ -14,7 +14,6 @@ import type { Card, Grade, Theme, Proof } from "../types";
 export interface SettingsPatch {
   theme?: Theme;
   stack?: string[];
-  autoSpeak?: boolean;
   difficulty?: number;
 }
 

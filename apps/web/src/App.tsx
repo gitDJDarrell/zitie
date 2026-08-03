@@ -29,7 +29,6 @@ export default function App({ onLogout, userEmail }: { onLogout: () => void; use
   const [pending, setPending] = useState(0);
   const [theme, setTheme] = useState<Theme>("light");
   const [stack, setStack] = useState<string[]>([]);
-  const [autoSpeak, setAutoSpeak] = useState(true);
   const [difficulty, setDifficulty] = useState(2);
   // A "study this stack" request from Browse. nonce changes on every request so
   // StudyView can auto-begin exactly once per click, even if the ids are unchanged.
@@ -53,9 +52,9 @@ export default function App({ onLogout, userEmail }: { onLogout: () => void; use
     initSpeech(); // voice lists load async — warm it before the first reveal
     (async () => {
       try {
-        const { bank: b, srs: s, theme: t, stack: st, autoSpeak: as, difficulty: d } = await storage.load();
+        const { bank: b, srs: s, theme: t, stack: st, difficulty: d } = await storage.load();
         applyTheme(t); setTheme(t);
-        setBank(b); setSrs(s); setStack(st); setAutoSpeak(as); setDifficulty(d); setLoaded(true);
+        setBank(b); setSrs(s); setStack(st); setDifficulty(d); setLoaded(true);
       } catch (err) {
         if (err instanceof ApiError) onLogout(); // session expired server-side
       }
@@ -65,8 +64,8 @@ export default function App({ onLogout, userEmail }: { onLogout: () => void; use
 
   // Keep the offline cache warm on every change, regardless of which action caused it.
   useEffect(() => {
-    if (loaded) storage.cacheSnapshot(bank, srs, theme, stack, autoSpeak, difficulty);
-  }, [bank, srs, theme, stack, autoSpeak, difficulty, loaded, storage]);
+    if (loaded) storage.cacheSnapshot(bank, srs, theme, stack, difficulty);
+  }, [bank, srs, theme, stack, difficulty, loaded, storage]);
 
   function toggleTheme() {
     const t: Theme = theme === "light" ? "dark" : "light";
@@ -144,12 +143,6 @@ export default function App({ onLogout, userEmail }: { onLogout: () => void; use
       if (card) setEarned(card);
     }
   }
-
-  const onToggleAutoSpeak = () => {
-    const next = !autoSpeak;
-    setAutoSpeak(next);
-    storage.setAutoSpeak(next).catch(() => {});
-  };
 
   const onSetDifficulty = (d: number) => {
     setDifficulty(d);
@@ -306,7 +299,7 @@ export default function App({ onLogout, userEmail }: { onLogout: () => void; use
             onSessionActive={setSessionActive} />
         ) : (
           <>
-            {tab === "study" && <StudyView bank={bank} srs={srs} filters={filters} setFilters={setFilters} posList={posList} onSeen={onSeen} onGrade={onGrade} onToggleStar={onToggleStar} stackSession={stackSession} onExitStackSession={() => setStackSession(null)} stack={stack} onStudyStack={onStudyStack} difficulty={difficulty} onSetDifficulty={onSetDifficulty} autoSpeak={autoSpeak} onToggleAutoSpeak={onToggleAutoSpeak} onSessionActive={setSessionActive} />}
+            {tab === "study" && <StudyView bank={bank} srs={srs} filters={filters} setFilters={setFilters} posList={posList} onSeen={onSeen} onGrade={onGrade} onToggleStar={onToggleStar} stackSession={stackSession} onExitStackSession={() => setStackSession(null)} stack={stack} onStudyStack={onStudyStack} difficulty={difficulty} onSetDifficulty={onSetDifficulty} onSessionActive={setSessionActive} />}
             {tab === "gallery" && <GalleryView bank={bank} srs={srs} onToggleStar={onToggleStar} stack={stack} onAddToStack={onAddToStack} onRemoveFromStack={onRemoveFromStack} onStudyIds={onStudyIds} onStartExam={() => setExaming(true)} />}
             {tab === "browse" && <BrowseView bank={bank} srs={srs} filters={filters} setFilters={setFilters} posList={posList} onDelete={onDelete} onDeleteMany={onDeleteMany} onClearAll={onClearAll} onResetSeen={onResetSeen} onToggleStar={onToggleStar} stack={stack} onAddToStack={onAddToStack} onRemoveFromStack={onRemoveFromStack} onClearStack={onClearStack} onStudyStack={onStudyStack} />}
             {tab === "import" && <ImportView bank={bank} srs={srs} onImport={onImport} onStudyIds={onStudyIds} />}

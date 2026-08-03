@@ -8,7 +8,6 @@ export interface CachedBank {
   theme: Theme;
   stack: string[];
   // Absent in caches written before these settings existed — callers default.
-  autoSpeak?: boolean;
   difficulty?: number;
 }
 
