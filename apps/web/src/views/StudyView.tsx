@@ -6,7 +6,7 @@ import { CHOICE_COUNT, isAnswer, meaningChoices } from "../lib/choices";
 import { contextFor, wordsContaining } from "../lib/context";
 import { applyFilters, type Filters } from "../lib/filters";
 import { POS_HANZI } from "../lib/posLabels";
-import { canSpeak, speak } from "../lib/speech";
+import { canSpeak, speak, speechHint } from "../lib/speech";
 import { BrushPad, type PadMode, type Surface } from "../components/BrushPad";
 import { DEFAULT_INK, type InkParams } from "../lib/ink";
 import { brushOutcome, combineVerdicts, type Verdict } from "../lib/strokes";
@@ -123,6 +123,8 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
   }, [bank, srs, filters, levels, stackSession]);
 
   const levelOptions = useMemo(() => availableLevels(bank), [bank]);
+  // Voices load asynchronously, so this is read at render rather than cached.
+  const speechReady = canSpeak();
 
   // What the collapsed filter header advertises, so folding it away never
   // hides an active constraint.
@@ -503,12 +505,18 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
         </Chip>
         <Chip active={mode === "write"} onClick={() => setMode("write")}>写 write — type hanzi</Chip>
         <Chip active={mode === "brush"} onClick={() => setMode("brush")}>描 brush — write by hand</Chip>
-        {canSpeak() && (
-          <Chip active={autoSpeak} onClick={onToggleAutoSpeak}>
-            {autoSpeak ? "🔊" : "🔇"} say it aloud
-          </Chip>
-        )}
+        {/* Offered even with no voice installed, so the setting is discoverable
+            and the reason it does nothing is sayable. Hiding it made "why is
+            there no audio?" unanswerable from inside the app. */}
+        <Chip active={autoSpeak && speechReady} onClick={onToggleAutoSpeak}>
+          {autoSpeak && speechReady ? "🔊" : "🔇"} say it aloud
+        </Chip>
       </div>
+      {!speechReady && (
+        <p className="ui t-body text-center max-w-xs" style={{ color: C.faint }}>
+          {speechHint()}
+        </p>
+      )}
       <div className="flex gap-3">
         <button onClick={() => begin(false)} disabled={!plannedCount}
           className="ui t-btn px-6 py-3 border rounded"
