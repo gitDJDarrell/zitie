@@ -12,6 +12,7 @@
     "build:hanzi": "tsx scripts/build-hanzi-data.ts",
     "build:reference": "tsx scripts/build-reference-data.ts",
     "build:strokes": "tsx scripts/build-stroke-data.ts",
+    "build:lookalikes": "tsx scripts/build-lookalikes.ts",
     "build:curated": "tsx scripts/build-curated.ts",
     "db:local": "tsx scripts/dev-db.ts",
     "db:generate": "drizzle-kit generate",
