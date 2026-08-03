@@ -7,9 +7,14 @@ import type { Card } from "../types";
 /* ————————————————— the reward ————————————————
    A dex slot used to fill itself the moment a card existed, which meant a
    pasted paragraph filled a hundred of them at once and none of them meant
-   anything. Now a slot is earned — recognised once, written once — and this is
-   the moment it lands: the character, its catalog number, and the fact that it
-   has just gone into the dex.
+   anything. A slot is earned now — you read the character and got it right —
+   and this is the moment it lands: the character, its catalog number, and the
+   fact that it has just gone into the dex.
+
+   Recognition is the bar because reading Chinese in the wild is what the app
+   is for. Writing and brushing are depth on a slot you already hold, and they
+   get their own moment at 精通; putting them in front of the slot only made
+   the collection a slow measure of handwriting.
 
    Deliberately a banner rather than a modal. It arrives mid-session, and a
    dialog you have to dismiss to carry on studying would turn a reward into an

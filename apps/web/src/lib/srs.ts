@@ -80,7 +80,7 @@ export function countDue(cards: Card[], srs: SeenMap, now = Date.now()): number 
 
 /* ————————————————— rating readouts ————————————————— */
 
-export const MASTERY_MAX = 4;
+export const STRENGTH_MAX = 4;
 
 /**
  * How well the card is known, 0–4, derived from the schedule rather than the
@@ -92,7 +92,7 @@ export const MASTERY_MAX = 4;
  * a card you keep forgetting shouldn't read as mastered just because its
  * interval crept up.
  */
-export function masteryOf(rec: SeenRecord | undefined): number {
+export function strengthOf(rec: SeenRecord | undefined): number {
   if (!rec || !(rec.reps ?? 0)) return 0; // never graded — no evidence either way
 
   const days = rec.intervalDays ?? 0;
@@ -113,16 +113,20 @@ export function masteryOf(rec: SeenRecord | undefined): number {
 /* ————————————————— collection ————————————————— */
 
 /**
- * The three proofs a character needs before its dex slot lights up:
+ * The three things you can prove about a character:
  *   认 recognised — the meaning picked from the character (read mode)
  *   写 written    — the character or its reading given from the English
  *   描 brushed    — drawn by hand, every stroke of it
  *
- * This is deliberately not `masteryOf`. Mastery is the scheduler's running
- * estimate of how well a memory is holding, and it moves both ways; a slot you
- * have earned should not empty because you missed a review three weeks later.
- * Collection asks a different, one-way question — have you ever actually
- * produced this character's answer, each of the three ways?
+ * They are not equals. Zitie is for reading Chinese in the wild, so 认 is the
+ * one that earns the dex slot and the other two are depth on top of it. See
+ * isCollected.
+ *
+ * All three are deliberately one-way, and deliberately not `strengthOf`.
+ * Strength is the scheduler's running estimate of how well a memory is holding
+ * and it moves both directions; a proof records that you did once actually do
+ * the thing, and a slot you earned should not empty because you missed a
+ * review three weeks later.
  */
 export interface Proofs { read: boolean; write: boolean; brush: boolean }
 
@@ -132,8 +136,37 @@ export function proofsOf(rec: SeenRecord | undefined): Proofs {
   return { read: !!rec?.readOk, write: !!rec?.writeOk, brush: !!rec?.brushOk };
 }
 
-/** All three in: the character has been earned. */
+/**
+ * Earned the dex slot: you can read it.
+ *
+ * This used to want all three proofs, and that quietly made the headline
+ * number on the gallery a measure of handwriting. Someone who could recognise
+ * 800 characters and hand-write 40 was told they had collected 40 — their
+ * weakest and, for reading Chinese in the wild, least transferable skill,
+ * reported as if it were their progress.
+ *
+ * Zitie is for reading Chinese you meet in the world, so the slot is earned by
+ * recognising the character. Producing it — typing it, brushing it — is real
+ * and still tracked, but as depth on top of a slot you already hold, not as a
+ * gate in front of it. Breadth is the goal; gating breadth behind the hardest
+ * skill is how you end up with a beautiful dex and forty characters in it.
+ */
 export function isCollected(rec: SeenRecord | undefined): boolean {
+  return proofsOf(rec).read;
+}
+
+/** Produced it at least one way — the rung above recognising it. */
+export function hasProduced(rec: SeenRecord | undefined): boolean {
+  const { write, brush } = proofsOf(rec);
+  return write || brush;
+}
+
+/**
+ * Every proof in, the easy way. Not the dex slot any more — this is the
+ * readiness bar for the 考 exam, which tests all three directions strictly and
+ * would be unfair on a direction you have never once produced.
+ */
+export function isFullyProven(rec: SeenRecord | undefined): boolean {
   const { read, write, brush } = proofsOf(rec);
   return read && write && brush;
 }
@@ -145,7 +178,7 @@ export const PROOF_GLYPH: { key: keyof Proofs; zh: string; label: string }[] = [
   { key: "brush", zh: "描", label: "brushed" },
 ];
 
-/** Owned but not yet earned — the state the dex nudges you to finish. */
+/** In your bank but not yet recognised — the state the dex nudges you to finish. */
 export function inProgress(rec: SeenRecord | undefined): boolean {
   return !isCollected(rec);
 }
@@ -157,7 +190,7 @@ export function proofCount(rec: SeenRecord | undefined): number {
 }
 
 /** Short label for a mastery level, for tooltips and screen readers. */
-export function masteryLabel(level: number): string {
+export function strengthLabel(level: number): string {
   return ["new", "learning", "familiar", "strong", "mastered"][level] ?? "new";
 }
 
@@ -203,12 +236,13 @@ export function masteryProgress(rec: SeenRecord | undefined): number {
 export const MASTERY_TOTAL = MASTERY_MARKS * PROOF_COUNT;
 
 /**
- * Eligible to sit the exam: fully collected (there's nothing to be strict about
- * until you've produced it the easy way) and not already mastered. Whether it's
- * *due* is a scheduling question the caller layers on top.
+ * Eligible to sit the exam: proven every direction the easy way (there's
+ * nothing to be strict about until you've produced it with help) and not
+ * already mastered. Whether it's *due* is a scheduling question the caller
+ * layers on top.
  */
 export function canExam(rec: SeenRecord | undefined): boolean {
-  return isCollected(rec) && !isMastered(rec);
+  return isFullyProven(rec) && !isMastered(rec);
 }
 
 /** Single-glyph shorthand for a grade, matching the study buttons. */

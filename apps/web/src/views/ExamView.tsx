@@ -3,7 +3,7 @@ import { SpeakBtn, StarBtn } from "../components/atoms";
 import { BrushPad } from "../components/BrushPad";
 import { DEFAULT_INK } from "../lib/ink";
 import { checkAnswer } from "../lib/answer";
-import { CHOICE_COUNT, meaningChoices } from "../lib/choices";
+import { CHOICE_COUNT, isAnswer, meaningChoices } from "../lib/choices";
 import { combineVerdicts, type Verdict } from "../lib/strokes";
 import { useStrokeSet } from "../lib/useStrokes";
 import { canExam, isDue, MASTERY_MARKS, masteryMarks, PROOF_GLYPH } from "../lib/srs";
@@ -253,13 +253,13 @@ function ReadTrial({ card, bank, header, onGrade, onDone, onToggleStar }: {
 
   function choose(option: string) {
     if (picked !== null) return;
-    const ok = option === card.meaning;
+    const ok = isAnswer(option, card);
     setPicked(option);
     onGrade(card.id, ok ? "good" : "again", ok ? "read" : undefined, true);
   }
 
   const answered = picked !== null;
-  const right = picked === card.meaning;
+  const right = picked !== null && isAnswer(picked, card);
 
   return (
     <div className="flex flex-col items-center gap-5 pt-4">
@@ -286,16 +286,16 @@ function ReadTrial({ card, bank, header, onGrade, onDone, onToggleStar }: {
         <div className="w-full max-w-sm flex flex-col items-center gap-3">
           <div className="w-full flex flex-col gap-2" aria-hidden="true">
             {options.map(option => {
-              const isAnswer = option === card.meaning;
+              const correct = isAnswer(option, card);
               const wasPick = option === picked;
               return (
                 <div key={option} className="ui text-sm text-left px-4 py-3 rounded border leading-snug"
                   style={{
-                    borderColor: isAnswer ? C.paper : wasPick ? C.cinnabar : C.ink3,
-                    color: isAnswer ? C.paper : wasPick ? C.cinnabar : C.faint,
-                    background: isAnswer ? C.ink2 : "transparent",
+                    borderColor: correct ? C.paper : wasPick ? C.cinnabar : C.ink3,
+                    color: correct ? C.paper : wasPick ? C.cinnabar : C.faint,
+                    background: correct ? C.ink2 : "transparent",
                   }}>
-                  {isAnswer ? "✓ " : wasPick ? "✕ " : ""}{option}
+                  {correct ? "✓ " : wasPick ? "✕ " : ""}{option}
                 </div>
               );
             })}

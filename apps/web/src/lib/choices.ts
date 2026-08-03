@@ -13,6 +13,43 @@ import type { Card } from "../types";
 
 export const CHOICE_COUNT = 4;
 
+const CJK = /[一-鿿]/;
+// "used in 咖啡 (coffee)", with or without a leading dash and the gloss.
+const USED_IN = /\s*[—–-]?\s*used in\s+[一-鿿]+\s*(?:\(([^)]*)\))?/gi;
+
+/**
+ * A meaning as it can safely be offered as an answer.
+ *
+ * Bound forms are glossed by the word they live in — 啡 is "used in 咖啡
+ * (coffee)" — and that is a usage note, not a meaning. Offered verbatim it
+ * printed the character under test inside its own correct answer, so the
+ * question could be answered by matching glyphs without reading anything. The
+ * context prompt made it worse: once 啡 is shown as 咖啡, the right option
+ * repeated the prompt exactly.
+ *
+ * So the usage note is unwrapped to the English it was carrying, and any
+ * remaining hanzi is dropped. Applied to every option, never just the correct
+ * one — sanitising only the answer would swap a glyph-matching tell for a
+ * formatting one.
+ */
+export function optionGloss(meaning: string): string {
+  let carried = "";
+  const stripped = meaning.replace(USED_IN, (_m, gloss: string | undefined) => {
+    if (gloss) carried = gloss;
+    return "";
+  });
+
+  const tidy = (s: string) => s.replace(CJK_RUN, "").replace(/\s+/g, " ")
+    .replace(/^[\s;,—–-]+|[\s;,—–-]+$/g, "").trim();
+
+  // Each fallback is itself hanzi-free, so no path out of here can leak one.
+  // The last resort — a gloss written entirely in hanzi — has nothing safe to
+  // return, and meaningChoices refuses the whole option set rather than ship it.
+  return tidy(stripped) || tidy(carried) || tidy(meaning) || meaning.trim();
+}
+
+const CJK_RUN = /[一-鿿]+/g;
+
 /** Meanings that are effectively the same answer, so never offered together. */
 function key(meaning: string): string {
   return meaning.toLowerCase().replace(/\([^)]*\)/g, "").replace(/[^a-z ]/g, "").trim();
@@ -64,7 +101,23 @@ export function meaningChoices(
   // test of the option list rather than of the character.
   const near = pool.slice(0, Math.max(wanted, Math.ceil(pool.length / 2)));
   const distractors = pick(near, wanted, rand).map(c => c.meaning);
-  return shuffle([card.meaning, ...distractors], rand);
+  const options = shuffle([card.meaning, ...distractors], rand).map(optionGloss);
+
+  // Belt and braces: an option that still carries a hanzi could hand over the
+  // answer by matching the prompt, so refuse the whole set rather than ship a
+  // free question. The caller falls back to tap-to-flip.
+  return options.some(o => CJK.test(o)) ? [] : options;
+}
+
+/**
+ * Whether a chosen option is this card's answer.
+ *
+ * Lives here rather than at the call sites because options are sanitised on
+ * the way out: comparing a tapped option against the raw `card.meaning` looks
+ * right and silently marks every bound form wrong.
+ */
+export function isAnswer(option: string, card: Card): boolean {
+  return option === optionGloss(card.meaning);
 }
 
 /** `n` distinct items, chosen uniformly without replacement. */
