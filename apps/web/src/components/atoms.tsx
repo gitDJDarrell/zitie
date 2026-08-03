@@ -1,4 +1,4 @@
-import { canSpeak, speak } from "../lib/speech";
+import { speak, speechHint, speechStatus } from "../lib/speech";
 import { GRADE_GLYPH, STRENGTH_MAX, strengthLabel, strengthOf } from "../lib/srs";
 import { C } from "../theme";
 import type { SeenRecord } from "../types";
@@ -66,19 +66,26 @@ export function Switch<T extends string>({ value, options, onChange }: {
   );
 }
 
-// Pronounce-aloud button. Renders nothing when the device has no Mandarin
-// voice, so it never sits there as a dead control.
+// Pronounce-aloud button, on every screen that shows a character's answer.
 export function SpeakBtn({ text, size = "base", className, style }: {
   text: string; size?: "base" | "lg"; className?: string; style?: React.CSSProperties;
 }) {
-  if (!canSpeak()) return null;
+  const status = speechStatus();
+  const ready = status === "ready";
+  // Deliberately still rendered when there's no voice. Returning null here made
+  // pronunciation vanish from every screen at once on any machine without a
+  // Chinese language pack — which is most Windows machines — and an absent
+  // control is indistinguishable from a feature that was never built. Muted and
+  // explained beats silently gone.
   return (
     <button
-      onClick={e => { e.stopPropagation(); speak(text); }}
-      aria-label={`Play pronunciation of ${text}`}
+      onClick={e => { e.stopPropagation(); if (ready) speak(text); }}
+      disabled={!ready}
+      aria-label={ready ? `Play pronunciation of ${text}` : `Pronunciation unavailable — ${speechHint(status)}`}
+      title={ready ? undefined : speechHint(status) ?? undefined}
       className={`px-2 py-1 leading-none ${size === "lg" ? "text-2xl" : "text-base"} ${className ?? ""}`}
-      style={{ color: C.faint, ...style }}>
-      {"🔊"}
+      style={{ color: C.faint, opacity: ready ? 1 : 0.4, cursor: ready ? "pointer" : "default", ...style }}>
+      {ready ? "🔊" : "🔇"}
     </button>
   );
 }

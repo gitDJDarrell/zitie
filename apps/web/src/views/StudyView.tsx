@@ -6,7 +6,7 @@ import { CHOICE_COUNT, isAnswer, meaningChoices } from "../lib/choices";
 import { contextFor, wordsContaining } from "../lib/context";
 import { applyFilters, type Filters } from "../lib/filters";
 import { POS_HANZI } from "../lib/posLabels";
-import { canSpeak, speak } from "../lib/speech";
+import { canSpeak, speechHint } from "../lib/speech";
 import { BrushPad, type PadMode, type Surface } from "../components/BrushPad";
 import { DEFAULT_INK, type InkParams } from "../lib/ink";
 import { brushOutcome, combineVerdicts, type Verdict } from "../lib/strokes";
@@ -67,7 +67,7 @@ const GRADES: { grade: Grade; label: string; zh: string }[] = [
 ];
 
 /* ————————————— study session: read (tap-to-flip) + write (reverse, typed) ————————————— */
-export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onGrade, onToggleStar, stackSession, onExitStackSession, stack, onStudyStack, difficulty, onSetDifficulty, autoSpeak, onToggleAutoSpeak, onSessionActive }: {
+export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onGrade, onToggleStar, stackSession, onExitStackSession, stack, onStudyStack, difficulty, onSetDifficulty, onSessionActive }: {
   bank: Card[]; srs: SeenMap; filters: Filters; setFilters: React.Dispatch<React.SetStateAction<Filters>>;
   posList: string[]; onSeen: (id: string) => void;
   onGrade: (id: string, grade: Grade, proof?: Proof) => void;
@@ -75,7 +75,6 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
   stackSession?: StackSession | null; onExitStackSession?: () => void;
   stack: string[]; onStudyStack: () => void;
   difficulty: number; onSetDifficulty: (d: number) => void;
-  autoSpeak: boolean; onToggleAutoSpeak: () => void;
   /** Fires when a deck starts or ends, so the app chrome can step aside. */
   onSessionActive?: (active: boolean) => void;
 }) {
@@ -123,6 +122,8 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
   }, [bank, srs, filters, levels, stackSession]);
 
   const levelOptions = useMemo(() => availableLevels(bank), [bank]);
+  // Voices load asynchronously, so this is read at render rather than cached.
+  const speechReady = canSpeak();
 
   // What the collapsed filter header advertises, so folding it away never
   // hides an active constraint.
@@ -242,7 +243,6 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
     if (swipedRef.current) { swipedRef.current = false; return; } // suppress the click that follows a swipe
     if (!flipped && card) {
       onSeen(card.id);
-      if (autoSpeak) speak(card.hanzi); // the tap itself is the gesture browsers require
     }
     setFlipped(f => !f);
   }
@@ -290,7 +290,6 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
     // English, and both count as the write proof. Requiring the characters
     // would shut out anyone without a Chinese keyboard.
     onGrade(card.id, kind === "hanzi" ? "good" : kind === "pinyin" ? "hard" : "again", ok ? "write" : undefined);
-    if (autoSpeak) speak(card.hanzi);
   }
 
   /**
@@ -327,7 +326,6 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
     setScore(s => correct ? { ...s, ok: s.ok + 1 } : { ...s, no: s.no + 1 });
     onGrade(card.id, grade, earnsProof ? "brush" : undefined);
     if (requeue) setQueue(q => [...(q as string[]), card.id]);
-    if (autoSpeak) speak(card.hanzi);
   }
 
   /** How the handed-in attempt actually did, for the reveal. */
@@ -356,7 +354,6 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
     if (!ok) setQueue(q => [...(q as string[]), card.id]);
     onSeen(card.id);
     onGrade(card.id, ok ? "good" : "again", ok ? "read" : undefined);
-    if (autoSpeak) speak(card.hanzi);
   }
 
   function next() { setIdx(i => i + 1); reset(); }
@@ -503,12 +500,12 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
         </Chip>
         <Chip active={mode === "write"} onClick={() => setMode("write")}>写 write — type hanzi</Chip>
         <Chip active={mode === "brush"} onClick={() => setMode("brush")}>描 brush — write by hand</Chip>
-        {canSpeak() && (
-          <Chip active={autoSpeak} onClick={onToggleAutoSpeak}>
-            {autoSpeak ? "🔊" : "🔇"} say it aloud
-          </Chip>
-        )}
       </div>
+      {!speechReady && (
+        <p className="ui t-body text-center max-w-xs" style={{ color: C.faint }}>
+          {speechHint()}
+        </p>
+      )}
       <div className="flex gap-3">
         <button onClick={() => begin(false)} disabled={!plannedCount}
           className="ui t-btn px-6 py-3 border rounded"

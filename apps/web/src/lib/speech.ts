@@ -64,10 +64,37 @@ export function initSpeech(): void {
 
 /** Is Mandarin TTS usable on this device right now? */
 export function canSpeak(): boolean {
+  return speechStatus() === "ready";
+}
+
+export type SpeechStatus =
+  | "ready"        // a Mandarin voice is installed and usable
+  | "no-voice"     // the browser speaks, but nothing on this device speaks Chinese
+  | "unsupported"; // no speech synthesis at all
+
+/**
+ * Why pronunciation is or isn't available, rather than just whether.
+ *
+ * The distinction matters to the UI: the audio controls used to render nothing
+ * when no Mandarin voice was installed, which is indistinguishable from the
+ * feature not existing. A Windows machine has no Chinese voice out of the box,
+ * so the commonest case looked exactly like a missing feature — and the one
+ * thing that would fix it, installing a language pack, was never mentioned.
+ */
+export function speechStatus(): SpeechStatus {
   const s = synth();
-  if (!s) return false;
+  if (!s) return "unsupported";
   if (!voice) voice = pickVoice();
-  return !!voice;
+  return voice ? "ready" : "no-voice";
+}
+
+/** What to tell someone who has no pronunciation, and what they can do. */
+export function speechHint(status: SpeechStatus = speechStatus()): string | null {
+  if (status === "ready") return null;
+  if (status === "unsupported") return "This browser can't speak — pronunciation is unavailable here.";
+  // Deliberately no English fallback voice: an en-US voice reading chá teaches
+  // a wrong pronunciation, which is worse than none.
+  return "No Mandarin voice on this device. Add a Chinese (Simplified) language pack in your system's language settings to hear pronunciation.";
 }
 
 /**

@@ -5,7 +5,6 @@ export interface LoadedState {
   srs: SeenMap;
   theme: Theme;
   stack: string[];
-  autoSpeak: boolean;
   difficulty: number;
 }
 
@@ -20,9 +19,8 @@ export interface StorageBackend {
   resetSeen(ids: string[] | null): Promise<void>;
   setTheme(theme: Theme): Promise<void>;
   setStack(ids: string[]): Promise<void>;
-  setAutoSpeak(autoSpeak: boolean): Promise<void>;
   setDifficulty(difficulty: number): Promise<void>;
-  cacheSnapshot(bank: Card[], srs: SeenMap, theme: Theme, stack: string[], autoSpeak?: boolean, difficulty?: number): void;
+  cacheSnapshot(bank: Card[], srs: SeenMap, theme: Theme, stack: string[], difficulty?: number): void;
 }
 
 export type SyncState = "syncing" | "synced" | "offline";
