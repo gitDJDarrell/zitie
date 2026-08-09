@@ -242,7 +242,7 @@ export function GalleryView({ bank, srs, onToggleStar, stack, onAddToStack, onRe
                       <Rating rec={srs[card.id]} compact />
                     </span>
                   </button>
-                  <SpeakBtn text={ch} className="absolute top-0 right-0 !px-1 !py-0.5"
+                  <SpeakBtn text={ch} pinyin={card.pinyin} className="absolute top-0 right-0 !px-1 !py-0.5"
                     style={{ fontSize: 10, color: shiny ? "#3a3a3a" : C.faint }} />
                 </div>
               ) : card ? (
@@ -305,7 +305,7 @@ export function GalleryView({ bank, srs, onToggleStar, stack, onAddToStack, onRe
                       <Rating rec={srs[card.id]} compact />
                     </span>
                   </button>
-                  <SpeakBtn text={card.hanzi} className="absolute top-0 right-0 !px-1 !py-0.5"
+                  <SpeakBtn text={card.hanzi} pinyin={card.pinyin} className="absolute top-0 right-0 !px-1 !py-0.5"
                     style={{ fontSize: 10, color: shiny ? "#3a3a3a" : C.faint }} />
                 </div>
               );

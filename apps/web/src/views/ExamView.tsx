@@ -369,7 +369,7 @@ function WriteTrial({ card, header, onGrade, onDone, onToggleStar }: {
               <div className="hz font-black" style={{ color: C.paper, fontSize: 64, lineHeight: 1.1 }}>{card.hanzi}</div>
               <div className="flex items-center gap-1">
                 <div className="mono text-lg" style={{ color: C.paper }}>{card.pinyin}</div>
-                <SpeakBtn text={card.hanzi} />
+                <SpeakBtn text={card.hanzi} pinyin={card.pinyin} />
               </div>
               <div className="ui text-sm text-center" style={{ color: C.dim }}>{card.meaning}</div>
             </div>
@@ -414,7 +414,7 @@ function BrushTrial({ card, header, onGrade, onDone, onToggleStar }: {
     setDone(true);
     const ok = !!combined?.perfect;
     onGrade(card.id, ok ? "good" : "again", ok ? "brush" : undefined, true);
-    speak(card.hanzi);
+    speak(card.hanzi, card.pinyin);
   }
 
   return (
@@ -466,7 +466,7 @@ function BrushTrial({ card, header, onGrade, onDone, onToggleStar }: {
             <div className="hz font-black" style={{ color: C.paper, fontSize: 44, lineHeight: 1.1 }}>{card.hanzi}</div>
             <div className="flex items-center gap-1">
               <div className="mono text-base" style={{ color: C.paper }}>{card.pinyin}</div>
-              <SpeakBtn text={card.hanzi} />
+              <SpeakBtn text={card.hanzi} pinyin={card.pinyin} />
               <StarBtn starred={!!card.starred} onClick={() => onToggleStar(card.id)} />
             </div>
           </div>

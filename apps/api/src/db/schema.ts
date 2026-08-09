@@ -98,6 +98,31 @@ export const characterStrokes = pgTable("character_strokes", {
   medians: jsonb("medians").$type<number[][][]>().notNull().default([]),
 });
 
+// Spoken audio, shared like the two tables above — 茶 sounds the same for
+// everyone, forever, so it is synthesised once and served to all.
+//
+// Keyed by reading, not by character. 行 has two: xíng and háng are different
+// sounds and both are correct, so a per-hanzi key would have to pick one and
+// be wrong half the time. The pinyin in the key is normalised to Azure's
+// phoneme form, which makes "xíng", "xing2" and "  Xíng " the same row rather
+// than three near-duplicate clips.
+//
+// `voice` records which neural voice produced it, so changing voices is a
+// re-seed of the affected rows rather than a guess about what is already there.
+export const characterAudio = pgTable("character_audio", {
+  hanzi: text("hanzi").notNull(),
+  // Azure sapi form, e.g. "xing2" / "ni3 hao3" — see lib/pinyin.ts.
+  phoneme: text("phoneme").notNull(),
+  // The human-readable reading this was made from, for debugging a bad clip.
+  pinyin: text("pinyin").notNull(),
+  voice: text("voice").notNull(),
+  mime: text("mime").notNull().default("audio/mpeg"),
+  audio: text("audio").notNull(), // base64 — clips are a few KB each
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+}, (t) => ({
+  pk: uniqueIndex("character_audio_key").on(t.hanzi, t.phoneme),
+}));
+
 // Deep character breakdowns — shared across ALL users (keyed by hanzi, not
 // user_id): the decomposition of 吃 is identical for everyone, so it's computed
 // once and reused forever. Seeded in-session from grounded data (makemeahanzi /
