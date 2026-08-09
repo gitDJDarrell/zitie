@@ -111,6 +111,100 @@ describe("optionGloss", () => {
   });
 });
 
+/**
+ * The omission this was changed to fix. Reading in the wild fails on
+ * look-alikes, but the distractor ranking only knew about part of speech and
+ * gloss length — so shown 木 among fire, mountain and to run, a learner who
+ * cannot tell it from 本 still answered correctly and the test found nothing
+ * out. One slot is now reserved for a character that resembles the one under
+ * test, so the question probes the failure that actually costs you a sign.
+ */
+describe("look-alike distractors", () => {
+  const wood = card("m", "木", "tree, wood", ["noun"]);
+  // 火 山 吃 跑 are none of them confusable with 木; 本 is.
+  const root = card("n", "本", "root; origin", ["noun"]);
+  const withRoot = [wood, root, card("a", "火", "fire"), card("b", "山", "mountain"),
+    card("d", "吃", "to eat", ["verb"]), card("e", "跑", "to run", ["verb"])];
+
+  it("offers the meaning of a character that looks like the answer", () => {
+    // Whatever the draw, 本 is there: a learner who reads 木 as 本 now has
+    // somewhere wrong to go, which is the whole point of the change.
+    for (const r of [fixed([0]), fixed([0.5]), fixed([0.99]), fixed([0.2, 0.7, 0.4])]) {
+      const options = meaningChoices(wood, withRoot, CHOICE_COUNT, r);
+      assert.ok(options.includes("root; origin"), options.join(" | "));
+    }
+  });
+
+  it("reserves the slot rather than just ranking it higher", () => {
+    // 找 is a verb where 我 is a pronoun, so distance() sorts it last of all —
+    // if the look-alike were only another term in that ranking it would lose to
+    // three tidy pronouns every time. It is the pair a reader actually confuses.
+    const me = card("me", "我", "I; me", ["pronoun"]);
+    const bankOf = [me,
+      card("s", "找", "to look for", ["verb"]),
+      card("p", "你", "you", ["pronoun"]),
+      card("q", "他", "he; him", ["pronoun"]),
+      card("r", "她", "she; her", ["pronoun"])];
+    const options = meaningChoices(me, bankOf, CHOICE_COUNT, fixed([0]));
+    assert.ok(options.includes("to look for"), options.join(" | "));
+  });
+
+  it("still fields a full question when nothing in the bank looks alike", () => {
+    // 火's look-alikes are 犬太大灭欠夫久, none of which are here. The reserved
+    // slot goes unfilled and every distractor is ranked on meaning as before —
+    // not a refusal, and not a short list.
+    const fire = card("a", "火", "fire", ["noun"]);
+    const noTwin = [fire, wood, card("b", "山", "mountain"),
+      card("d", "吃", "to eat", ["verb"]), card("e", "跑", "to run", ["verb"])];
+    const options = meaningChoices(fire, noTwin, CHOICE_COUNT, fixed([0.3, 0.6]));
+    assert.equal(options.length, CHOICE_COUNT);
+    assert.ok(options.includes("fire"));
+  });
+
+  it("keeps refusing rather than offering a two-way guess", () => {
+    // The escape hatch survives the reserved slot: a bank holding only the
+    // card and its look-alike still can't field three wrong answers.
+    assert.deepEqual(meaningChoices(wood, [wood, root], CHOICE_COUNT, fixed([0])), []);
+  });
+
+  it("leaves a meaning-ranked distractor even at two options", () => {
+    // Exam mode sizes its options off the bank, so `count` can fall to two.
+    // The reserved slot must not eat the only distractor there is.
+    const options = meaningChoices(wood, withRoot, 2, fixed([0]));
+    assert.equal(options.length, 2);
+    assert.equal(options.filter(o => isAnswer(o, wood)).length, 1);
+  });
+
+  it("sanitises a look-alike's gloss like any other option", () => {
+    // The hard rule, through the new path: 本 is reserved on sight of the
+    // glyph, so if its gloss were a bound form it would carry hanzi into the
+    // options — and a hanzi anywhere in the set is a glyph-matching tell.
+    const bound = card("n", "本", "used in 本子 (notebook)", ["noun"]);
+    const options = meaningChoices(wood, [wood, bound, ...withRoot.slice(2)], CHOICE_COUNT, fixed([0]));
+    assert.ok(options.includes("notebook"), options.join(" | "));
+    for (const o of options) assert.ok(!/[一-鿿]/.test(o), `option "${o}" carries hanzi`);
+  });
+
+  it("still marks exactly one option correct", () => {
+    // isAnswer has to agree with what was rendered, reserved slot or not.
+    const options = meaningChoices(wood, withRoot, CHOICE_COUNT, fixed([0.4, 0.8]));
+    assert.equal(options.filter(o => isAnswer(o, wood)).length, 1);
+  });
+
+  it("never offers a look-alike whose meaning restates the answer", () => {
+    // 未 and 末 look alike and their glosses can read the same way. Two right
+    // answers is worse than a weak distractor, so the pool's existing overlap
+    // rule has to win over the reservation.
+    const notYet = card("u", "未", "not yet", ["adverb"]);
+    const bankOf = [notYet, card("v", "末", "not yet (literary)", ["adverb"]),
+      card("w", "很", "very", ["adverb"]), card("x", "都", "all", ["adverb"]),
+      card("y", "也", "also", ["adverb"])];
+    const options = meaningChoices(notYet, bankOf, CHOICE_COUNT, fixed([0]));
+    assert.ok(!options.includes("not yet (literary)"), options.join(" | "));
+    assert.equal(options.filter(o => isAnswer(o, notYet)).length, 1);
+  });
+});
+
 describe("options never spoil the prompt", () => {
   const bound = card("f", "啡", "used in 咖啡 (coffee)", ["noun"]);
   const withBound = [bound, ...bank];

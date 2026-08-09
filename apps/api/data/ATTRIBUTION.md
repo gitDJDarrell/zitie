@@ -16,6 +16,7 @@ hand. None of the sources are committed; the build scripts download them.
 | `stories.json` | hand-written | etymologies for the 184 dex characters the datasets record no account of |
 | `insights-curated.json` | `build-curated.ts` | `stories.json` + readings from `hanzi.json` + compounds from `insights-hsk.json` |
 | `strokes-hsk.json` | `build-stroke-data.ts` | makemeahanzi `graphics.txt` — stroke outlines and centrelines for the 3,000 dex characters |
+| `apps/web/src/data/lookalikes.ts` (outside this directory) | `build-lookalikes.ts` | `strokes-hsk.json` — which characters are easy to misread as which, for read mode's distractors |
 
 ## Sources
 
@@ -43,7 +44,10 @@ Sequences — the component decompositions in `hanzi.json`.
 the code and CC BY 4.0 for the data. Decompositions, etymologies and stroke
 data, itself derived from Unihan and CC-CEDICT. `strokes-hsk.json` is a direct
 derivation of its `graphics.txt` (stroke outlines and medians), so that file
-carries the same attribution requirement.
+carries the same attribution requirement — as does
+`apps/web/src/data/lookalikes.ts`, which is computed from it and, unlike the
+rest of this table, is **shipped in the web bundle** rather than only seeded
+into the database.
 
 **HSK 3.0 character and word lists** — © 2021 Pleco Inc., MIT license, via
 <https://github.com/elkmovie/hsk30>. The dex levels in
@@ -59,9 +63,11 @@ npm run build:hanzi --workspace apps/api        # hanzi.json
 npm run build:reference --workspace apps/api    # insights-hsk.json + hsk-words.json
 npm run build:curated --workspace apps/api      # insights-curated.json (from stories.json)
 npm run build:strokes --workspace apps/api      # strokes-hsk.json
+npm run build:lookalikes --workspace apps/api   # apps/web/src/data/lookalikes.ts
 ```
 
 The first two download their sources to a scratch directory (pass a path as the
 first argument to reuse one). None of them touch the hand-written files, and
 `build:curated` needs `insights-hsk.json` to be current — it reads the compound
-lists straight out of it.
+lists straight out of it. `build:lookalikes` downloads nothing but needs
+`strokes-hsk.json`, so run it after `build:strokes`.
