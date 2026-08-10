@@ -735,7 +735,7 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
               <div className="hz font-black" style={{ color: C.paper, fontSize: 44, lineHeight: 1.1 }}>{card.hanzi}</div>
               <div className="flex items-center gap-1">
                 <div className="mono text-base" style={{ color: C.paper }}>{card.pinyin}</div>
-                <SpeakBtn text={card.hanzi} pinyin={card.pinyin} />
+                <SpeakBtn text={card.hanzi} />
               </div>
             </div>
             {/* What the attempt scored. A miss is stated plainly rather than
@@ -819,7 +819,7 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
               <div className="hz font-black" style={{ color: C.paper, fontSize: 64, lineHeight: 1.1 }}>{card.hanzi}</div>
               <div className="flex items-center gap-1">
                 <div className="mono text-lg" style={{ color: C.paper }}>{card.pinyin}</div>
-                <SpeakBtn text={card.hanzi} pinyin={card.pinyin} />
+                <SpeakBtn text={card.hanzi} />
               </div>
               <div className="ui text-sm text-center" style={{ color: C.dim }}>{card.meaning}</div>
             </div>
@@ -887,7 +887,7 @@ export function StudyView({ bank, srs, filters, setFilters, posList, onSeen, onG
             <div className="hz font-semibold" style={{ color: C.dim, fontSize: 40, lineHeight: 1.1 }}>{card.hanzi}</div>
             <div className="flex items-center gap-1">
               <div className="mono text-2xl" style={{ color: C.paper }}>{card.pinyin}</div>
-              <SpeakBtn text={card.hanzi} pinyin={card.pinyin} size="lg" />
+              <SpeakBtn text={card.hanzi} size="lg" />
             </div>
             <div className="ui text-base text-center leading-relaxed" style={{ color: C.paper }}>{card.meaning}</div>
             <div className="ui t-meta text-center" style={{ color: C.faint }}>

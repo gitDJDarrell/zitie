@@ -11,7 +11,6 @@ import { cardsRoute } from "./routes/cards.js";
 import { exportRoute } from "./routes/export.js";
 import { seenRoute } from "./routes/seen.js";
 import { strokesRoute } from "./routes/strokes.js";
-import { audioRoute } from "./routes/audio.js";
 import { settingsRoute } from "./routes/settings.js";
 import { allowedOrigins, originChecker } from "./lib/origins.js";
 
@@ -44,7 +43,6 @@ app.route("/insights", insightsRoute);
 app.route("/cards", cardsRoute);
 app.route("/seen", seenRoute);
 app.route("/strokes", strokesRoute);
-app.route("/audio", audioRoute);
 app.route("/settings", settingsRoute);
 app.route("/export", exportRoute);
 

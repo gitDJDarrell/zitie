@@ -67,18 +67,11 @@ export function Switch<T extends string>({ value, options, onChange }: {
 }
 
 // Pronounce-aloud button, on every screen that shows a character's answer.
-//
-// `pinyin` is what makes it right rather than merely loud: it selects the
-// recorded clip for the reading this card means, instead of leaving a
-// polyphone to the browser's guess. Optional only because a few callers speak
-// something with no reading attached.
-export function SpeakBtn({ text, pinyin, size = "base", className, style }: {
-  text: string; pinyin?: string; size?: "base" | "lg"; className?: string; style?: React.CSSProperties;
+export function SpeakBtn({ text, size = "base", className, style }: {
+  text: string; size?: "base" | "lg"; className?: string; style?: React.CSSProperties;
 }) {
   const status = speechStatus();
-  // A clip plays without any installed voice, so the control stays live when
-  // we have a reading to look one up by.
-  const ready = status === "ready" || !!pinyin?.trim();
+  const ready = status === "ready";
   // Deliberately still rendered when there's no voice. Returning null here made
   // pronunciation vanish from every screen at once on any machine without a
   // Chinese language pack — which is most Windows machines — and an absent
@@ -86,7 +79,7 @@ export function SpeakBtn({ text, pinyin, size = "base", className, style }: {
   // explained beats silently gone.
   return (
     <button
-      onClick={e => { e.stopPropagation(); if (ready) speak(text, pinyin); }}
+      onClick={e => { e.stopPropagation(); if (ready) speak(text); }}
       disabled={!ready}
       aria-label={ready ? `Play pronunciation of ${text}` : `Pronunciation unavailable — ${speechHint(status)}`}
       title={ready ? undefined : speechHint(status) ?? undefined}

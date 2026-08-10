@@ -307,7 +307,7 @@ export function BrowseView({
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-1">
                   <span className="mono text-sm" style={{ color: C.paper }}>{c.pinyin}</span>
-                  {!selectMode && <SpeakBtn text={c.hanzi} pinyin={c.pinyin} className="!px-1 !py-0" />}
+                  {!selectMode && <SpeakBtn text={c.hanzi} className="!px-1 !py-0" />}
                 </div>
                 <div className="ui t-meta truncate" style={{ color: C.dim }}>{c.meaning}</div>
                 <div className="ui t-micro mt-1 flex items-center gap-2" style={{ color: C.faint }}>

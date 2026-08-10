@@ -219,7 +219,7 @@ export function WordDex({ bank, srs, onToggleStar, stack, onAddToStack, onRemove
                   </span>
                   <span style={{ color: C.dim }}><Rating rec={srs[card.id]} compact /></span>
                 </button>
-                <SpeakBtn text={word} pinyin={card.pinyin} className="absolute top-0 right-0 !px-1 !py-0.5"
+                <SpeakBtn text={word} className="absolute top-0 right-0 !px-1 !py-0.5"
                   style={{ fontSize: 10, color: C.faint }} />
               </div>
             ) : card ? (

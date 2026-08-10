@@ -119,7 +119,7 @@ export function CardDetail({ card, srs, onClose, onToggleStar, inStack, onToggle
           </div>
           <div className="flex items-center gap-1">
             <div className="mono text-2xl" style={{ color: C.paper }}>{card.pinyin}</div>
-            <SpeakBtn text={card.hanzi} pinyin={card.pinyin} size="lg" />
+            <SpeakBtn text={card.hanzi} size="lg" />
           </div>
           <div className="ui text-base text-center leading-relaxed" style={{ color: C.paper }}>{card.meaning}</div>
           <div className="ui t-meta text-center" style={{ color: C.faint }}>

@@ -8,11 +8,7 @@ export interface Settings {
   difficulty: number;
 }
 
-// Optional-chained because `import.meta.env` is a Vite construct and does not
-// exist under node:test. Any module that reaches this one — lib/speech.ts now
-// does, to fetch pronunciation clips — would otherwise be unimportable in a
-// unit test, which is a silly reason to lose coverage of its pure parts.
-const API_URL = import.meta.env?.VITE_API_URL || "http://localhost:8787";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8787";
 
 export class ApiError extends Error {
   status: number;
@@ -76,12 +72,6 @@ export const api = {
   getStrokes: (hanzi: string[]) =>
     request<{ strokes: Record<string, CharacterStrokes> }>("/strokes", { method: "POST", body: JSON.stringify({ hanzi }) }),
 
-  // Pronunciation clips, asked for by reading rather than by character: 行 has
-  // two and they are different sounds. Keyed hanzi:phoneme in the response. A
-  // miss is normal — the caller falls back to the browser's own voice.
-  getAudio: (want: { hanzi: string; pinyin: string }[]) =>
-    request<{ clips: Record<string, AudioClip> }>("/audio", { method: "POST", body: JSON.stringify({ want }) }),
-
   getInsights: (hanzi: string[]) =>
     request<{ insights: Record<string, CharacterInsight> }>("/insights", { method: "POST", body: JSON.stringify({ hanzi }) }),
 
@@ -90,14 +80,6 @@ export const api = {
   enrichInsights: (hanzi: string[]) =>
     request<{ queued: string[]; unavailable: string[] }>("/insights/enrich", { method: "POST", body: JSON.stringify({ hanzi }) }),
 };
-
-export interface AudioClip {
-  mime: string;
-  /** base64 — clips are a couple of KB, so they ride in the JSON. */
-  audio: string;
-  voice: string;
-  pinyin: string;
-}
 
 export interface InsightComponent {
   char: string; reading?: string; gloss?: string;

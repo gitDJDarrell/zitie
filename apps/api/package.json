@@ -19,8 +19,7 @@
     "db:migrate": "tsx scripts/migrate.ts",
     "db:deploy": "npm run db:migrate && npm run db:seed-reference",
     "db:seed": "tsx scripts/seed.ts",
-    "db:seed-reference": "tsx scripts/seed-reference.ts",
-    "db:seed-audio": "tsx scripts/seed-audio.ts"
+    "db:seed-reference": "tsx scripts/seed-reference.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.112.3",

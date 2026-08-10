@@ -379,12 +379,18 @@ quality-of-life fixes that were accepted, all landed together:
      ink banner collection uses, because mastery is a far rarer moment. Raised
      once per character, like collection.
 
-## Backlog — pronunciation (parked 2026-08-04, blocked on a credential)
+## Backlog — pronunciation (designed then removed 2026-08-04, to be re-planned)
 
-**Built, merged, and dormant.** All of it is on main (99589be) and inert without
-a key: the table is empty, the endpoint returns `{}`, and the client falls back
-to the browser's own voice exactly as it did before. Nothing needs undoing to
-resume, and nothing is broken by leaving it.
+**Built, then taken back out.** It was implemented and merged as 99589be and
+reverted the same day — not because anything was wrong with it, but because it
+is blocked on a credential and shipping a whole dormant subsystem to wait for
+one is clutter. **The code is recoverable in full: `git show 99589be`, or
+`git revert` the revert.** What follows is the design and the reasoning, so a
+future session re-plans from the findings rather than from scratch.
+
+What remains in the tree: the browser-voice pronunciation buttons, unchanged.
+They were asked for separately and still work — muted with an explanation where
+no Mandarin voice is installed.
 
 **The finding worth keeping, because it outlives the provider choice.** Voice
 quality was never the main problem. A bare hanzi handed to *any* TTS engine is
@@ -396,7 +402,7 @@ across the dex. Every card already stores the reading it means, so the fix is to
 stop letting the engine choose. **Any provider considered later has to be judged
 on phoneme control first and voice quality second.**
 
-What exists:
+What 99589be contained, and would restore:
 - `apps/api/src/lib/pinyin.ts` — stored reading → Azure `sapi` phoneme
   (`xíng` → `xing2`, `kāfēi` → `ka1 fei1`). Handles tone marks or digits,
   spaced or unspaced, ü either spelling. Returns null rather than guessing;
@@ -423,7 +429,10 @@ credit card for identity verification. Not worth it pre-production.
 corpus — 4.3% of one month's free F0 allowance, so realistically £0. One-time,
 not per-play: clips are stored and served like any other reference data.
 
-**To resume:** create a Speech resource (tier F0), put `AZURE_SPEECH_KEY` and
+**To resume:** restore the code first — `git revert` the revert commit, or
+cherry-pick 99589be — then re-run `db:migrate` to recreate `character_audio`
+(the table was dropped from the dev database when the code came out). After
+that: create a Speech resource (tier F0), put `AZURE_SPEECH_KEY` and
 `AZURE_SPEECH_REGION` in `apps/api/.env`, then
 `npm run db:seed-audio --workspace apps/api -- --limit 20` to audition the voice
 before the full run. Then check 行 specifically — it must say xíng, not háng. If

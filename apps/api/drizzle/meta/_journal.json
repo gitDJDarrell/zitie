@@ -71,13 +71,6 @@
       "when": 1785634088904,
       "tag": "0009_same_nebula",
       "breakpoints": true
-    },
-    {
-      "idx": 10,
-      "version": "7",
-      "when": 1786297785741,
-      "tag": "0010_ambitious_hawkeye",
-      "breakpoints": true
     }
   ]
 }
