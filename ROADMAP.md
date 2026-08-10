@@ -379,6 +379,62 @@ quality-of-life fixes that were accepted, all landed together:
      ink banner collection uses, because mastery is a far rarer moment. Raised
      once per character, like collection.
 
+## Backlog — pronunciation (parked 2026-08-04, blocked on a credential)
+
+**Built, merged, and dormant.** All of it is on main (99589be) and inert without
+a key: the table is empty, the endpoint returns `{}`, and the client falls back
+to the browser's own voice exactly as it did before. Nothing needs undoing to
+resume, and nothing is broken by leaving it.
+
+**The finding worth keeping, because it outlives the provider choice.** Voice
+quality was never the main problem. A bare hanzi handed to *any* TTS engine is
+a guess whenever the character has more than one reading, and Mandarin has
+hundreds: 行 is xíng or háng, 还 is hái or huán, 好 is hǎo or hào. The engine
+picks by context and a flashcard has none, so the app would teach the wrong tone
+with total confidence — five of the 116 cards in the dev bank, several hundred
+across the dex. Every card already stores the reading it means, so the fix is to
+stop letting the engine choose. **Any provider considered later has to be judged
+on phoneme control first and voice quality second.**
+
+What exists:
+- `apps/api/src/lib/pinyin.ts` — stored reading → Azure `sapi` phoneme
+  (`xíng` → `xing2`, `kāfēi` → `ka1 fei1`). Handles tone marks or digits,
+  spaced or unspaced, ü either spelling. Returns null rather than guessing;
+  all 1,527 single-character readings and 10,902 of 10,954 total entries
+  convert. 13 tests.
+- `apps/api/src/lib/tts.ts` — `Synthesizer` interface + `AzureSynthesizer`.
+  **A different provider is one new class and one line in `synthesizerFromEnv`;
+  nothing else in the app knows or cares.** 9 tests, no key needed.
+- `character_audio` (migration 0010) — fourth shared reference table beside
+  `character_strokes` / `character_insights`. Keyed by (hanzi, phoneme), not by
+  hanzi, so 行 holds both its clips.
+- `apps/api/scripts/seed-audio.ts` — `db:seed-audio`, idempotent and resumable,
+  sourced from `hsk_words` so it inherits `readings-override.json`'s
+  hand-checked heteronyms. Deliberately **not** in `db:deploy`: a release must
+  not depend on a credential the app never uses.
+- `POST /audio` + `lib/speech.ts` — clip preferred, browser voice as fallback,
+  and deliberately no third tier (an en-US voice reading chá is worse than
+  silence).
+
+**Why it's parked:** Azure needs a subscription, and the free trial wants a
+credit card for identity verification. Not worth it pre-production.
+
+**Cost, once there is a subscription:** 21,749 billed characters for the entire
+corpus — 4.3% of one month's free F0 allowance, so realistically £0. One-time,
+not per-play: clips are stored and served like any other reference data.
+
+**To resume:** create a Speech resource (tier F0), put `AZURE_SPEECH_KEY` and
+`AZURE_SPEECH_REGION` in `apps/api/.env`, then
+`npm run db:seed-audio --workspace apps/api -- --limit 20` to audition the voice
+before the full run. Then check 行 specifically — it must say xíng, not háng. If
+it says háng the phoneme isn't reaching the engine, and that is the whole point.
+
+**Alternatives, if Azure stays unattractive:** `edge-tts` reaches the same
+Microsoft neural voices with no account, but it is an unofficial client for an
+undocumented endpoint — fine to audition with, a liability to ship on. OpenAI
+and ElevenLabs sound good but have no phoneme control, so polyphones revert to
+guesses; on the reasoning above that is a downgrade, not a substitute.
+
 ## Sequencing
 
 1. ~~Mobile UX polish + PWA~~ — done (11bd2c8, 1a31893).
