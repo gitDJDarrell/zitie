@@ -48,7 +48,7 @@ describe("originChecker", () => {
   });
 
   it("lets through a caller with no Origin header at all", () => {
-    // curl, the Fly health check, a native fetch — nothing to police.
+    // curl, a platform health check, a native fetch — nothing to police.
     assert.equal(check(undefined), "https://zitie.vercel.app");
   });
 });

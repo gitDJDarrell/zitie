@@ -35,7 +35,7 @@ function sweep(windowMs: number) {
 }
 
 function clientIp(c: Context) {
-  // Fly/Vercel/most proxies set x-forwarded-for; first hop is the client.
+  // Vercel and most proxies set x-forwarded-for; first hop is the client.
   const fwd = c.req.header("x-forwarded-for");
   return fwd ? fwd.split(",")[0].trim() : "local";
 }

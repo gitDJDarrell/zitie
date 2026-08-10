@@ -47,7 +47,7 @@ app.route("/settings", settingsRoute);
 app.route("/export", exportRoute);
 
 const port = Number(process.env.PORT) || 8787;
-// Bind all interfaces so the container's proxy (Fly) and the Android emulator
+// Bind all interfaces so the container's reverse proxy and the Android emulator
 // (10.0.2.2 → host) can reach it, not just loopback.
 serve({ fetch: app.fetch, port, hostname: "0.0.0.0" }, (info) => {
   console.log(`zitie api listening on 0.0.0.0:${info.port}`);

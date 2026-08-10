@@ -208,9 +208,10 @@ they were queued:
    — tool offered, results fed back, JSON parsed, every failure mode raising
    rather than storing nonsense), so what's left unverified is narrow: whether
    the live API accepts this request shape, and whether the model's breakdowns
-   read well. Both need a key — none in the dev environment; if one is in Fly
-   secrets, the first uncollected non-HSK character opened after deploy is the
-   test. Watch that the grounding filter isn't eating legitimate components.
+   read well. Both need a key — none in the dev environment; if one is in the
+   deploy environment's secrets, the first uncollected non-HSK character opened
+   after deploy is the test. Watch that the grounding filter isn't eating
+   legitimate components.
 3. ~~**Haiku for the extraction hot path**~~ — SHIPPED, split by difficulty
    rather than by frequency: a photo stays on the top tier (handwriting,
    glare, characters a stroke apart), typed or pasted text goes to Haiku,
@@ -465,9 +466,13 @@ intention*, and each was defensible before it was stated.
    `flyctl deploy` on every push to main and `fly.toml`'s release command would
    have migrated and seeded production on the way. Nothing had ever deployed,
    so the first push that happened to land would have been the first production
-   release, decided by timing rather than by anyone. `fly.toml`, the Dockerfile
-   and DEPLOY.md stay — inert, and holding the release command and health checks
-   a real deploy will want.
+   release, decided by timing rather than by anyone.
+7. **Drop Fly entirely.** — SHIPPED. Fly is no longer the host. `fly.toml` is
+   removed and DEPLOY.md is rewritten host-neutral: the API is a plain container
+   (the repo-root `Dockerfile` stays and runs on any host that builds one —
+   Railway, Render, a VM), with `npm run db:deploy` wired as that host's
+   release/pre-deploy step instead of a Fly release command. Code comments that
+   named Fly are made generic. No app behaviour changes.
 
 **Still open from this run:** the dex restructure that decision 0.5 implies —
 characters lead as progress, and the word dex becomes the readout of what they
