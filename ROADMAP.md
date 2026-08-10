@@ -25,6 +25,31 @@ accounts, AI extraction, HSK character dex, study stacks). Decisions locked
      relationship, not from nagging.
    Anything that proposes to shorten the climb, or to reward showing up rather
    than getting better, is out of scope by this decision.
+0.5. **What Zitie is for: reading Chinese in the wild (locked 2026-08-03).**
+   Signs, menus, chat, subtitles. Success is recognition speed and breadth.
+   This was settled because the code was answering the question four different
+   ways at once — the import pipeline said "retain what you meet", the HSK
+   catalogs and exam said "pass a level", the dex said "build breadth", the
+   etymology and brush said "understand characters deeply" — and with no
+   stated goal nothing could be prioritised or cut, so every idea got bolted
+   on. It resolves a class of questions:
+   - **Recognition earns the dex slot; producing is depth above it.** See the
+     2026-08-03 backlog. A slot that wanted all three proofs made the headline
+     count a measure of handwriting, which is the least transferable of the
+     three for this purpose.
+   - **Handwriting is a memory aid, not the outcome.** The motor trace genuinely
+     helps encoding, and 描 brush mode stays for that. But you will read Chinese
+     daily and hand-write it approximately never — Chinese adults themselves
+     have 提笔忘字 from typing pinyin. Leading with the brush was rejected on
+     these grounds even though it is the most differentiated thing built.
+   - **Characters and words are not siblings.** You read words; characters are
+     why you can. ~3,000 characters covers ~99% of running text while words are
+     unbounded, so the character dex stays the finishable spine. Merging the two
+     catalogs into one flat list is out — it would throw away the only
+     completable goal in the app.
+   - **Distractors are judged on what defeats a reader**, which is the
+     look-alike, not the unrelated meaning. See the 2026-08-03 backlog.
+
 1. **Etymology is grounded in open data, not freestyled.** Ship IDS
    (Ideographic Description Sequences — component decomposition, e.g.
    吃 → ⿰口乞) + Unihan (radical, stroke count, reading, gloss) as static
@@ -378,6 +403,76 @@ quality-of-life fixes that were accepted, all landed together:
      room — a lit, gold-sheened card over a dimmed app, louder than the quiet
      ink banner collection uses, because mastery is a far rarer moment. Raised
      once per character, like collection.
+
+## Backlog — reading-first (SHIPPED 2026-08-03, PRs #8 and the look-alike merge)
+
+Everything here follows from decision 0.5. Recorded because the reasoning is
+worth more than the diffs — each of these was a defect *relative to the stated
+intention*, and each was defensible before it was stated.
+
+1. ~~**Earn the dex slot by reading, not by writing.**~~ — SHIPPED (d19023c).
+   `isCollected` wanted all three proofs, which quietly made the gallery's
+   headline count a measure of handwriting: someone who could recognise 800
+   characters and hand-write 40 was told they had collected 40. Recognition now
+   earns the slot; `hasProduced` is the rung above; the 考 exam keeps the
+   stricter bar as `isFullyProven`, since sitting a brush exam on a character
+   never once brushed would be unfair. **Nothing can lose a slot** — the old
+   rule's set is a strict subset of the new one; on the dev bank it moved 6
+   collected to 12. Also split the two things both called mastery:
+   `strengthOf` is the scheduler's running estimate and moves both ways,
+   `isMastered` is the one-way 精通 tier. Naming both the same made the ladder
+   unreadable.
+2. ~~**Test recognition in context.**~~ — SHIPPED (834b586). The wild does not
+   show you one character on a white card. A character the scheduler trusts
+   (strength ≥ 2) now appears inside a real HSK word — 茶 alone when new, 红茶
+   once known — target at full ink, neighbours quiet. Every reveal also lists
+   up to four real words it appears in, because reading is associative. Context
+   comes from the bundled HSK 3.0 list, never invented: a character with no HSK
+   word, or a card that is already a word, is shown alone.
+3. ~~**Stop printing the answer inside its own option.**~~ — SHIPPED (4cb5adf).
+   Bound forms are glossed by the word they live in, so 啡's meaning was
+   literally "used in 咖啡 (coffee)" — the character under test appearing inside
+   its own correct answer, answerable by matching glyphs having read nothing.
+   Item 2 made it exact rather than merely easy. `optionGloss` unwraps the
+   usage note to the English it carried, applied to **every** option (sanitising
+   only the answer swaps a glyph tell for a formatting one), and
+   `meaningChoices` refuses any set that still contains a hanzi. Correctness
+   moved into `isAnswer` beside the option building: options are sanitised on
+   the way out, so the five call sites comparing against raw `card.meaning`
+   would each have marked every bound form wrong.
+4. ~~**Look-alike distractors.**~~ — SHIPPED (7458111). Options were ranked on
+   part of speech and gloss length only, so the test never asked what reading
+   actually asks — can you tell 木 from 本. **67% of HSK1 characters have a
+   look-alike inside HSK1 itself**, so for a beginner this was the majority
+   case, not an edge one. One option slot is now reserved for a visually
+   confusable character, drawn from a map generated from the same makemeahanzi
+   stroke geometry brush mode grades against (rasterised, cosine-compared, cut
+   by z-score because raw similarity is not comparable across characters).
+   Reserved rather than blended into the ranking: the pool is hundreds deep and
+   the final three are drawn at random from its closer half, so a blended
+   look-alike would surface at exactly the rate the test fails to ask its
+   question. **Costs 53 KB gzipped (+37%)** — `MAX_PER_CHAR` in the generator
+   trims ~40% of that if the bundle ever bites.
+5. ~~**Pronunciation explains itself instead of vanishing.**~~ — SHIPPED
+   (946f81b, ec9b48f). `SpeakBtn` returned null with no Mandarin voice
+   installed, which on a stock Windows machine is the default — so every audio
+   control in the app rendered as nothing at once, indistinguishable from a
+   feature nobody built, and the one thing that fixes it was never mentioned.
+   Controls now stay put, muted, carrying the reason and the remedy. Auto-speak
+   was removed in the same pass: audio is a preview you press, not a session
+   setting that talks over you every few seconds.
+6. ~~**Stop auto-deploying to Fly.**~~ — SHIPPED (024db21). The workflow ran
+   `flyctl deploy` on every push to main and `fly.toml`'s release command would
+   have migrated and seeded production on the way. Nothing had ever deployed,
+   so the first push that happened to land would have been the first production
+   release, decided by timing rather than by anyone. `fly.toml`, the Dockerfile
+   and DEPLOY.md stay — inert, and holding the release command and health checks
+   a real deploy will want.
+
+**Still open from this run:** the dex restructure that decision 0.5 implies —
+characters lead as progress, and the word dex becomes the readout of what they
+have unlocked ("412 HSK words now readable") rather than a parallel grind with
+its own switch and its own count. Agreed in principle, not started.
 
 ## Backlog — pronunciation (designed then removed 2026-08-04, to be re-planned)
 
