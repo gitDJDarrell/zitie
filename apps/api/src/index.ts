@@ -12,6 +12,7 @@ import { exportRoute } from "./routes/export.js";
 import { seenRoute } from "./routes/seen.js";
 import { strokesRoute } from "./routes/strokes.js";
 import { settingsRoute } from "./routes/settings.js";
+import { profileRoute } from "./routes/profile.js";
 import { allowedOrigins, originChecker } from "./lib/origins.js";
 
 const app = new Hono();
@@ -44,6 +45,7 @@ app.route("/cards", cardsRoute);
 app.route("/seen", seenRoute);
 app.route("/strokes", strokesRoute);
 app.route("/settings", settingsRoute);
+app.route("/profile", profileRoute);
 app.route("/export", exportRoute);
 
 const port = Number(process.env.PORT) || 8787;

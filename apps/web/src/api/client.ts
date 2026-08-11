@@ -8,6 +8,20 @@ export interface Settings {
   difficulty: number;
 }
 
+export interface Profile {
+  username: string | null;
+  email: string;
+  phone: string | null;
+  bio: string | null;
+  avatar: string | null;      // data: URI
+  joinedAt: number;           // epoch ms — the account's created date
+  lastSeen: number | null;    // epoch ms — last time the app was opened
+  masteryRating: number;      // the 考 exam Elo behind the rank title
+}
+
+/** Fields a user may edit on their own profile ("" clears one). */
+export type ProfilePatch = Partial<Pick<Profile, "username" | "phone" | "bio" | "avatar">>;
+
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8787";
 
 export class ApiError extends Error {
@@ -60,6 +74,10 @@ export const api = {
   getSettings: () => request<Settings>("/settings"),
   patchSettings: (patch: Partial<Settings>) =>
     request<Settings>("/settings", { method: "PATCH", body: JSON.stringify(patch) }),
+
+  getProfile: () => request<Profile>("/profile"),
+  updateProfile: (patch: ProfilePatch) =>
+    request<Profile>("/profile", { method: "PATCH", body: JSON.stringify(patch) }),
 
   exportBank: () => request<Record<string, unknown>[]>("/export"),
 

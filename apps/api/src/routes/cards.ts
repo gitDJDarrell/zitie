@@ -3,7 +3,7 @@ import { Hono } from "hono";
 import { nanoid } from "nanoid";
 import { z } from "zod";
 import { db } from "../db/client.js";
-import { cards, seenState } from "../db/schema.js";
+import { cards, seenState, users } from "../db/schema.js";
 import { requireAuth } from "../lib/auth.js";
 import { mergeCard, normalizeItem } from "../lib/merge.js";
 import { serializeSeen, type SeenWire } from "../lib/seenWire.js";
@@ -21,6 +21,9 @@ cardsRoute.get("/", async (c) => {
   const [rows, seenRows] = await Promise.all([
     db.select().from(cards).where(eq(cards.userId, userId)),
     db.select().from(seenState).where(eq(seenState.userId, userId)),
+    // The bank load is the one request that fires whenever the app opens, so
+    // it's where "last seen" gets stamped — real activity, not last login.
+    db.update(users).set({ lastSeen: new Date() }).where(eq(users.id, userId)),
   ]);
 
   const seen: Record<string, SeenWire> = {};

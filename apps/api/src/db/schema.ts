@@ -1,12 +1,33 @@
 import { boolean, index, integer, jsonb, pgTable, real, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
+import { RATING_BASE } from "../lib/rating.js";
 
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
   email: text("email").notNull(),
   passwordHash: text("password_hash").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  // Profile — all optional, set from the profile screen. `createdAt` above is
+  // the join date; these are the rest of a public-ish identity.
+  username: text("username"),
+  phone: text("phone"),
+  bio: text("bio"),
+  // A small, client-resized image kept inline as a data: URI. Capped in the
+  // route (see profile.ts) so a row stays a row, not a file store.
+  avatar: text("avatar"),
+  // Bumped to now() whenever the app is opened (GET /cards), so "last seen" is
+  // real activity rather than last login.
+  lastSeen: timestamp("last_seen", { withTimezone: true }),
+  // The 考 exam's Elo. Every strict trial is a match against a per-direction
+  // opponent rating; a clean pass moves it up, a miss down, by the standard Elo
+  // update. The visible 科举 rank (童生 … 状元) is just a band of this number —
+  // the rank is the title, this is the ladder underneath it. Updated only by
+  // POST /seen/grade on exam trials; see lib/rating.ts.
+  masteryRating: integer("mastery_rating").notNull().default(RATING_BASE),
 }, (t) => ({
   emailIdx: uniqueIndex("users_email_idx").on(t.email),
+  // NULLs are distinct in Postgres, so this lets many users have no username
+  // while keeping chosen ones unique.
+  usernameIdx: uniqueIndex("users_username_idx").on(t.username),
 }));
 
 export const sessions = pgTable("sessions", {

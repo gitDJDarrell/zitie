@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ApiError } from "./api/client";
+import { ApiError, api, type Profile, type ProfilePatch } from "./api/client";
 import { type Filters } from "./lib/filters";
 import { initSpeech } from "./lib/speech";
 import { ApiStorage } from "./storage/apiStorage";
@@ -13,6 +13,7 @@ import { EarnedBanner } from "./components/EarnedBanner";
 import { MasteredBanner } from "./components/MasteredBanner";
 import { StudyView, type StackSession } from "./views/StudyView";
 import { ExamView } from "./views/ExamView";
+import { ProfileView } from "./views/ProfileView";
 
 const DEFAULT_POS = ["noun", "verb", "pronoun", "adjective", "adverb", "measure word", "particle"];
 
@@ -40,6 +41,10 @@ export default function App({ onLogout, userEmail }: { onLogout: () => void; use
   const [mastered, setMastered] = useState<Card | null>(null);
   // The 考 exam is running as its own full-screen flow, outside the tab bar.
   const [examing, setExaming] = useState(false);
+  // The account's profile — loaded on start so the header can show the avatar,
+  // opened as an overlay from the header.
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [profileOpen, setProfileOpen] = useState(false);
   // A study deck is running: the account chrome steps aside so the session
   // has the room — and the quiet — to itself.
   const [sessionActive, setSessionActive] = useState(false);
@@ -58,6 +63,9 @@ export default function App({ onLogout, userEmail }: { onLogout: () => void; use
       } catch (err) {
         if (err instanceof ApiError) onLogout(); // session expired server-side
       }
+      // Profile is best-effort: a header avatar is nice-to-have, and offline it
+      // simply isn't there. Never let it block or fail the bank load.
+      api.getProfile().then(setProfile).catch(() => {});
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -72,6 +80,14 @@ export default function App({ onLogout, userEmail }: { onLogout: () => void; use
     applyTheme(t);
     setTheme(t);
     storage.setTheme(t).catch(() => {});
+  }
+
+  // Save a profile edit. Throws ApiError (e.g. a taken username) straight to the
+  // ProfileView, which shows it inline; on success the server's canonical row
+  // replaces ours.
+  async function onSaveProfile(patch: ProfilePatch) {
+    const updated = await api.updateProfile(patch);
+    setProfile(updated);
   }
 
   const posList = useMemo(() => {
@@ -266,11 +282,21 @@ export default function App({ onLogout, userEmail }: { onLogout: () => void; use
             <div className="ui t-label mt-1" style={{ color: C.faint }}>character study</div>
           </div>
           <div className="flex flex-col items-end gap-1">
-            {userEmail && (
-              <div className="ui text-xs max-w-[180px] truncate" style={{ color: C.dim }} title={userEmail}>
-                {userEmail}
-              </div>
-            )}
+            <button onClick={() => setProfileOpen(true)}
+              className="flex items-center gap-2 max-w-[200px]"
+              aria-label="Open your profile" title="Your profile">
+              <span className="rounded-full overflow-hidden shrink-0 flex items-center justify-center"
+                style={{ width: 24, height: 24, background: C.ink3, border: `1px solid ${C.line}` }}>
+                {profile?.avatar
+                  ? <img src={profile.avatar} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                  : <span className="hz" style={{ fontSize: 12, color: C.dim }}>
+                      {(profile?.username || userEmail || "?").trim().charAt(0).toUpperCase()}
+                    </span>}
+              </span>
+              <span className="ui text-xs truncate" style={{ color: C.dim }}>
+                {profile?.username || userEmail}
+              </span>
+            </button>
             <div className="flex items-center gap-2">
               <button onClick={toggleTheme} aria-label={theme === "light" ? "Switch to dark theme" : "Switch to light theme"}
                 className="px-2 py-1 rounded border flex items-center gap-1"
@@ -309,6 +335,10 @@ export default function App({ onLogout, userEmail }: { onLogout: () => void; use
 
       {earned && <EarnedBanner card={earned} onDismiss={() => setEarned(null)} />}
       {mastered && <MasteredBanner card={mastered} onDismiss={() => setMastered(null)} />}
+      {profileOpen && profile && (
+        <ProfileView profile={profile} bank={bank} srs={srs}
+          onSave={onSaveProfile} onClose={() => setProfileOpen(false)} />
+      )}
 
       {!examing && (
       <nav className="fixed bottom-0 left-0 right-0" style={{

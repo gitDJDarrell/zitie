@@ -2,9 +2,10 @@ import { and, eq, inArray, sql } from "drizzle-orm";
 import { Hono } from "hono";
 import { z } from "zod";
 import { db } from "../db/client.js";
-import { cards, seenState } from "../db/schema.js";
+import { cards, seenState, users } from "../db/schema.js";
 import { requireAuth } from "../lib/auth.js";
 import { serializeSeen } from "../lib/seenWire.js";
+import { DIR_OPPONENT, NEUTRAL_OPPONENT, nextRating } from "../lib/rating.js";
 import { initialState, MASTERY_MARKS, schedule, type Grade } from "../lib/srs.js";
 
 export const seenRoute = new Hono();
@@ -121,6 +122,20 @@ seenRoute.post("/grade", async (c) => {
       },
     })
     .returning();
+
+  // The 考 exam's Elo. Every exam trial is a match: a clean pass is a win, a
+  // miss a loss, scored against the direction's opponent (or a neutral one when
+  // a miss arrives without its direction, since `proof` only rides along on a
+  // pass). This is the number the visible 科举 rank title sits on. Only exam
+  // trials touch it — ordinary study never does.
+  if (exam) {
+    const [u] = await db.select({ rating: users.masteryRating }).from(users).where(eq(users.id, userId));
+    if (u) {
+      const opponent = earned ? DIR_OPPONENT[earned] : NEUTRAL_OPPONENT;
+      const updated = nextRating(u.rating, opponent, grade !== "again");
+      await db.update(users).set({ masteryRating: updated }).where(eq(users.id, userId));
+    }
+  }
 
   return c.json(serialize(row));
 });
