@@ -17,6 +17,24 @@ export interface Card {
   notes?: string | null;
   starred?: boolean;
   added: string;
+  /** Cosmetic grade, stamped by the server when the card was granted. */
+  rarity?: Rarity;
+  /** "pack" | "grandfathered" — how the card entered the collection. */
+  source?: string;
+}
+
+export type Rarity = "common" | "rare" | "epic" | "legendary";
+
+/** The pack economy. Points are earned only by proving cards. */
+export interface Wallet {
+  points: number;
+  tier: number;
+  packs: Record<string, number>;
+  sinceEpic: number;
+  sinceLegendary: number;
+  tierBand: string;
+  /** Packs this tier grants each month. */
+  grant: number;
 }
 
 export interface SeenRecord {

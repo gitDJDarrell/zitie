@@ -36,6 +36,7 @@ const SUPPLEMENT = join(here, "../data/hsk-words-supplement.json");
 const READINGS = join(here, "../data/readings-override.json");
 const DEX = join(here, "../../web/src/data/dex.ts");
 const WORD_DEX_OUT = join(here, "../../web/src/data/wordDex.ts");
+const DEX_LEVELS_OUT = join(here, "../src/data/dexLevels.ts");
 
 const HSK_WORDLIST_URL = "https://raw.githubusercontent.com/elkmovie/hsk30/main/wordlist.txt";
 // CC-CEDICT is not served from a URL this environment can reach; the `hanzi`
@@ -144,6 +145,43 @@ export const WORD_TOTAL = WORD_INDEX.size;
     + `(${Math.round(statSync(WORD_DEX_OUT).size / 1024)} KB)`);
 }
 
+/** Mirror the dex character list into the API as a compiled-in module. */
+function writeDexLevels(levels: { level: string; chars: string[] }[]): void {
+  const body = levels.map((l) => {
+    const meta = LEVEL_META[l.level];
+    return `  { level: ${JSON.stringify(l.level)}, label: ${JSON.stringify(meta?.label ?? l.level)},
+`
+      + `    chars: ${JSON.stringify(l.chars.join(""))} },`;
+  }).join("
+");
+  const src = `// GENERATED from apps/web/src/data/dex.ts by build-reference-data.ts —
+`
+    + `// do not edit by hand.
+//
+`
+    + `// A TypeScript module rather than a JSON file on purpose: rating.ts needs
+`
+    + `// this at runtime, and tsc does not copy JSON into dist/, so reading it by
+`
+    + `// path compiles fine and then dies on boot in production.
+
+`
+    + `export interface DexLevelChars {
+  level: string;
+  label: string;
+  chars: string;
+}
+
+`
+    + `export const DEX_LEVELS: DexLevelChars[] = [
+${body}
+];
+`;
+  writeFileSync(DEX_LEVELS_OUT, src);
+  const total = levels.reduce((n, l) => n + l.chars.length, 0);
+  console.log(`· wrote ${DEX_LEVELS_OUT} (${levels.length} levels, ${total} characters)`);
+}
+
 async function main() {
   const srcDir = process.argv[2] ?? join(tmpdir(), "zitie-reference-src");
   mkdirSync(srcDir, { recursive: true });
@@ -180,6 +218,11 @@ async function main() {
   const hskWords = parseHskWordlist(readFileSync(wordlistPath, "utf8"));
   const levels = readDexLevels();
   console.log(`· ${dict.size} dictionary entries, ${hskWords.length} HSK words, ${levels.length} dex levels`);
+
+  // The API needs the same character list at runtime to rate cards and roll
+  // packs. Emitted as a .ts module, not .json: tsc does not copy JSON into
+  // dist/, so a file read by path compiles fine and then dies on boot.
+  writeDexLevels(levels);
 
   const freq = new Map<string, number>();
   for (const line of unwrap(freqPath).split("\n")) {

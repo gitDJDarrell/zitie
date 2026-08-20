@@ -1,19 +1,13 @@
 import { and, eq, inArray } from "drizzle-orm";
 import { Hono } from "hono";
-import { nanoid } from "nanoid";
 import { z } from "zod";
 import { db } from "../db/client.js";
 import { cards, seenState } from "../db/schema.js";
 import { requireAuth } from "../lib/auth.js";
-import { mergeCard, normalizeItem } from "../lib/merge.js";
 import { serializeSeen, type SeenWire } from "../lib/seenWire.js";
 
 export const cardsRoute = new Hono();
 cardsRoute.use("*", requireAuth);
-
-function today() {
-  return new Date().toISOString().slice(0, 10);
-}
 
 // GET /cards — full bank load: cards + seen map, mirrors the client's single loadData shape.
 cardsRoute.get("/", async (c) => {
@@ -29,45 +23,10 @@ cardsRoute.get("/", async (c) => {
   return c.json({ cards: rows, seen });
 });
 
-// POST /cards — bulk upsert with the additive merge, keyed by hanzi.
-cardsRoute.post("/", async (c) => {
-  const userId = c.get("userId");
-  const body = await c.req.json().catch(() => null);
-  if (!Array.isArray(body)) {
-    return c.json({ error: "Expected a JSON array." }, 400);
-  }
-
-  const existing = await db.select().from(cards).where(eq(cards.userId, userId));
-  const byHanzi = new Map(existing.map((c) => [c.hanzi, c]));
-
-  let added = 0, updated = 0;
-  try {
-    for (const [i, item] of body.entries()) {
-      const norm = normalizeItem(item, i);
-      const prev = byHanzi.get(norm.hanzi);
-      if (prev) {
-        const merged = mergeCard(prev, norm);
-        await db.update(cards).set(merged).where(eq(cards.id, prev.id));
-        updated++;
-      } else {
-        const id = nanoid();
-        await db.insert(cards).values({
-          id, userId, hanzi: norm.hanzi, pinyin: norm.pinyin, meaning: norm.meaning,
-          pos: norm.pos ?? [], compound: norm.compound ?? false,
-          radical: norm.radical, strokes: norm.strokes,
-          examples: norm.examples, notes: norm.notes,
-          added: today(),
-        });
-        added++;
-      }
-    }
-  } catch (err: any) {
-    return c.json({ error: err.message ?? "Import failed." }, 400);
-  }
-
-  const rows = await db.select().from(cards).where(eq(cards.userId, userId));
-  return c.json({ cards: rows, added, updated });
-});
+// Bulk import used to live here. It is gone deliberately: packs are the only
+// way a card enters a collection, and an endpoint that inserts arbitrary
+// cards would bypass the entire economy — pity timers, tier bands, rarity and
+// all. Cards are dealt by POST /packs/open and nowhere else.
 
 const patchSchema = z.object({
   starred: z.boolean().optional(),

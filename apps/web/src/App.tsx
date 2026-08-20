@@ -1,13 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ApiError } from "./api/client";
+import { api, ApiError } from "./api/client";
 import { type Filters } from "./lib/filters";
 import { initSpeech } from "./lib/speech";
 import { ApiStorage } from "./storage/apiStorage";
 import { applyTheme, C, FONT_CSS } from "./theme";
-import type { Card, Grade, Proof, SeenMap, SeenRecord, SyncState, Theme } from "./types";
+import type { Card, Grade, Proof, SeenMap, SeenRecord, SyncState, Theme, Wallet } from "./types";
 import { BrowseView } from "./views/BrowseView";
 import { GalleryView } from "./views/GalleryView";
-import { ImportView } from "./views/ImportView";
+import { PacksView } from "./views/PacksView";
 import { isCollected, isMastered, MASTERY_MARKS } from "./lib/srs";
 import { EarnedBanner } from "./components/EarnedBanner";
 import { MasteredBanner } from "./components/MasteredBanner";
@@ -20,7 +20,10 @@ export default function App({ onLogout, userEmail }: { onLogout: () => void; use
   const [bank, setBank] = useState<Card[]>([]);
   const [srs, setSrs] = useState<SeenMap>({});
   const [loaded, setLoaded] = useState(false);
-  const [tab, setTab] = useState<"study" | "gallery" | "browse" | "import">("study");
+  const [tab, setTab] = useState<"study" | "gallery" | "browse" | "packs">("study");
+  // The pack economy — points, unopened packs, subscription tier, pity
+  // counters. Server-authoritative; the client only ever displays it.
+  const [wallet, setWallet] = useState<Wallet | null>(null);
   const [filters, setFilters] = useState<Filters>({ q: "", pos: [], includeCompound: false, age: "all", starred: false });
   const [syncState, setSyncState] = useState<SyncState>("syncing");
   // Writes waiting for the network. Shown in the header so an offline session
@@ -55,6 +58,9 @@ export default function App({ onLogout, userEmail }: { onLogout: () => void; use
         const { bank: b, srs: s, theme: t, stack: st, difficulty: d } = await storage.load();
         applyTheme(t); setTheme(t);
         setBank(b); setSrs(s); setStack(st); setDifficulty(d); setLoaded(true);
+        // The wallet is not part of the offline snapshot: packs are dealt
+        // server-side, so a stale local copy could only ever mislead.
+        api.getWallet().then(setWallet).catch(() => {});
       } catch (err) {
         if (err instanceof ApiError) onLogout(); // session expired server-side
       }
@@ -149,10 +155,13 @@ export default function App({ onLogout, userEmail }: { onLogout: () => void; use
     storage.setDifficulty(d).catch(() => {});
   };
 
-  const onImport = async (items: unknown[]) => {
-    const { cards, added, updated } = await storage.importCards(items); // server computes the merge
-    setBank(cards);
-    return { added, updated };
+  // Cards now arrive only from packs, dealt server-side. Merge them in rather
+  // than refetching the bank — the pack view is already showing them.
+  const onGranted = (granted: Card[]) => {
+    setBank(b => {
+      const have = new Set(b.map(c => c.hanzi));
+      return [...b, ...granted.filter(c => !have.has(c.hanzi))];
+    });
   };
 
   const onDelete = (id: string) => {
@@ -240,7 +249,7 @@ export default function App({ onLogout, userEmail }: { onLogout: () => void; use
     { id: "study" as const, zh: "学", en: "Study" },
     { id: "gallery" as const, zh: "鉴", en: "Gallery" },
     { id: "browse" as const, zh: "查", en: "Browse" },
-    { id: "import" as const, zh: "入", en: "Import" },
+    { id: "packs" as const, zh: "包", en: "Packs" },
   ];
 
   const syncLabel = syncState === "offline"
@@ -302,7 +311,7 @@ export default function App({ onLogout, userEmail }: { onLogout: () => void; use
             {tab === "study" && <StudyView bank={bank} srs={srs} filters={filters} setFilters={setFilters} posList={posList} onSeen={onSeen} onGrade={onGrade} onToggleStar={onToggleStar} stackSession={stackSession} onExitStackSession={() => setStackSession(null)} stack={stack} onStudyStack={onStudyStack} difficulty={difficulty} onSetDifficulty={onSetDifficulty} onSessionActive={setSessionActive} />}
             {tab === "gallery" && <GalleryView bank={bank} srs={srs} onToggleStar={onToggleStar} stack={stack} onAddToStack={onAddToStack} onRemoveFromStack={onRemoveFromStack} onStudyIds={onStudyIds} onStartExam={() => setExaming(true)} />}
             {tab === "browse" && <BrowseView bank={bank} srs={srs} filters={filters} setFilters={setFilters} posList={posList} onDelete={onDelete} onDeleteMany={onDeleteMany} onClearAll={onClearAll} onResetSeen={onResetSeen} onToggleStar={onToggleStar} stack={stack} onAddToStack={onAddToStack} onRemoveFromStack={onRemoveFromStack} onClearStack={onClearStack} onStudyStack={onStudyStack} />}
-            {tab === "import" && <ImportView bank={bank} srs={srs} onImport={onImport} onStudyIds={onStudyIds} />}
+            {tab === "packs" && <PacksView wallet={wallet} onWallet={setWallet} onGranted={onGranted} />}
           </>
         )}
       </div>

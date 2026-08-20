@@ -39,6 +39,16 @@ export const cards = pgTable("cards", {
   notes: text("notes"),
   starred: boolean("starred").notNull().default(false),
   added: text("added").notNull(), // ISO date string, e.g. "2026-07-18"
+  // Cosmetic grade, stamped once when the card is granted. Deterministic from
+  // the hanzi (see lib/rating.ts), but stored rather than recomputed so the
+  // client never has to derive it and a later change to the formula cannot
+  // restyle cards someone already owns.
+  rarity: text("rarity").notNull().default("common"),
+  // How the card entered the collection: "pack" | "grandfathered". The default
+  // is deliberately "grandfathered": any row that takes it was not dealt by a
+  // pack, so a row can always say honestly where it came from. POST
+  // /packs/open writes "pack" explicitly.
+  source: text("source").notNull().default("grandfathered"),
 }, (t) => ({
   userHanziIdx: uniqueIndex("cards_user_hanzi_idx").on(t.userId, t.hanzi),
 }));
@@ -133,6 +143,27 @@ export const hskWords = pgTable("hsk_words", {
 }, (table) => ({
   levelIdx: index("hsk_words_level_idx").on(table.level),
 }));
+
+// The pack economy, one row per user. Points are earned only by proving cards
+// (see routes/seen.ts) — opening a pack pays nothing, or hoarding unstudied
+// cards becomes a viable strategy and the study loop inverts.
+export const wallet = pgTable("wallet", {
+  userId: uuid("user_id").primaryKey().references(() => users.id, { onDelete: "cascade" }),
+  points: integer("points").notNull().default(0),
+  // Subscription tier 1|2|3 — grants 3, 7 or 15 packs a month.
+  tier: integer("tier").notNull().default(1),
+  // Unopened packs, counted per grade: { common, rare, epic, legendary }.
+  packs: jsonb("packs").$type<Record<string, number>>().notNull().default({}),
+  // Anchor for the monthly grant; the grant is applied lazily on read so a
+  // user who does not open the app for two months does not accrue a backlog.
+  periodStart: timestamp("period_start", { withTimezone: true }).notNull().defaultNow(),
+  // Pity timers, carried over from the OW1 loot box: an epic is guaranteed
+  // within 5 packs and a legendary within 20, counted since the last one.
+  sinceEpic: integer("since_epic").notNull().default(0),
+  sinceLegendary: integer("since_legendary").notNull().default(0),
+  // Highest HSK tier the learner draws from; advances as a tier fills.
+  tierBand: text("tier_band").notNull().default("1"),
+});
 
 export const settings = pgTable("settings", {
   userId: uuid("user_id").primaryKey().references(() => users.id, { onDelete: "cascade" }),

@@ -1,4 +1,4 @@
-import type { Card, Grade, Proof, SeenMap, SeenRecord, Theme } from "../types";
+import type { Card, Grade, Proof, Rarity, SeenMap, SeenRecord, Theme, Wallet } from "../types";
 import type { CharacterStrokes } from "../lib/strokes";
 
 export interface Settings {
@@ -45,8 +45,6 @@ export const api = {
   me: () => request<{ id: string; email: string }>("/auth/me"),
 
   getBank: () => request<{ cards: Card[]; seen: SeenMap }>("/cards"),
-  importCards: (items: unknown[]) =>
-    request<{ cards: Card[]; added: number; updated: number }>("/cards", { method: "POST", body: JSON.stringify(items) }),
   patchCard: (id: string, patch: Partial<Card>) =>
     request<Card>(`/cards/${encodeURIComponent(id)}`, { method: "PATCH", body: JSON.stringify(patch) }),
   deleteCards: (ids: string[]) => request<{ ok: true }>("/cards", { method: "DELETE", body: JSON.stringify({ ids }) }),
@@ -54,7 +52,16 @@ export const api = {
 
   markSeen: (id: string) => request<SeenRecord>("/seen", { method: "POST", body: JSON.stringify({ id }) }),
   gradeCard: (id: string, grade: Grade, proof?: Proof, exam?: boolean) =>
-    request<SeenRecord>("/seen/grade", { method: "POST", body: JSON.stringify({ id, grade, proof, exam }) }),
+    request<SeenRecord & { earnedPoints?: number; points?: number | null }>(
+      "/seen/grade", { method: "POST", body: JSON.stringify({ id, grade, proof, exam }) }),
+
+  getWallet: () => request<Wallet>("/packs"),
+  openPack: (grade: Rarity) =>
+    request<{ cards: Card[]; wallet: Wallet }>("/packs/open", { method: "POST", body: JSON.stringify({ grade }) }),
+  buyPack: (grade: Rarity) =>
+    request<Wallet>("/packs/buy", { method: "POST", body: JSON.stringify({ grade }) }),
+  setTier: (tier: number) =>
+    request<Wallet>("/packs/tier", { method: "PATCH", body: JSON.stringify({ tier }) }),
   resetSeen: (ids?: string[]) => request<{ ok: true }>("/seen/reset", { method: "POST", body: JSON.stringify({ ids }) }),
 
   getSettings: () => request<Settings>("/settings"),

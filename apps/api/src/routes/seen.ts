@@ -4,8 +4,10 @@ import { z } from "zod";
 import { db } from "../db/client.js";
 import { cards, seenState } from "../db/schema.js";
 import { requireAuth } from "../lib/auth.js";
+import { POINTS } from "../lib/rating.js";
 import { serializeSeen } from "../lib/seenWire.js";
 import { initialState, MASTERY_MARKS, schedule, type Grade } from "../lib/srs.js";
+import { awardPoints } from "./packs.js";
 
 export const seenRoute = new Hono();
 seenRoute.use("*", requireAuth);
@@ -122,7 +124,27 @@ seenRoute.post("/grade", async (c) => {
     })
     .returning();
 
-  return c.json(serialize(row));
+  // Points, minted here because this is where the proof is verified. Opening
+  // a pack pays nothing — the only route to more cards runs through the ones
+  // you already hold, or hoarding unstudied cards becomes a viable strategy.
+  let points = 0;
+  const alreadyProved =
+    earned === "read" ? !!existing?.readOk :
+    earned === "write" ? !!existing?.writeOk :
+    earned === "brush" ? !!existing?.brushOk : false;
+  if (earned && !alreadyProved) points += POINTS.proof;
+  // A review pays only when the card was genuinely due — re-grading a card
+  // you just answered must not print points.
+  const wasDue = !!existing?.due && existing.due.getTime() <= now.getTime();
+  if (grade !== "again" && wasDue) points += POINTS.review;
+  // Mastery pays once, on the sitting that completes the last direction.
+  const marked = (r: { readMarks: number; writeMarks: number; brushMarks: number }) =>
+    r.readMarks >= MASTERY_MARKS && r.writeMarks >= MASTERY_MARKS && r.brushMarks >= MASTERY_MARKS;
+  if (!(existing && marked(existing)) && marked(row)) points += POINTS.mastery;
+
+  const balance = points > 0 ? await awardPoints(userId, points) : null;
+
+  return c.json({ ...serialize(row), earnedPoints: points, points: balance });
 });
 
 const resetSchema = z.object({ ids: z.array(z.string()).optional() });

@@ -10,7 +10,6 @@ export interface LoadedState {
 
 export interface StorageBackend {
   load(): Promise<LoadedState>;
-  importCards(items: unknown[]): Promise<{ cards: Card[]; added: number; updated: number }>;
   patchCard(id: string, patch: Partial<Card>): Promise<Card | null>;
   deleteCards(ids: string[]): Promise<void>;
   clearAll(): Promise<void>;

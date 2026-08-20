@@ -3,9 +3,10 @@ import { Chip, Rating, SpeakBtn, Switch } from "../components/atoms";
 import { CardDetail } from "../components/CardDetail";
 import { MysteryCardDetail } from "../components/MysteryCardDetail";
 import { DEX_LEVELS, DEX_INDEX, DEX_ORDER, DEX_TOTAL } from "../data/dex";
+import { finishOf } from "../lib/rarityStyle";
 import { canExam, isCollected, isDue, isMastered, PROOF_GLYPH, proofsOf } from "../lib/srs";
 import { C } from "../theme";
-import type { Card, SeenMap, StudyIds } from "../types";
+import type { Card, Rarity, SeenMap, StudyIds } from "../types";
 import { WordDex } from "./WordDex";
 import { useGridWindow } from "../lib/useGridWindow";
 
@@ -225,25 +226,37 @@ export function GalleryView({ bank, srs, onToggleStar, stack, onAddToStack, onRe
               const shiny = card ? isMastered(srs[card.id]) : false;
               const proofs = proofsOf(card ? srs[card.id] : undefined);
               const got = card ? proofs.read && proofs.write && proofs.brush : false;
+              const fin = finishOf((card?.rarity ?? "common") as Rarity);
               return card && got ? (
+                // Two signals, two encodings, deliberately kept apart: the
+                // card's material is its RARITY (what it is), and the 精 seal
+                // is MASTERY (what you did). Before packs the foil meant
+                // mastery, which would now make a mastered common
+                // indistinguishable from an unmastered legendary.
+                //
                 // The speak button has to be a sibling of the tile button, not
                 // a child — a <button> inside a <button> is invalid and Safari
                 // drops the inner one's clicks.
                 <div key={ch} className="relative" style={{ height: TILE_HEIGHT }}>
                   <button onClick={() => setCursor({ kind: "dex", index: dexIndex })}
-                    aria-label={`No. ${n} ${ch} — collected${shiny ? ", mastered" : ""}, view details`}
-                    className={`w-full h-full flex flex-col items-center justify-center gap-0.5 rounded${shiny ? " dex-shiny" : ""}`}
-                    style={shiny ? undefined : { background: C.ink2, border: `1px solid ${C.ink3}` }}>
-                    <span className="hz text-2xl leading-tight" style={{ color: shiny ? "#1a1a1a" : C.paper }}>{ch}</span>
-                    <span className="ui t-micro" style={{ color: shiny ? "#3a3a3a" : C.faint }}>
+                    aria-label={`No. ${n} ${ch} — collected, ${fin.label}${shiny ? ", mastered" : ""}, view details`}
+                    className={`w-full h-full flex flex-col items-center justify-center gap-0.5 rounded ${fin.className}`}
+                    style={fin.style}>
+                    <span className="hz text-2xl leading-tight" style={{ color: fin.glyph }}>{ch}</span>
+                    <span className="ui t-micro" style={{ color: fin.sub }}>
                       {String(n).padStart(4, "0")}{card.starred ? " ★" : ""}
                     </span>
-                    <span style={{ color: shiny ? "#3a3a3a" : C.dim }}>
+                    <span style={{ color: fin.sub }}>
                       <Rating rec={srs[card.id]} compact />
                     </span>
                   </button>
+                  {shiny && (
+                    <span className="hz absolute top-0 left-0 px-1 leading-none"
+                      aria-hidden="true"
+                      style={{ fontSize: 11, color: fin.glyph, opacity: 0.85 }}>精</span>
+                  )}
                   <SpeakBtn text={ch} className="absolute top-0 right-0 !px-1 !py-0.5"
-                    style={{ fontSize: 10, color: shiny ? "#3a3a3a" : C.faint }} />
+                    style={{ fontSize: 10, color: fin.sub }} />
                 </div>
               ) : card ? (
                 // In your bank, not yet earned. The character is shown solid —
@@ -293,20 +306,25 @@ export function GalleryView({ bank, srs, onToggleStar, stack, onAddToStack, onRe
           <div className="grid gap-1" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(72px, 1fr))" }}>
             {extras.map((card, i) => {
               const shiny = isMastered(srs[card.id]);
+              const fin = finishOf((card.rarity ?? "common") as Rarity);
               return (
                 <div key={card.id} className="relative">
                   <button onClick={() => setCursor({ kind: "extra", index: i })}
-                    aria-label={`${card.hanzi} — view details${shiny ? " (mastered)" : ""}`}
-                    className={`w-full flex flex-col items-center gap-0.5 py-2 px-1 rounded${shiny ? " dex-shiny" : ""}`}
-                    style={shiny ? undefined : { background: C.ink2, border: `1px solid ${C.ink3}` }}>
-                    <span className="hz text-xl leading-tight" style={{ color: shiny ? "#1a1a1a" : C.paper }}>{card.hanzi}</span>
-                    <span className="ui t-micro truncate w-full text-center" style={{ color: shiny ? "#3a3a3a" : C.faint }}>{card.pinyin}</span>
-                    <span style={{ color: shiny ? "#3a3a3a" : C.dim }}>
+                    aria-label={`${card.hanzi} — ${fin.label}, view details${shiny ? " (mastered)" : ""}`}
+                    className={`w-full flex flex-col items-center gap-0.5 py-2 px-1 rounded ${fin.className}`}
+                    style={fin.style}>
+                    <span className="hz text-xl leading-tight" style={{ color: fin.glyph }}>{card.hanzi}</span>
+                    <span className="ui t-micro truncate w-full text-center" style={{ color: fin.sub }}>{card.pinyin}</span>
+                    <span style={{ color: fin.sub }}>
                       <Rating rec={srs[card.id]} compact />
                     </span>
                   </button>
+                  {shiny && (
+                    <span className="hz absolute top-0 left-0 px-1 leading-none" aria-hidden="true"
+                      style={{ fontSize: 11, color: fin.glyph, opacity: 0.85 }}>精</span>
+                  )}
                   <SpeakBtn text={card.hanzi} className="absolute top-0 right-0 !px-1 !py-0.5"
-                    style={{ fontSize: 10, color: shiny ? "#3a3a3a" : C.faint }} />
+                    style={{ fontSize: 10, color: fin.sub }} />
                 </div>
               );
             })}

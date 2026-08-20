@@ -103,13 +103,6 @@ export class ApiStorage implements StorageBackend {
     }
   }
 
-  async importCards(items: unknown[]) {
-    this.notify("syncing");
-    const result = await api.importCards(items); // network/validation errors surface to the caller
-    this.notify("synced");
-    return result;
-  }
-
   async patchCard(id: string, patch: Partial<Card>): Promise<Card | null> {
     this.notify("syncing");
     try {

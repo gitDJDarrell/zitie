@@ -9,10 +9,12 @@ import { auth } from "./routes/auth.js";
 import { insightsRoute } from "./routes/insights.js";
 import { cardsRoute } from "./routes/cards.js";
 import { exportRoute } from "./routes/export.js";
+import { packsRoute } from "./routes/packs.js";
 import { seenRoute } from "./routes/seen.js";
 import { strokesRoute } from "./routes/strokes.js";
 import { settingsRoute } from "./routes/settings.js";
 import { allowedOrigins, originChecker } from "./lib/origins.js";
+import { initRatings } from "./lib/rating.js";
 
 const app = new Hono();
 
@@ -41,10 +43,26 @@ app.route("/auth", auth);
 app.route("/ai", aiRoute);
 app.route("/insights", insightsRoute);
 app.route("/cards", cardsRoute);
+app.route("/packs", packsRoute);
 app.route("/seen", seenRoute);
 app.route("/strokes", strokesRoute);
 app.route("/settings", settingsRoute);
 app.route("/export", exportRoute);
+
+// Character ratings are derived from how many HSK words each character
+// appears in, so the word list has to be in memory before any pack can be
+// rolled. Loaded once at boot; /packs/open answers 503 until it lands.
+void (async () => {
+  try {
+    const { db } = await import("./db/client.js");
+    const { hskWords } = await import("./db/schema.js");
+    const rows = await db.select({ zh: hskWords.zh }).from(hskWords);
+    initRatings(rows.map(r => r.zh));
+    console.log(`[rating] indexed ${rows.length} HSK words`);
+  } catch (err) {
+    console.error("[rating] failed to build the rating index", err);
+  }
+})();
 
 const port = Number(process.env.PORT) || 8787;
 // Bind all interfaces so the container's reverse proxy and the Android emulator

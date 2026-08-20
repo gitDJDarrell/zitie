@@ -15,6 +15,7 @@
     "build:lookalikes": "tsx scripts/build-lookalikes.ts",
     "build:curated": "tsx scripts/build-curated.ts",
     "db:local": "tsx scripts/dev-db.ts",
+    "db:grandfather": "tsx scripts/grandfather-cards.ts",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "tsx scripts/migrate.ts",
     "db:deploy": "npm run db:migrate && npm run db:seed-reference",

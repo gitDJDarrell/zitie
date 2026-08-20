@@ -166,3 +166,94 @@ button, a, [role="radio"], [role="button"], input, textarea, select {
 .dex-shiny:hover::after, .dex-shiny:focus-visible::after {
   animation: dex-shiny-sweep 1s ease-in-out 1;
 }
+
+/* ————————————————— card rarity: the material ladder —————————————————
+   Rarity is cosmetic and nothing else — every card carries identical content
+   whatever it pulled at. The app is strict monochrome (cinnabar collapses to
+   black/white), so rarity cannot be hue-coded the way Overwatch used
+   blue/purple/orange. It is coded by material instead, escalating in how the
+   card handles light: paper absorbs it, ink deepens it, satin catches it at
+   an angle, mirror throws it back.
+
+   Common and rare are theme-aware and set inline from the C tokens, so they
+   invert with the page. Epic and legendary are fixed in both themes, the same
+   call .dex-shiny already makes: real metal looks the same whichever way the
+   room is lit. */
+
+/* 银 satin — brushed metal, restrained. No glitter; that is legendary's. */
+.rar-epic {
+  position: relative;
+  background: linear-gradient(160deg, #3F4247 0%, #6E727A 22%, #4A4D53 45%, #7C8088 70%, #43464C 100%);
+  border-color: #9AA0A8 !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.28);
+}
+/* corner ticks, drawn as one inset frame clipped to the corners */
+.rar-epic::before {
+  content: "";
+  position: absolute;
+  inset: 5px;
+  pointer-events: none;
+  border: 1px solid rgba(201,206,212,0.9);
+  clip-path: polygon(
+    0 0, 32% 0, 32% 1.6px, 1.6px 1.6px, 1.6px 32%, 0 32%,
+    0 100%, 32% 100%, 32% calc(100% - 1.6px), 1.6px calc(100% - 1.6px), 1.6px 68%, 0 68%,
+    100% 0, 68% 0, 68% 1.6px, calc(100% - 1.6px) 1.6px, calc(100% - 1.6px) 32%, 100% 32%,
+    100% 100%, 68% 100%, 68% calc(100% - 1.6px), calc(100% - 1.6px) calc(100% - 1.6px), calc(100% - 1.6px) 68%, 100% 68%
+  );
+}
+
+/* 镜 mirror — the top grade, and the treatment already shipped on completed
+   dex entries. Aliased rather than duplicated so the two never drift. */
+.rar-legendary {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #747982 0%, #9aa0a8 18%, #eef1f4 38%, #ffffff 50%, #eef1f4 62%, #9aa0a8 82%, #747982 100%);
+  border-color: #d7dbdf !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.8), inset 0 -1px 3px rgba(0,0,0,0.25);
+}
+.rar-legendary::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle, #fff 0 1px, transparent 1.5px),
+    radial-gradient(circle, #fff 0 1px, transparent 1.5px),
+    radial-gradient(circle, #fff 0 1px, transparent 1.5px),
+    radial-gradient(circle, #fff 0 1px, transparent 1.5px),
+    radial-gradient(circle, #fff 0 1px, transparent 1.5px),
+    radial-gradient(circle, #fff 0 1px, transparent 1.5px),
+    radial-gradient(circle, #fff 0 0.75px, transparent 1.2px),
+    radial-gradient(circle, #fff 0 0.75px, transparent 1.2px),
+    radial-gradient(circle, #fff 0 0.75px, transparent 1.2px),
+    radial-gradient(circle, #fff 0 0.75px, transparent 1.2px);
+  background-repeat: no-repeat;
+  background-position:
+    12% 20%, 28% 65%, 42% 15%, 58% 78%, 71% 30%, 85% 60%,
+    35% 42%, 65% 8%, 8% 50%, 92% 78%;
+  opacity: 0.9;
+}
+.rar-legendary::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(115deg, transparent 40%, rgba(255,255,255,0.85) 49%, rgba(255,255,255,0.85) 51%, transparent 60%);
+  background-size: 240% 240%;
+  background-position: 0% 0%;
+}
+.rar-legendary:hover::after, .rar-legendary:focus-visible::after {
+  animation: dex-shiny-sweep 1s ease-in-out 1;
+}
+
+/* The pack-opening reveal: cards flip up one after another. Rarity sets the
+   delay elsewhere; this is only the motion. */
+@keyframes pack-reveal {
+  0% { transform: translateY(10px) scale(0.94); opacity: 0; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+.pack-card { animation: pack-reveal 260ms cubic-bezier(.2,.9,.3,1.1) both; }
+@media (prefers-reduced-motion: reduce) {
+  .pack-card { animation: none; }
+  .rar-legendary:hover::after, .rar-legendary:focus-visible::after { animation: none; }
+}
